@@ -6,11 +6,17 @@
   <title>Register Profile | EF X TOUR 2026</title>
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
   <style>
     .register-container {
       max-width: 600px;
       margin: 60px auto;
       padding: 30px;
+    }
+    .register-col-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
     }
   </style>
 </head>
@@ -19,7 +25,7 @@
     <h2 class="text-gold" style="text-align: center; margin-bottom: 30px;">CREATE PLAYER PROFILE</h2>
 
     <form id="register-form">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="register-col-2">
         <div class="form-group">
           <label for="fullName">Full Name</label>
           <input type="text" id="fullName" class="form-input" required>
@@ -30,7 +36,7 @@
         </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="register-col-2">
         <div class="form-group">
           <label for="email">Email Address</label>
           <input type="email" id="email" class="form-input" required>
@@ -41,7 +47,7 @@
         </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="register-col-2">
         <div class="form-group">
           <label for="efootballId">eFootball ID (In-game ID)</label>
           <input type="text" id="efootballId" class="form-input" required>
@@ -52,7 +58,7 @@
         </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="register-col-2">
         <div class="form-group">
           <label for="country">Country</label>
           <input type="text" id="country" class="form-input" placeholder="e.g. Malaysia, Indonesia" required>
@@ -76,6 +82,7 @@
     </div>
   </div>
 
+  <script src="js/mobile-nav.js"></script>
   <script src="js/firebase-config.js"></script>
   <script type="module">
     import AuthService from "./js/auth.js";

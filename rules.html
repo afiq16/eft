@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/navbar.css">
   <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
   <!-- Header -->
@@ -22,8 +23,12 @@
         <li><a href="fixtures.html" class="nav-link">Fixtures</a></li>
         <li><a href="rules.html" class="nav-link active">Rules</a></li>
       </ul>
+      <button class="hamburger" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </header>
+  <div class="mobile-nav-overlay"></div>
 
   <div style="max-width: 800px; margin: 40px auto; padding: 0 20px;">
     <div class="card">
@@ -45,5 +50,6 @@
       </div>
     </div>
   </div>
+  <script src="js/mobile-nav.js"></script>
 </body>
 </html>
