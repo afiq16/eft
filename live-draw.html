@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Allocation Draw | EF X TOUR 2026</title>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/lottery.css">
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <div class="logo-area">
+        <span class="logo-title">EF X TOUR 2026</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+        <li><a href="live-draw.html" class="nav-link active">Live Draw</a></li>
+        <li><a href="standings.html" class="nav-link">Standings</a></li>
+        <li><a href="fixtures.html" class="nav-link">Fixtures</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Arena -->
+  <div class="lottery-container">
+    <h2 class="text-gold" style="font-size: 2.2rem; text-transform: uppercase;">Realtime Club Lottery</h2>
+    <p style="color: var(--text-secondary);">Watch randomized club allocations synchronized live via Realtime Database.</p>
+
+    <div class="lottery-arena">
+      <div class="arena-glow"></div>
+      <div id="draw-status-badge" class="badge badge-info" style="margin-bottom: 20px;">LOBBY OPEN</div>
+      
+      <div class="draw-split">
+        <div id="player-draw-card" class="draw-card">
+          <div class="label">Player Selection</div>
+          <div class="value" id="player-draw-value">WAITING...</div>
+        </div>
+        <div class="draw-vs">TO</div>
+        <div id="club-draw-card" class="draw-card">
+          <div class="label">Club Allocated</div>
+          <div class="value text-gold" id="club-draw-value">WAITING...</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 30px;">
+        <button id="btn-sound-toggle" class="btn btn-outline">🔊 Sound Effects On</button>
+      </div>
+    </div>
+
+    <!-- Allocation list -->
+    <h3 style="text-align: left; margin: 40px 0 20px; text-transform: uppercase;" class="text-blue">Live Drawing Results</h3>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Player Name</th>
+            <th>Allocated Club</th>
+            <th>Time Assigned</th>
+          </tr>
+        </thead>
+        <tbody id="results-list">
+          <tr>
+            <td colspan="3" style="text-align: center; color: var(--text-muted);">No club assigned yet. Draw has not started.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="js/firebase-config.js"></script>
+  <script type="module">
+    import { db, rtdb } from "./js/firebase-init.js";
+    import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // Play standard Web Audio API synth sounds (original custom SFX, no copyright issues)
+    let soundEnabled = true;
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playBeep(freq, type, duration) {
+      if (!soundEnabled) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        osc.type = type;
+        osc.frequency.value = freq;
+        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        console.log("Audio contexts need interaction first");
+      }
+    }
+
+    document.getElementById('btn-sound-toggle').addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      document.getElementById('btn-sound-toggle').innerText = soundEnabled ? "🔊 Sound Effects On" : "🔇 Sound Effects Off";
+    });
+
+    const statusBadge = document.getElementById('draw-status-badge');
+    const playerCard = document.getElementById('player-draw-card');
+    const playerValue = document.getElementById('player-draw-value');
+    const clubCard = document.getElementById('club-draw-card');
+    const clubValue = document.getElementById('club-draw-value');
+    const resultsList = document.getElementById('results-list');
+
+    // Realtime Database listeners
+    const lotteryRef = ref(rtdb, 'lottery/current');
+
+    onValue(lotteryRef, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) return;
+
+      statusBadge.innerText = data.status.toUpperCase();
+      statusBadge.className = `badge badge-${data.status === 'LIVE' ? 'danger' : data.status === 'COMPLETED' ? 'success' : 'pending'}`;
+
+      if (data.status === 'LIVE') {
+        // Run shuffling animation
+        playerValue.innerText = data.shufflingPlayer || "SHUFFLING...";
+        clubValue.innerText = data.shufflingClub || "SHUFFLING...";
+        playerCard.classList.add('shuffling');
+        clubCard.classList.add('shuffling');
+        playBeep(200 + Math.random() * 600, 'sawtooth', 0.05);
+      } else if (data.status === 'REVEALED') {
+        // Stop shuffling and show target
+        playerCard.classList.remove('shuffling');
+        clubCard.classList.remove('shuffling');
+        playerCard.classList.add('active');
+        clubCard.classList.add('gold-active');
+
+        playerValue.innerText = data.activePlayer;
+        clubValue.innerText = data.activeClub;
+        
+        playBeep(880, 'sine', 0.4);
+      } else {
+        playerCard.classList.remove('shuffling', 'active');
+        clubCard.classList.remove('shuffling', 'gold-active');
+        playerValue.innerText = "WAITING...";
+        clubValue.innerText = "WAITING...";
+      }
+
+      // Display overall draw results list
+      if (data.assignments) {
+        resultsList.innerHTML = "";
+        Object.values(data.assignments).forEach(asg => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${asg.playerName}</td>
+            <td class="text-gold">${asg.clubName}</td>
+            <td>${new Date(asg.timestamp).toLocaleTimeString()}</td>
+          `;
+          resultsList.appendChild(tr);
+        });
+      }
+    });
+  </script>
+</body>
+</html>

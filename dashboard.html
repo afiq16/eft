@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Player Dashboard | EF X TOUR 2026</title>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <div class="logo-area">
+        <span class="logo-title">EF X TOUR 2026</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="dashboard.html" class="nav-link active">Dashboard</a></li>
+        <li><a href="registration.html" class="nav-link">Tournament Registration</a></li>
+        <li><a href="live-draw.html" class="nav-link">Live Draw</a></li>
+        <li><a href="standings.html" class="nav-link">Standings</a></li>
+        <li><a href="fixtures.html" class="nav-link">Fixtures</a></li>
+      </ul>
+      <div class="nav-auth">
+        <button id="btn-logout" class="btn btn-outline" style="padding: 8px 16px;">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Dashboard Content -->
+  <div class="dashboard-grid">
+    <div>
+      <div class="profile-card">
+        <img id="p-avatar" src="https://via.placeholder.com/100" alt="Avatar" class="profile-avatar">
+        <div class="profile-info">
+          <h2 id="p-name">Loading Profile...</h2>
+          <p id="p-username">@username</p>
+          <div style="margin-top: 10px;">
+            <span id="p-role-badge" class="badge badge-info">Player</span>
+            <span id="p-registration-badge" class="badge badge-pending">Registration: None</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <h3 style="margin-bottom: 20px; font-size: 1.5rem; text-transform: uppercase;">League Statistics</h3>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div>Club Assigned</div>
+          <div class="stat-value text-gold" id="p-club">N/A</div>
+        </div>
+        <div class="stat-box">
+          <div>Matches</div>
+          <div class="stat-value" id="s-played">0</div>
+        </div>
+        <div class="stat-box">
+          <div>Wins</div>
+          <div class="stat-value" id="s-wins">0</div>
+        </div>
+        <div class="stat-box">
+          <div>Points</div>
+          <div class="stat-value text-blue" id="s-points">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar details -->
+    <div>
+      <div class="card" style="margin-bottom: 30px;">
+        <h3 class="text-gold" style="margin-bottom: 15px;">Next Match</h3>
+        <div id="next-match-details" style="text-align: center; color: var(--text-secondary);">
+          No match scheduled yet. Club draw is pending.
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="text-blue" style="margin-bottom: 15px;">Registration Steps</h3>
+        <ul style="color: var(--text-secondary); padding-left: 20px; font-size: 0.95rem;">
+          <li style="margin-bottom: 10px;">Go to Tournament Registration</li>
+          <li style="margin-bottom: 10px;">Enter payment references & transaction screenshot</li>
+          <li style="margin-bottom: 10px;">Wait for payment verification status approval</li>
+          <li style="margin-bottom: 10px;">Join Club Allocation draw lobby</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/firebase-config.js"></script>
+  <script type="module">
+    import AuthGuard from "./js/auth-guard.js";
+    import AuthService from "./js/auth.js";
+    import { auth, db } from "./js/firebase-init.js";
+    import { doc, getDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    AuthGuard.guardPage();
+
+    document.getElementById('btn-logout').addEventListener('click', () => {
+      AuthService.logoutUser();
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // Fetch profile
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          document.getElementById('p-name').innerText = data.fullName;
+          document.getElementById('p-username').innerText = `@${data.username}`;
+          document.getElementById('p-role-badge').innerText = data.role;
+          if (data.profilePhoto) {
+            document.getElementById('p-avatar').src = data.profilePhoto;
+          }
+          
+          if (data.role === 'SUPER_ADMIN') {
+            document.getElementById('p-role-badge').className = "badge badge-success";
+            document.getElementById('p-role-badge').innerText += " (Access Panel below)";
+            const adminLink = document.createElement('div');
+            adminLink.style.marginTop = "20px";
+            adminLink.innerHTML = `<a href="admin.html" class="btn btn-secondary">Go to Admin control Center</a>`;
+            document.querySelector('.profile-info').appendChild(adminLink);
+          }
+        }
+
+        // Fetch registration details
+        const regDoc = await getDoc(doc(db, "registrations", user.uid));
+        const badge = document.getElementById('p-registration-badge');
+        if (regDoc.exists()) {
+          const regData = regDoc.data();
+          badge.innerText = `Registration: ${regData.status}`;
+          if (regData.status === 'APPROVED') {
+            badge.className = "badge badge-success";
+          } else if (regData.status === 'REJECTED') {
+            badge.className = "badge badge-danger";
+          } else {
+            badge.className = "badge badge-pending";
+          }
+        } else {
+          badge.innerText = "Registration: NOT REGISTERED";
+          badge.className = "badge badge-danger";
+        }
+      }
+    });
+  </script>
+</body>
+</html>

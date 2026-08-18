@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tournament Registration | EF X TOUR 2026</title>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    .registration-box {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 30px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <div class="logo-area">
+        <span class="logo-title">EF X TOUR 2026</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+        <li><a href="registration.html" class="nav-link active">Tournament Registration</a></li>
+        <li><a href="live-draw.html" class="nav-link">Live Draw</a></li>
+        <li><a href="standings.html" class="nav-link">Standings</a></li>
+        <li><a href="fixtures.html" class="nav-link">Fixtures</a></li>
+      </ul>
+      <div class="nav-auth">
+        <a href="dashboard.html" class="btn btn-outline" style="padding: 8px 16px;">Back to Dash</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Form container -->
+  <div class="registration-box card">
+    <h2 class="text-gold" style="margin-bottom: 10px; text-align: center;">TOURNAMENT ENTRY FORM</h2>
+    <p style="color: var(--text-secondary); text-align: center; margin-bottom: 30px;">Season 01 - Organizer: Afiq (50 USD Fee)</p>
+
+    <div id="reg-status-alert" style="display: none;"></div>
+
+    <form id="reg-form">
+      <div class="form-group">
+        <label for="team-name">Esports Team Name</label>
+        <input type="text" id="team-name" class="form-input" placeholder="e.g. Afiq Esports" required>
+      </div>
+
+      <div class="form-group">
+        <label>Preferred Clubs (Select top 3 choices)</label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 8px;">
+          <select id="club-pref-1" class="form-input" style="background: var(--bg-tertiary);" required>
+            <option value="">Club 1</option>
+            <option value="Arsenal">Arsenal</option>
+            <option value="Barcelona">Barcelona</option>
+            <option value="Manchester United">Manchester United</option>
+            <option value="Bayern Munich">Bayern Munich</option>
+            <option value="AC Milan">AC Milan</option>
+            <option value="PSG">PSG</option>
+          </select>
+          <select id="club-pref-2" class="form-input" style="background: var(--bg-tertiary);" required>
+            <option value="">Club 2</option>
+            <option value="Arsenal">Arsenal</option>
+            <option value="Barcelona">Barcelona</option>
+            <option value="Manchester United">Manchester United</option>
+            <option value="Bayern Munich">Bayern Munich</option>
+            <option value="AC Milan">AC Milan</option>
+            <option value="PSG">PSG</option>
+          </select>
+          <select id="club-pref-3" class="form-input" style="background: var(--bg-tertiary);" required>
+            <option value="">Club 3</option>
+            <option value="Arsenal">Arsenal</option>
+            <option value="Barcelona">Barcelona</option>
+            <option value="Manchester United">Manchester United</option>
+            <option value="Bayern Munich">Bayern Munich</option>
+            <option value="AC Milan">AC Milan</option>
+            <option value="PSG">PSG</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom: 20px; background: rgba(0, 229, 255, 0.05); border-color: rgba(0, 229, 255, 0.15);">
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+          💵 <strong>Payment Method:</strong> Cash/Direct hand-to-hand payment to admin Organizer Afiq. Once submitted, please clear the dues directly.
+        </p>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <input type="checkbox" id="terms" required>
+        <label for="terms" style="color: var(--text-secondary); font-size: 0.9rem; margin-left: 8px;">I agree to clear registration fee directly to Organizer Afiq</label>
+      </div>
+
+      <button type="submit" id="btn-submit-reg" class="btn btn-primary" style="width: 100%;">Submit Entry Details</button>
+    </form>
+  </div>
+
+  <script src="js/firebase-config.js"></script>
+  <script type="module">
+    import AuthGuard from "./js/auth-guard.js";
+    import Utils from "./js/utils.js";
+    import { auth, db } from "./js/firebase-init.js";
+    import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    AuthGuard.guardPage();
+
+    let userId = "";
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        userId = user.uid;
+        // Check current registration status
+        const regDoc = await getDoc(doc(db, "registrations", userId));
+        if (regDoc.exists()) {
+          const regData = regDoc.data();
+          const alertDiv = document.getElementById('reg-status-alert');
+          alertDiv.style.display = 'block';
+          alertDiv.className = `alert alert-${regData.status === 'APPROVED' ? 'success' : regData.status === 'REJECTED' ? 'error' : 'warning'}`;
+          alertDiv.innerText = `Registration status: ${regData.status}. ${regData.adminNote || ""}`;
+          
+          if (regData.status === 'APPROVED' || regData.status === 'SUBMITTED') {
+            document.getElementById('btn-submit-reg').disabled = true;
+            document.getElementById('btn-submit-reg').innerText = "Submission Locked";
+          }
+        }
+      }
+    });
+
+    document.getElementById('reg-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!userId) return;
+
+      const teamName = document.getElementById('team-name').value;
+      const pref1 = document.getElementById('club-pref-1').value;
+      const pref2 = document.getElementById('club-pref-2').value;
+      const pref3 = document.getElementById('club-pref-3').value;
+
+      Utils.showLoader();
+      try {
+        await setDoc(doc(db, "registrations", userId), {
+          playerId: userId,
+          teamName: teamName,
+          clubPreferences: [pref1, pref2, pref3],
+          paymentMethod: "CASH_DIRECT",
+          status: "SUBMITTED",
+          submittedAt: new Date().toISOString()
+        });
+
+        // Add pending payment reference matching manual verification
+        await setDoc(doc(db, "payments", userId), {
+          playerId: userId,
+          paymentMethod: "CASH_DIRECT",
+          status: "PENDING_CASH",
+          amount: "50 USD",
+          updatedAt: new Date().toISOString()
+        });
+
+        if (window.Utils) window.Utils.hideLoader();
+        Utils.showToast("Registration submitted! Clear cash with Organizer Afiq.", "success");
+        setTimeout(() => location.reload(), 1500);
+      } catch (err) {
+        if (window.Utils) window.Utils.hideLoader();
+        Utils.showToast(err.message, "error");
+      }
+    });
+  </script>
+</body>
+</html>

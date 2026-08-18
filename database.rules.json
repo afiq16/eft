@@ -1,0 +1,12 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+    "lottery": {
+      "$lotteryId": {
+        ".read": true,
+        ".write": "auth != null"
+      }
+    }
+  }
+}
