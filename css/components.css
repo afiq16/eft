@@ -1,0 +1,171 @@
+/* Component Styles: Buttons, Cards, Inputs, Tables, Alerts */
+
+/* Form Control styling */
+.form-group {
+  margin-bottom: 20px;
+}
+.form-group label {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-glass);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  transition: var(--transition-smooth);
+}
+.form-input:focus {
+  border-color: var(--primary);
+  box-shadow: var(--glow-shadow);
+  outline: none;
+}
+
+/* Custom premium buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  border-radius: 8px;
+  transition: var(--transition-smooth);
+  gap: 8px;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, #00b0ff 100%);
+  color: #000;
+  box-shadow: var(--glow-shadow);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px var(--primary);
+}
+.btn-secondary {
+  background: linear-gradient(135deg, var(--secondary) 0%, #b8860b 100%);
+  color: #000;
+  box-shadow: var(--gold-glow-shadow);
+}
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px var(--secondary);
+}
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+}
+.btn-outline:hover {
+  background: rgba(0, 229, 255, 0.1);
+  box-shadow: var(--glow-shadow);
+}
+.btn-danger {
+  background: var(--error);
+  color: #fff;
+}
+.btn-danger:hover {
+  box-shadow: 0 0 15px rgba(255, 23, 68, 0.5);
+}
+
+/* Glassmorphism Cards */
+.card {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 24px;
+  transition: var(--transition-smooth);
+}
+.card:hover {
+  border-color: rgba(0, 229, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(0, 229, 255, 0.05);
+}
+
+/* Modern Tables */
+.table-container {
+  overflow-x: auto;
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  background: var(--bg-secondary);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+th {
+  background: var(--bg-tertiary);
+  padding: 16px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-glass);
+}
+td {
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+}
+tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Badge styles */
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.badge-success { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid var(--success); }
+.badge-pending { background: rgba(255, 234, 0, 0.15); color: var(--warning); border: 1px solid var(--warning); }
+.badge-danger { background: rgba(255, 23, 68, 0.15); color: var(--error); border: 1px solid var(--error); }
+.badge-info { background: rgba(0, 229, 255, 0.15); color: var(--primary); border: 1px solid var(--primary); }
+
+/* Feedback alerts */
+.alert {
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+.alert-success { background: rgba(0, 230, 118, 0.1); border: 1px solid var(--success); color: var(--success); }
+.alert-error { background: rgba(255, 23, 68, 0.1); border: 1px solid var(--error); color: var(--error); }
+.alert-warning { background: rgba(255, 234, 0, 0.1); border: 1px solid var(--warning); color: var(--warning); }
+
+/* Loading overlay & skeleton styles */
+.loader-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.5s ease;
+}
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid var(--bg-tertiary);
+  border-bottom-color: var(--primary);
+  border-radius: 50%;
+  animation: rotation 1s linear infinite;
+}
+@keyframes rotation {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

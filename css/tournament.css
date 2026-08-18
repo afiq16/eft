@@ -1,0 +1,42 @@
+/* Specific rules for tournaments and match pages styling */
+.tournament-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+}
+.match-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  padding: 20px;
+  transition: var(--transition-smooth);
+}
+.match-card:hover {
+  border-color: var(--primary);
+}
+.match-team {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 40%;
+}
+.match-team.away {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+.match-score {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--secondary);
+  width: 20%;
+  text-align: center;
+}
+.match-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}

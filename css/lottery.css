@@ -1,0 +1,122 @@
+/* Club Pool Lottery Shuffling & Realtime Animation Styling */
+
+.lottery-container {
+  max-width: 900px;
+  margin: 40px auto;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.lottery-arena {
+  background: radial-gradient(circle at center, rgba(0, 229, 255, 0.1) 0%, transparent 70%), var(--bg-secondary);
+  border: 1px solid var(--border-glass);
+  border-radius: 20px;
+  padding: 50px 30px;
+  margin-top: 30px;
+  box-shadow: inset 0 0 50px rgba(0, 229, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.arena-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+  background: var(--primary);
+  filter: blur(120px);
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.draw-split {
+  display: grid;
+  grid-template-columns: 1fr 80px 1fr;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  z-index: 2;
+  margin: 40px 0;
+}
+
+@media (max-width: 768px) {
+  .draw-split {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}
+
+.draw-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid var(--border-glass);
+  border-radius: 16px;
+  padding: 40px 20px;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-smooth);
+}
+
+.draw-card.active {
+  border-color: var(--primary);
+  box-shadow: var(--glow-shadow);
+  background: rgba(0, 229, 255, 0.05);
+}
+
+.draw-card.gold-active {
+  border-color: var(--secondary);
+  box-shadow: var(--gold-glow-shadow);
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.draw-card .label {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 15px;
+}
+
+.draw-card .value {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.draw-vs {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--secondary);
+}
+
+/* Shuffling animations */
+.shuffling {
+  animation: cardShuffle 0.15s ease-in-out infinite alternate;
+}
+
+@keyframes cardShuffle {
+  0% { transform: scale(0.98) translateY(-2px); opacity: 0.8; }
+  100% { transform: scale(1.02) translateY(2px); opacity: 1; }
+}
+
+.reveal-anim {
+  animation: revealZoom 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes revealZoom {
+  0% { transform: scale(0.5); opacity: 0; filter: blur(10px); }
+  70% { transform: scale(1.1); filter: blur(0); }
+  100% { transform: scale(1); opacity: 1; }
+}

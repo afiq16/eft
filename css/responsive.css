@@ -1,0 +1,65 @@
+/* CSS Styles for responsive layout support */
+
+@media (max-width: 1024px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    position: relative;
+    max-height: none;
+    border-right: none;
+    border-bottom: 1px solid var(--border-glass);
+  }
+  .admin-content {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none; /* Mobile navigation toggler can be added */
+  }
+  .nav-container {
+    padding: 12px 16px;
+  }
+  
+  /* Transform tables into readable card lists */
+  .responsive-table table, 
+  .responsive-table thead, 
+  .responsive-table tbody, 
+  .responsive-table th, 
+  .responsive-table td, 
+  .responsive-table tr {
+    display: block;
+  }
+  .responsive-table thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  .responsive-table tr {
+    border: 1px solid var(--border-glass);
+    border-radius: 8px;
+    margin-bottom: 12px;
+    background: var(--bg-tertiary);
+    padding: 8px;
+  }
+  .responsive-table td {
+    border: none;
+    position: relative;
+    padding-left: 50%;
+    text-align: right;
+  }
+  .responsive-table td:before {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    content: attr(data-label);
+    font-weight: bold;
+    text-align: left;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+  }
+}
