@@ -3,21 +3,38 @@
 const Utils = {
   // Show premium notifications using CSS Injection
   showToast(message, type = 'info') {
+    const typeMap = {
+      success: 'success',
+      error: 'error',
+      warning: 'warning',
+      info: 'info'
+    };
+    const cssType = typeMap[type] || 'warning';
+
     const toast = document.createElement('div');
-    toast.className = `alert alert-${type === 'error' ? 'error' : type === 'success' ? 'success' : 'warning'}`;
-    toast.style.position = 'fixed';
-    toast.style.bottom = '20px';
-    toast.style.right = '20px';
-    toast.style.zIndex = '9999';
-    toast.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.5)';
-    toast.style.minWidth = '300px';
-    toast.style.animation = 'revealZoom 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+    toast.className = `alert alert-${cssType === 'info' ? 'warning' : cssType}`;
+    // Info style override — use blue
+    if (cssType === 'info') {
+      toast.style.background = 'rgba(0, 229, 255, 0.1)';
+      toast.style.border = '1px solid #00e5ff';
+      toast.style.color = '#00e5ff';
+    }
+    toast.style.cssText += `
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 99998;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      min-width: 280px;
+      max-width: min(90vw, 400px);
+      animation: revealZoom 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    `;
     toast.innerText = message;
-    
     document.body.appendChild(toast);
+
     setTimeout(() => {
-      toast.style.opacity = '0';
-      setTimeout(() => toast.remove(), 500);
+      toast.classList.add('toast-fade-out');
+      setTimeout(() => toast.remove(), 420);
     }, 4000);
   },
 
@@ -68,6 +85,12 @@ const Utils = {
       metadata,
       timestamp: new Date().toISOString()
     });
+  },
+
+  // HTML Escape Helper
+  escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
   }
 };
 
