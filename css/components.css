@@ -4,6 +4,7 @@
 .form-group {
   margin-bottom: 20px;
 }
+
 .form-group label {
   display: block;
   font-family: var(--font-display);
@@ -12,6 +13,7 @@
   margin-bottom: 8px;
   font-weight: 500;
 }
+
 .form-input {
   width: 100%;
   padding: 12px 16px;
@@ -23,6 +25,7 @@
   font-size: 0.95rem;
   transition: var(--transition-smooth);
 }
+
 .form-input:focus {
   border-color: var(--primary);
   box-shadow: var(--glow-shadow);
@@ -43,42 +46,62 @@
   transition: var(--transition-smooth);
   gap: 8px;
 }
+
 .btn-primary {
   background: linear-gradient(135deg, var(--primary) 0%, #00b0ff 100%);
   color: #000;
   box-shadow: var(--glow-shadow);
 }
+
 .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 0 25px var(--primary);
 }
+
 .btn-secondary {
   background: linear-gradient(135deg, var(--secondary) 0%, #b8860b 100%);
   color: #000;
   box-shadow: var(--gold-glow-shadow);
 }
+
 .btn-secondary:hover {
   transform: translateY(-2px);
   box-shadow: 0 0 25px var(--secondary);
 }
+
 .btn-outline {
   background: transparent;
   border: 1px solid var(--primary);
   color: var(--primary);
 }
+
 .btn-outline:hover {
   background: rgba(0, 229, 255, 0.1);
   box-shadow: var(--glow-shadow);
 }
+
 .btn-danger {
   background: var(--error);
   color: #fff;
 }
+
 .btn-danger:hover {
   box-shadow: 0 0 15px rgba(255, 23, 68, 0.5);
 }
 
 /* Glassmorphism Cards */
+.score-box {
+  background: var(--bg-secondary);
+  border: 1px solid var(--primary);
+  box-shadow: var(--glow-shadow);
+  border-radius: 12px;
+  padding: 24px;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
 .card {
   background: var(--bg-glass);
   border: 1px solid var(--border-glass);
@@ -87,6 +110,7 @@
   padding: 24px;
   transition: var(--transition-smooth);
 }
+
 .card:hover {
   border-color: rgba(0, 229, 255, 0.2);
   box-shadow: 0 8px 32px 0 rgba(0, 229, 255, 0.05);
@@ -99,11 +123,13 @@
   border-radius: 12px;
   background: var(--bg-secondary);
 }
+
 table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
 }
+
 th {
   background: var(--bg-tertiary);
   padding: 16px;
@@ -112,11 +138,13 @@ th {
   color: var(--text-secondary);
   border-bottom: 1px solid var(--border-glass);
 }
+
 td {
   padding: 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   color: var(--text-primary);
 }
+
 tr:hover td {
   background: rgba(255, 255, 255, 0.02);
 }
@@ -130,10 +158,30 @@ tr:hover td {
   font-weight: 700;
   text-transform: uppercase;
 }
-.badge-success { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid var(--success); }
-.badge-pending { background: rgba(255, 234, 0, 0.15); color: var(--warning); border: 1px solid var(--warning); }
-.badge-danger { background: rgba(255, 23, 68, 0.15); color: var(--error); border: 1px solid var(--error); }
-.badge-info { background: rgba(0, 229, 255, 0.15); color: var(--primary); border: 1px solid var(--primary); }
+
+.badge-success {
+  background: rgba(0, 230, 118, 0.15);
+  color: var(--success);
+  border: 1px solid var(--success);
+}
+
+.badge-pending {
+  background: rgba(255, 234, 0, 0.15);
+  color: var(--warning);
+  border: 1px solid var(--warning);
+}
+
+.badge-danger {
+  background: rgba(255, 23, 68, 0.15);
+  color: var(--error);
+  border: 1px solid var(--error);
+}
+
+.badge-info {
+  background: rgba(0, 229, 255, 0.15);
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
 
 /* Feedback alerts */
 .alert {
@@ -142,14 +190,44 @@ tr:hover td {
   margin-bottom: 20px;
   font-weight: 500;
 }
-.alert-success { background: rgba(0, 230, 118, 0.1); border: 1px solid var(--success); color: var(--success); }
-.alert-error { background: rgba(255, 23, 68, 0.1); border: 1px solid var(--error); color: var(--error); }
-.alert-warning { background: rgba(255, 234, 0, 0.1); border: 1px solid var(--warning); color: var(--warning); }
+
+.alert-success {
+  background: rgba(0, 230, 118, 0.1);
+  border: 1px solid var(--success);
+  color: var(--success);
+}
+
+.alert-error {
+  background: rgba(255, 23, 68, 0.1);
+  border: 1px solid var(--error);
+  color: var(--error);
+}
+
+.alert-warning {
+  background: rgba(255, 234, 0, 0.1);
+  border: 1px solid var(--warning);
+  color: var(--warning);
+}
 
 /* Loading overlay & skeleton styles */
+.score-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 8, 12, 0.9);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
 .loader-overlay {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: var(--bg-primary);
   display: flex;
   align-items: center;
@@ -157,6 +235,7 @@ tr:hover td {
   z-index: 9999;
   transition: opacity 0.5s ease;
 }
+
 .loader {
   width: 48px;
   height: 48px;
@@ -165,16 +244,34 @@ tr:hover td {
   border-radius: 50%;
   animation: rotation 1s linear infinite;
 }
+
 @keyframes rotation {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Global reveal/toast animation — used by utils.js showToast */
 @keyframes revealZoom {
-  0% { transform: scale(0.6) translateY(10px); opacity: 0; filter: blur(4px); }
-  70% { transform: scale(1.04) translateY(-2px); filter: blur(0); }
-  100% { transform: scale(1) translateY(0); opacity: 1; }
+  0% {
+    transform: scale(0.6) translateY(10px);
+    opacity: 0;
+    filter: blur(4px);
+  }
+
+  70% {
+    transform: scale(1.04) translateY(-2px);
+    filter: blur(0);
+  }
+
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
 }
 
 /* Toast notification extra styling */
@@ -182,4 +279,27 @@ tr:hover td {
   opacity: 0 !important;
   transform: translateY(10px) !important;
   transition: opacity 0.4s ease, transform 0.4s ease !important;
+}
+
+/* Club Logo & Crest Styles */
+.club-logo-img {
+  display: inline-block;
+  object-fit: contain;
+  vertical-align: middle;
+  transition: transform 0.2s ease;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.4));
+}
+
+.club-logo-img:hover {
+  transform: scale(1.15);
+}
+
+.club-with-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.club-name-text {
+  font-weight: 600;
 }

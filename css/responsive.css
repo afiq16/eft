@@ -35,10 +35,12 @@
 .hamburger.open span:nth-child(1) {
   transform: translateY(7px) rotate(45deg);
 }
+
 .hamburger.open span:nth-child(2) {
   opacity: 0;
   transform: scaleX(0);
 }
+
 .hamburger.open span:nth-child(3) {
   transform: translateY(-7px) rotate(-45deg);
 }
@@ -65,6 +67,7 @@
   .admin-layout {
     flex-direction: column;
   }
+
   .sidebar {
     width: 100%;
     position: relative;
@@ -76,20 +79,24 @@
     gap: 10px;
     padding: 16px;
   }
+
   .sidebar-logo {
     width: 100%;
     border-bottom: none;
     padding-bottom: 0;
   }
+
   .sidebar-menu {
     flex-direction: row;
     flex-wrap: wrap;
     gap: 6px;
   }
+
   .sidebar-item a {
     padding: 8px 14px;
     font-size: 0.85rem;
   }
+
   .admin-content {
     padding: 24px 20px;
   }
@@ -107,20 +114,23 @@
     position: fixed;
     top: 0;
     right: -100%;
-    width: 80%;
+    width: 85%;
     max-width: 320px;
     height: 100vh;
-    background: rgba(15, 16, 23, 0.97);
-    backdrop-filter: blur(16px);
+    background: rgba(12, 13, 20, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border-left: 1px solid var(--border-glass);
     flex-direction: column;
     align-items: flex-start;
-    padding: 80px 24px 32px;
-    gap: 8px;
-    z-index: 1000;
+    padding: 24px 20px 40px;
+    gap: 6px;
+    z-index: 1001;
     transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     list-style: none;
     display: flex;
+    overflow-y: auto;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.8);
   }
 
   .nav-links.open {
@@ -132,19 +142,24 @@
   }
 
   .nav-link {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     width: 100%;
-    padding: 14px 16px;
+    padding: 12px 16px;
     border-radius: 10px;
-    font-size: 1.05rem;
-    transition: background 0.2s, color 0.2s;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: background 0.2s, color 0.2s, transform 0.2s;
   }
 
   .nav-link:hover,
   .nav-link.active {
-    background: rgba(0, 229, 255, 0.08);
+    background: rgba(0, 229, 255, 0.1);
     color: var(--primary);
-    text-shadow: none;
+    transform: translateX(4px);
+    box-shadow: inset 3px 0 0 var(--primary);
   }
 
   .hamburger {
@@ -242,6 +257,7 @@
     flex-direction: column;
     padding: 16px;
   }
+
   .sidebar-menu {
     flex-direction: column;
   }
@@ -325,7 +341,8 @@
   }
 
   /* ── Table cells font size ── */
-  th, td {
+  th,
+  td {
     padding: 12px 10px;
     font-size: 0.88rem;
   }
@@ -351,7 +368,8 @@
     padding: 10px 18px !important;
   }
 
-  th, td {
+  th,
+  td {
     padding: 10px 8px !important;
     font-size: 0.82rem;
   }

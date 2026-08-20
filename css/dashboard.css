@@ -83,6 +83,17 @@
   font-size: 0.8rem;
 }
 
-.form-w { background: var(--success); color: #000; }
-.form-d { background: var(--text-muted); color: #fff; }
-.form-l { background: var(--error); color: #fff; }
+.form-w {
+  background: var(--success);
+  color: #000;
+}
+
+.form-d {
+  background: var(--text-muted);
+  color: #fff;
+}
+
+.form-l {
+  background: var(--error);
+  color: #fff;
+}
