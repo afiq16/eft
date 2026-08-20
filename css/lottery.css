@@ -42,12 +42,6 @@
   margin: 40px 0;
 }
 
-@media (max-width: 768px) {
-  .draw-split {
-    grid-template-columns: 1fr;
-    gap: 30px;
-  }
-}
 
 .draw-card {
   background: rgba(255, 255, 255, 0.03);

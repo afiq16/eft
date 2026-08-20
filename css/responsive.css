@@ -160,12 +160,7 @@
   }
 
   .nav-auth {
-    gap: 8px;
-  }
-
-  .nav-auth .btn {
-    padding: 7px 12px !important;
-    font-size: 0.8rem;
+    display: none;
   }
 
   /* ── Hero Section ── */

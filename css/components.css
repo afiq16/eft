@@ -169,3 +169,17 @@ tr:hover td {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* Global reveal/toast animation — used by utils.js showToast */
+@keyframes revealZoom {
+  0% { transform: scale(0.6) translateY(10px); opacity: 0; filter: blur(4px); }
+  70% { transform: scale(1.04) translateY(-2px); filter: blur(0); }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* Toast notification extra styling */
+.toast-fade-out {
+  opacity: 0 !important;
+  transform: translateY(10px) !important;
+  transition: opacity 0.4s ease, transform 0.4s ease !important;
+}
