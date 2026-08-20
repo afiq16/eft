@@ -129,6 +129,7 @@
   <header>
     <div class="nav-container">
       <div class="logo-area">
+        <button type="button" onclick="Utils.goBack()" class="nav-back-btn" aria-label="Go back">← Back</button>
         <a href="index.html" style="-webkit-text-fill-color:initial;text-decoration:none;">
           <span class="logo-title">⚡ EF X TOUR 2026</span>
         </a>
@@ -142,8 +143,12 @@
       <div class="nav-auth">
         <a href="dashboard.html" class="btn btn-outline" style="padding:8px 16px; font-size:0.85rem;" id="nav-btn-dash">Dashboard</a>
       </div>
+      <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </header>
+  <div class="mobile-nav-overlay" id="nav-overlay"></div>
 
   <div class="profile-page" id="profile-content" style="display:none;">
     <div class="pub-profile-header">
@@ -158,55 +163,60 @@
           <div class="pub-username" id="prof-username">@loading</div>
           <div style="margin-bottom:12px;" id="prof-badges"></div>
           <div class="pub-bio" id="prof-bio"></div>
-          <div style="font-size:0.85rem; color:var(--text-muted);" id="prof-joined"></div>
         </div>
         <div class="pub-stats">
           <div class="pub-stat-box">
-            <div class="pub-stat-val text-gold" id="stat-club" style="font-size:1.2rem; margin-top:8px;">—</div>
-            <div class="pub-stat-lbl">Current Club</div>
-          </div>
-          <div class="pub-stat-box">
-            <div class="pub-stat-val text-blue" id="stat-winrate">0%</div>
-            <div class="pub-stat-lbl">Win Rate</div>
-          </div>
-          <div class="pub-stat-box">
             <div class="pub-stat-val" id="stat-pts">0</div>
-            <div class="pub-stat-lbl">League Pts</div>
+            <div class="pub-stat-lbl">Points</div>
+          </div>
+          <div class="pub-stat-box">
+            <div class="pub-stat-val" id="stat-winrate">0%</div>
+            <div class="pub-stat-lbl">Winrate</div>
+          </div>
+          <div class="pub-stat-box">
+            <div class="pub-stat-val" id="stat-club" style="font-size:1.1rem; padding-top:6px;">None</div>
+            <div class="pub-stat-lbl">Assigned Club</div>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Match History -->
     <div class="pub-history-card">
-      <h3 style="font-family:var(--font-display); font-size:1.1rem; margin-bottom:16px;">Recent Matches</h3>
-      <div id="prof-history">
-        <div style="color:var(--text-muted); font-size:0.9rem; text-align:center; padding:20px;">No match history found.</div>
+      <h3 style="font-family:var(--font-display); font-size:1.1rem; color:#fff; margin-bottom:16px;">📜 Match History</h3>
+      <div id="match-history-list">
+        <div style="color:var(--text-muted); font-size:0.88rem; text-align:center; padding:20px;">No matches played yet this season.</div>
       </div>
     </div>
+
+    <div style="font-size:0.75rem; color:var(--text-muted); margin-top:20px; text-align:center;" id="prof-joined"></div>
   </div>
 
-  <div id="loading-err" style="text-align:center; padding:100px 24px; color:var(--text-muted);">
-    Loading profile...
+  <div id="loading-err" style="text-align:center; padding:80px 20px; color:var(--text-muted);">
+    <div>Loading profile...</div>
   </div>
 
+  <script src="js/mobile-nav.js"></script>
   <script src="js/firebase-config.js"></script>
   <script type="module">
     import { db } from "./js/firebase-init.js";
-    import { doc, getDoc, collection, query, where, getDocs, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import Utils from "./js/utils.js";
+    import { doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    async function loadProfile() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const uid = urlParams.get('uid');
-      
-      if (!uid) {
-        document.getElementById('loading-err').textContent = "Player not found. Invalid URL.";
-        return;
-      }
+    const urlParams = new URLSearchParams(window.location.search);
+    const uid = urlParams.get('uid');
 
+    if (!uid) {
+      document.getElementById('loading-err').textContent = "No user ID specified.";
+    } else {
+      loadProfile(uid);
+    }
+
+    async function loadProfile(uid) {
       try {
         const userDoc = await getDoc(doc(db, "users", uid));
         if (!userDoc.exists()) {
-          document.getElementById('loading-err').textContent = "Player not found.";
+          document.getElementById('loading-err').textContent = "User not found.";
           return;
         }
 
@@ -242,7 +252,7 @@
           const s = statsDoc.data();
           played = s.played || 0;
           wins = s.wins || 0;
-          document.getElementById('stat-club').textContent = s.clubName || 'None';
+          document.getElementById('stat-club').innerHTML = s.clubName ? Utils.getClubWithLogoHtml(s.clubName) : 'None';
           document.getElementById('stat-pts').textContent = s.points || 0;
         }
         

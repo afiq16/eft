@@ -114,6 +114,7 @@
   <header id="main-header">
     <div class="nav-container">
       <div class="logo-area">
+        <button type="button" onclick="Utils.goBack()" class="nav-back-btn" aria-label="Go back">← Back</button>
         <a href="index.html" style="-webkit-text-fill-color:initial; text-decoration:none;">
           <span class="logo-title">⚡ EF X TOUR 2026</span>
         </a>
@@ -132,8 +133,12 @@
         <a href="dashboard.html" class="btn btn-outline nav-auth-only" id="btn-nav-dash" style="padding:8px 18px; font-size:0.85rem; display:none;">Dashboard</a>
         <button class="btn btn-outline nav-auth-only" id="btn-nav-logout" style="padding:8px 18px; font-size:0.85rem; display:none;">Logout</button>
       </div>
+      <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </header>
+  <div class="mobile-nav-overlay" id="nav-overlay"></div>
 
   <div class="gallery-layout">
     <div class="gallery-header">
@@ -274,6 +279,7 @@
       document.getElementById('lightbox-modal') ? document.getElementById('lightbox-modal').style.display = 'flex' : document.getElementById('lightbox').style.display = 'flex';
     };
   </script>
+  <script src="js/mobile-nav.js"></script>
   <script type="module" src="js/notifications.js"></script>
 </body>
 </html>

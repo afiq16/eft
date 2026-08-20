@@ -197,12 +197,20 @@
       font-size: 0.85rem;
     }
     .home-back:hover { color: var(--primary); }
+    .nav-back-btn {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      text-decoration: none;
+    }
+    .nav-back-btn:hover { color: var(--primary); }
   </style>
 </head>
 <body>
   <div class="auth-wrap">
-    <a href="index.html" class="home-back">← Back to Home</a>
     <div class="auth-card">
+      <div style="margin-bottom:16px;">
+        <a href="index.html" class="nav-back-btn">← Back to Home</a>
+      </div>
       <div class="auth-logo"><span>⚡ EF X TOUR 2026</span></div>
       <h1 class="auth-title">Welcome Back</h1>
       <p class="auth-subtitle">Login to your player account</p>

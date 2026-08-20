@@ -22,6 +22,7 @@
   <header id="main-header">
     <div class="nav-container">
       <div class="logo-area">
+        <button type="button" onclick="Utils.goBack()" class="nav-back-btn" aria-label="Go back">← Back</button>
         <a href="index.html" style="-webkit-text-fill-color:initial; text-decoration:none;">
           <span class="logo-title">⚡ EF X TOUR 2026</span>
         </a>
@@ -78,6 +79,7 @@
   <script src="js/firebase-config.js"></script>
   <script type="module">
     import { db } from "./js/firebase-init.js";
+    import Utils from "./js/utils.js";
     import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     async function loadStandings() {
@@ -111,7 +113,7 @@
                   <span style="font-weight: 700;">${row.playerName || 'Player'}</span>
                 </div>
               </td>
-              <td class="text-blue" style="font-weight:600;">${row.clubName || 'Pending'}</td>
+              <td class="text-blue" style="font-weight:600;">${row.clubName ? Utils.getClubWithLogoHtml(row.clubName) : 'Pending'}</td>
               <td>${row.played || 0}</td>
               <td>${row.wins || 0}</td>
               <td>${row.draws || 0}</td>
