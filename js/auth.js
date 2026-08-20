@@ -12,7 +12,7 @@ import Utils from "./utils.js";
 const AVATAR_STYLES = ['adventurer'];
 
 function getRandomCartoonAvatar(seed) {
-  return `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(seed)}&hairColor=0e0e0e,2c1b18,4a312c&skinColor=f2d3b1,ecad80&glassesProbability=25`;
+  return `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(seed)}&hairColor=2c1b18,4a312c,0e0e0e&skinColor=f2d3b1,ecad80`;
 }
 
 const AuthService = {
@@ -22,8 +22,8 @@ const AuthService = {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Auto-assign cartoon avatar
-      const avatarUrl = getRandomCartoonAvatar(profileData.username || email);
+      // Auto-assign cute boy gamer player avatar
+      const avatarUrl = profileData.profilePhoto || getRandomCartoonAvatar(profileData.username || email);
 
       // Create profile in Firestore
       await setDoc(doc(db, "users", user.uid), {
