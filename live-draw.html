@@ -3,170 +3,571 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Live Allocation Draw | EF X TOUR 2026</title>
+  <title>Live Draw | EF X TOUR 2026</title>
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/navbar.css">
   <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/lottery.css">
-  <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    .draw-page {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+    /* ── Countdown Banner ──── */
+    .countdown-banner {
+      background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(0,229,255,0.06));
+      border: 1px solid rgba(212,175,55,0.25);
+      border-radius: 18px;
+      padding: 32px;
+      text-align: center;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .countdown-banner::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--secondary), transparent);
+    }
+    .cd-row { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-top: 16px; }
+    .cd-box {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(212,175,55,0.2);
+      border-radius: 12px;
+      padding: 18px 22px;
+      min-width: 80px;
+      text-align: center;
+    }
+    .cd-num { font-family: var(--font-display); font-size: 2.6rem; font-weight: 800; color: var(--secondary); line-height: 1; }
+    .cd-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); margin-top: 4px; }
+
+    /* ── Live Embed ───────────── */
+    .live-embed {
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px solid rgba(255,23,68,0.3);
+      margin-bottom: 32px;
+      background: rgba(0,0,0,0.5);
+      position: relative;
+    }
+    .live-embed-label {
+      position: absolute;
+      top: 12px; left: 12px;
+      background: #ff1744;
+      color: #fff;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 2;
+    }
+    .live-embed iframe { display: block; width: 100%; height: 420px; border: none; }
+
+    /* ── Draw Arena ───────────── */
+    .draw-arena {
+      background: rgba(8,8,12,0.8);
+      border: 1px solid rgba(212,175,55,0.2);
+      border-radius: 20px;
+      padding: 40px 32px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 32px;
+    }
+    .draw-arena::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--secondary), var(--primary), transparent);
+    }
+    .arena-glow {
+      position: absolute;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(212,175,55,0.1) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      pointer-events: none;
+    }
+    .draw-cards {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 2;
+      margin: 24px 0;
+    }
+    .draw-card {
+      background: rgba(23,24,34,0.9);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 28px 32px;
+      min-width: 180px;
+      transition: all 0.4s;
+    }
+    .draw-card.shuffling {
+      animation: cardShake 0.15s ease-in-out infinite alternate;
+      border-color: rgba(0,229,255,0.5);
+      box-shadow: 0 0 30px rgba(0,229,255,0.2);
+    }
+    .draw-card.active {
+      border-color: rgba(0,229,255,0.6);
+      box-shadow: 0 0 40px rgba(0,229,255,0.25);
+    }
+    .draw-card.gold-active {
+      border-color: rgba(212,175,55,0.6);
+      box-shadow: 0 0 40px rgba(212,175,55,0.25);
+    }
+    @keyframes cardShake {
+      from { transform: rotate(-1deg) scale(1.02); }
+      to { transform: rotate(1deg) scale(0.98); }
+    }
+    .card-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .card-value {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #fff;
+      word-break: break-word;
+    }
+    .draw-to {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--secondary);
+    }
+    .draw-progress-bar {
+      background: rgba(255,255,255,0.06);
+      border-radius: 50px;
+      height: 6px;
+      overflow: hidden;
+      margin: 20px 0 8px;
+    }
+    .draw-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 50px;
+      transition: width 0.5s ease;
+      width: 0%;
+    }
+
+    /* ── Comments ─────────────── */
+    .comments-section {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 32px;
+    }
+    .comments-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border-glass);
+      background: var(--bg-secondary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .comments-feed {
+      height: 240px;
+      overflow-y: auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .comment-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .comment-avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: var(--bg-tertiary);
+    }
+    .comment-bubble {
+      background: rgba(23,24,34,0.7);
+      border: 1px solid var(--border-glass);
+      border-radius: 12px;
+      padding: 8px 12px;
+      flex: 1;
+    }
+    .comment-author { font-size: 0.78rem; font-weight: 700; color: var(--primary); }
+    .comment-text { font-size: 0.85rem; color: var(--text-primary); margin-top: 2px; }
+    .comment-time { font-size: 0.68rem; color: var(--text-muted); margin-top: 4px; }
+    .comment-input-row {
+      display: flex;
+      gap: 8px;
+      padding: 10px 14px;
+      border-top: 1px solid var(--border-glass);
+      background: var(--bg-secondary);
+    }
+    .comment-input-row input {
+      flex: 1;
+      padding: 9px 14px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-glass);
+      border-radius: 20px;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+    }
+    .comment-input-row input:focus { outline: none; border-color: var(--primary); }
+    .comment-send-btn {
+      padding: 9px 18px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, var(--primary), #00b0ff);
+      color: #000;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.82rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .comment-send-btn:hover { transform: scale(1.05); }
+
+    /* ── Results table ────────── */
+    .results-section { margin-bottom: 32px; }
+  </style>
 </head>
 <body>
-  <!-- Header -->
   <header>
     <div class="nav-container">
       <div class="logo-area">
-        <span class="logo-title">EF X TOUR 2026</span>
+        <a href="index.html" style="-webkit-text-fill-color:initial;text-decoration:none;">
+          <span class="logo-title">⚡ EF X TOUR 2026</span>
+        </a>
       </div>
-      <ul class="nav-links">
+      <ul class="nav-links" id="main-nav">
         <li><a href="index.html" class="nav-link">Home</a></li>
         <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
         <li><a href="live-draw.html" class="nav-link active">Live Draw</a></li>
         <li><a href="standings.html" class="nav-link">Standings</a></li>
         <li><a href="fixtures.html" class="nav-link">Fixtures</a></li>
       </ul>
-      <button class="hamburger" aria-label="Toggle navigation">
+      <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
   </header>
-  <div class="mobile-nav-overlay"></div>
+  <div class="mobile-nav-overlay" id="nav-overlay"></div>
 
-  <!-- Arena -->
-  <div class="lottery-container">
-    <h2 class="text-gold" style="font-size: 2.2rem; text-transform: uppercase;">Realtime Club Lottery</h2>
-    <p style="color: var(--text-secondary);">Watch randomized club allocations synchronized live via Realtime Database.</p>
+  <div class="draw-page">
+    <div style="text-align:center; margin-bottom:32px;">
+      <div class="badge badge-info" style="font-size:0.75rem; margin-bottom:12px; padding:6px 16px;" id="draw-status-badge">LOBBY OPEN</div>
+      <h1 style="font-size:clamp(1.8rem,4vw,2.8rem); font-weight:800; margin-bottom:8px;">
+        🎲 Live <span class="text-gold">Club Draw</span>
+      </h1>
+      <p style="color:var(--text-secondary);">Watch real-time club allocations — synchronized live via Realtime Database.</p>
+    </div>
 
-    <div class="lottery-arena">
-      <div class="arena-glow"></div>
-      <div id="draw-status-badge" class="badge badge-info" style="margin-bottom: 20px;">LOBBY OPEN</div>
-      
-      <div class="draw-split">
-        <div id="player-draw-card" class="draw-card">
-          <div class="label">Player Selection</div>
-          <div class="value" id="player-draw-value">WAITING...</div>
+    <!-- Countdown (shown when draw is scheduled) -->
+    <div id="countdown-section" style="display:none;">
+      <div class="countdown-banner">
+        <div style="font-family:var(--font-display); font-size:0.9rem; font-weight:700; text-transform:uppercase; letter-spacing:2px; color:var(--secondary);">⏳ Draw Starts In</div>
+        <div style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;" id="draw-date-text">Loading...</div>
+        <div class="cd-row">
+          <div class="cd-box"><div class="cd-num" id="cd-days">00</div><div class="cd-label">Days</div></div>
+          <div class="cd-box"><div class="cd-num" id="cd-hours">00</div><div class="cd-label">Hours</div></div>
+          <div class="cd-box"><div class="cd-num" id="cd-mins">00</div><div class="cd-label">Mins</div></div>
+          <div class="cd-box"><div class="cd-num" id="cd-secs">00</div><div class="cd-label">Secs</div></div>
         </div>
-        <div class="draw-vs">TO</div>
-        <div id="club-draw-card" class="draw-card">
-          <div class="label">Club Allocated</div>
-          <div class="value text-gold" id="club-draw-value">WAITING...</div>
-        </div>
-      </div>
-
-      <div style="margin-top: 30px;">
-        <button id="btn-sound-toggle" class="btn btn-outline">🔊 Sound Effects On</button>
       </div>
     </div>
 
-    <!-- Allocation list -->
-    <h3 style="text-align: left; margin: 40px 0 20px; text-transform: uppercase;" class="text-blue">Live Drawing Results</h3>
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Player Name</th>
-            <th>Allocated Club</th>
-            <th>Time Assigned</th>
-          </tr>
-        </thead>
-        <tbody id="results-list">
-          <tr>
-            <td colspan="3" style="text-align: center; color: var(--text-muted);">No club assigned yet. Draw has not started.</td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- Live Embed (YouTube/FB) -->
+    <div id="live-embed-section" style="display:none;">
+      <div class="live-embed">
+        <div class="live-embed-label"><span style="width:8px;height:8px;background:#fff;border-radius:50%;"></span>LIVE</div>
+        <iframe id="live-iframe" src="" allowfullscreen allow="autoplay"></iframe>
+      </div>
+    </div>
+
+    <!-- Draw Arena -->
+    <div class="draw-arena">
+      <div class="arena-glow"></div>
+      <div class="draw-cards">
+        <div class="draw-card" id="player-card">
+          <div class="card-label">Player</div>
+          <div class="card-value" id="player-value">WAITING...</div>
+        </div>
+        <div class="draw-to">→</div>
+        <div class="draw-card" id="club-card">
+          <div class="card-label">Club Assigned</div>
+          <div class="card-value text-gold" id="club-value">WAITING...</div>
+        </div>
+      </div>
+      <div class="draw-progress-bar"><div class="draw-progress-fill" id="progress-fill"></div></div>
+      <div style="font-size:0.8rem; color:var(--text-muted);" id="draw-progress-text">Waiting for draw to begin...</div>
+      <div style="margin-top:20px;">
+        <button id="btn-sound-toggle" class="btn btn-outline" style="padding:8px 16px; font-size:0.85rem;">🔊 Sound On</button>
+      </div>
+    </div>
+
+    <!-- Live Comments -->
+    <div class="comments-section" id="comments-section">
+      <div class="comments-header">
+        <span style="font-size:1rem;">💬</span>
+        <span style="font-family:var(--font-display); font-weight:700; font-size:0.9rem;">Live Comments</span>
+        <span class="badge badge-danger" style="font-size:0.65rem; margin-left:auto;">LIVE</span>
+      </div>
+      <div class="comments-feed" id="comments-feed">
+        <div style="color:var(--text-muted); font-size:0.85rem; text-align:center; padding:20px;">
+          Login to post comments 💬
+        </div>
+      </div>
+      <div class="comment-input-row" id="comment-input-row" style="display:none;">
+        <img id="comment-avatar" src="https://api.dicebear.com/7.x/pixel-art/svg?seed=user" class="comment-avatar" style="width:32px;height:32px;border-radius:50%;" alt="You">
+        <input type="text" id="comment-input" placeholder="Say something about the draw...">
+        <button class="comment-send-btn" id="comment-send">Send</button>
+      </div>
+    </div>
+
+    <!-- Results Table -->
+    <div class="results-section">
+      <h3 class="text-blue" style="margin-bottom:16px; text-transform:uppercase; font-size:1rem; letter-spacing:1px;">📋 Draw Results</h3>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Player Name</th>
+              <th>Club Assigned</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody id="results-list">
+            <tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No results yet. Draw has not started.</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
   <script src="js/mobile-nav.js"></script>
   <script src="js/firebase-config.js"></script>
   <script type="module">
-    import { db, rtdb } from "./js/firebase-init.js";
+    import { auth, db, rtdb } from "./js/firebase-init.js";
     import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-    import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import {
+      collection, addDoc, query, orderBy, limit, onSnapshot, doc, getDoc, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    // Play standard Web Audio API synth sounds (original custom SFX, no copyright issues)
+    // ── Sound ─────────────────────────────────
     let soundEnabled = true;
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-    function playBeep(freq, type, duration) {
+    function playBeep(freq, type, dur) {
       if (!soundEnabled) return;
       try {
         const osc = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        osc.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        osc.type = type;
-        osc.frequency.value = freq;
-        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
-      } catch (e) {
-        console.log("Audio contexts need interaction first");
-      }
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.type = type; osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        osc.start(); osc.stop(audioCtx.currentTime + dur);
+      } catch(_) {}
     }
-
-    document.getElementById('btn-sound-toggle').addEventListener('click', () => {
+    document.getElementById('btn-sound-toggle').addEventListener('click', function() {
       soundEnabled = !soundEnabled;
-      document.getElementById('btn-sound-toggle').innerText = soundEnabled ? "🔊 Sound Effects On" : "🔇 Sound Effects Off";
+      this.textContent = soundEnabled ? '🔊 Sound On' : '🔇 Sound Off';
     });
 
+    // ── Auth check ─────────────────────────────
+    let currentUser = null, currentUserData = null;
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUser = user;
+        const uDoc = await getDoc(doc(db, "users", user.uid));
+        if (uDoc.exists()) {
+          currentUserData = uDoc.data();
+          document.getElementById('comment-input-row').style.display = 'flex';
+          document.getElementById('comment-avatar').src = currentUserData.profilePhoto ||
+            `https://api.dicebear.com/7.x/pixel-art/svg?seed=${user.uid}`;
+          document.querySelector('.comments-feed').innerHTML = '';
+        }
+        loadComments();
+      }
+    });
+
+    // ── Draw Config (Countdown + Live URL) ─────
+    async function loadDrawConfig() {
+      try {
+        const cfg = await getDoc(doc(db, "drawConfig", "current"));
+        if (!cfg.exists()) return;
+        const d = cfg.data();
+
+        // Live embed
+        if (d.liveUrl) {
+          document.getElementById('live-embed-section').style.display = 'block';
+          let embedUrl = d.liveUrl;
+          // Convert YouTube watch URL to embed
+          embedUrl = embedUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/');
+          document.getElementById('live-iframe').src = embedUrl;
+        }
+
+        // Countdown
+        if (d.scheduledAt && d.status !== 'COMPLETED') {
+          const drawDate = new Date(d.scheduledAt);
+          const now = new Date();
+          if (drawDate > now) {
+            document.getElementById('countdown-section').style.display = 'block';
+            document.getElementById('draw-date-text').textContent =
+              drawDate.toLocaleDateString('en-MY', { weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' });
+            function updateCd() {
+              const diff = new Date(d.scheduledAt) - new Date();
+              if (diff <= 0) { document.getElementById('countdown-section').style.display = 'none'; return; }
+              document.getElementById('cd-days').textContent = String(Math.floor(diff/86400000)).padStart(2,'0');
+              document.getElementById('cd-hours').textContent = String(Math.floor((diff%86400000)/3600000)).padStart(2,'0');
+              document.getElementById('cd-mins').textContent = String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+              document.getElementById('cd-secs').textContent = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+            }
+            updateCd(); setInterval(updateCd, 1000);
+          }
+        }
+      } catch (_) {}
+    }
+    loadDrawConfig();
+
+    // ── Realtime Draw State ─────────────────────
     const statusBadge = document.getElementById('draw-status-badge');
-    const playerCard = document.getElementById('player-draw-card');
-    const playerValue = document.getElementById('player-draw-value');
-    const clubCard = document.getElementById('club-draw-card');
-    const clubValue = document.getElementById('club-draw-value');
+    const playerCard = document.getElementById('player-card');
+    const playerVal = document.getElementById('player-value');
+    const clubCard = document.getElementById('club-card');
+    const clubVal = document.getElementById('club-value');
     const resultsList = document.getElementById('results-list');
 
-    // Realtime Database listeners
-    const lotteryRef = ref(rtdb, 'lottery/current');
-
-    onValue(lotteryRef, (snapshot) => {
-      const data = snapshot.val();
+    onValue(ref(rtdb, 'lottery/current'), (snap) => {
+      const data = snap.val();
       if (!data) return;
 
-      statusBadge.innerText = data.status.toUpperCase();
-      statusBadge.className = `badge badge-${data.status === 'LIVE' ? 'danger' : data.status === 'COMPLETED' ? 'success' : 'pending'}`;
+      const statusMap = { LIVE:'🔴 LIVE', REVEALED:'✅ REVEALED', COMPLETED:'🏁 COMPLETED', LOBBY:'🟡 LOBBY', SCHEDULED:'📅 SCHEDULED' };
+      statusBadge.textContent = statusMap[data.status] || data.status;
+      statusBadge.className = `badge badge-${data.status==='LIVE'?'danger':data.status==='COMPLETED'?'success':data.status==='REVEALED'?'info':'pending'}`;
 
       if (data.status === 'LIVE') {
-        // Run shuffling animation
-        playerValue.innerText = data.shufflingPlayer || "SHUFFLING...";
-        clubValue.innerText = data.shufflingClub || "SHUFFLING...";
-        playerCard.classList.add('shuffling');
-        clubCard.classList.add('shuffling');
-        playBeep(200 + Math.random() * 600, 'sawtooth', 0.05);
+        playerVal.textContent = data.shufflingPlayer || 'SHUFFLING...';
+        clubVal.textContent = '???';
+        playerCard.classList.add('shuffling'); clubCard.classList.add('shuffling');
+        playerCard.classList.remove('active'); clubCard.classList.remove('gold-active');
+        playBeep(200 + Math.random()*400, 'sawtooth', 0.06);
       } else if (data.status === 'REVEALED') {
-        // Stop shuffling and show target
-        playerCard.classList.remove('shuffling');
-        clubCard.classList.remove('shuffling');
-        playerCard.classList.add('active');
-        clubCard.classList.add('gold-active');
-
-        playerValue.innerText = data.activePlayer;
-        clubValue.innerText = data.activeClub;
-        
-        playBeep(880, 'sine', 0.4);
+        playerCard.classList.remove('shuffling'); clubCard.classList.remove('shuffling');
+        playerCard.classList.add('active'); clubCard.classList.add('gold-active');
+        playerVal.textContent = data.activePlayer || '—';
+        clubVal.textContent = data.activeClub || '—';
+        playBeep(880, 'sine', 0.5);
+        // Progress
+        if (data.revealedIndex && data.totalPlayers) {
+          const pct = (data.revealedIndex / data.totalPlayers) * 100;
+          document.getElementById('progress-fill').style.width = pct + '%';
+          document.getElementById('draw-progress-text').textContent = `${data.revealedIndex} / ${data.totalPlayers} players drawn`;
+        }
+      } else if (data.status === 'COMPLETED') {
+        playerCard.classList.remove('shuffling','active'); clubCard.classList.remove('shuffling','gold-active');
+        playerVal.textContent = '🏁 COMPLETE'; clubVal.textContent = '🎉 DONE';
+        document.getElementById('progress-fill').style.width = '100%';
+        document.getElementById('draw-progress-text').textContent = '🎉 Draw complete! All players assigned.';
       } else {
-        playerCard.classList.remove('shuffling', 'active');
-        clubCard.classList.remove('shuffling', 'gold-active');
-        playerValue.innerText = "WAITING...";
-        clubValue.innerText = "WAITING...";
+        playerCard.classList.remove('shuffling','active'); clubCard.classList.remove('shuffling','gold-active');
+        playerVal.textContent = 'WAITING...'; clubVal.textContent = 'WAITING...';
       }
 
-      // Display overall draw results list
-      if (data.assignments) {
-        resultsList.innerHTML = "";
-        Object.values(data.assignments).forEach(asg => {
+      // Results from leagueTables (fetched separately for accuracy)
+    });
+
+    // Load draw results from Firestore
+    async function loadDrawResults() {
+      try {
+        const { getDocs, collection: col, orderBy: ord, query: q2 } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+        const snap = await getDocs(col(db, "leagueTables"));
+        if (snap.empty) return;
+        resultsList.innerHTML = '';
+        let rank = 1;
+        snap.forEach(d => {
+          const r = d.data();
           const tr = document.createElement('tr');
           tr.innerHTML = `
-            <td>${asg.playerName}</td>
-            <td class="text-gold">${asg.clubName}</td>
-            <td>${new Date(asg.timestamp).toLocaleTimeString()}</td>
+            <td style="font-weight:700; color:var(--text-muted);">${rank}</td>
+            <td style="font-weight:600;">${r.playerName||'—'}</td>
+            <td class="text-gold" style="font-weight:700;">${r.clubName||'—'}</td>
+            <td style="font-size:0.8rem; color:var(--text-muted);">Draw complete</td>
           `;
           resultsList.appendChild(tr);
+          rank++;
         });
+      } catch (_) {}
+    }
+    loadDrawResults();
+
+    // Auto-refresh results when draw is updated
+    onValue(ref(rtdb, 'lottery/current'), (snap) => {
+      if (snap.val()?.status === 'REVEALED' || snap.val()?.status === 'COMPLETED') {
+        setTimeout(loadDrawResults, 1500);
       }
     });
+
+    // ── Comments ────────────────────────────────
+    function loadComments() {
+      const q = query(collection(db, "drawComments"), orderBy("sentAt","asc"), limit(100));
+      onSnapshot(q, (snap) => {
+        const feed = document.getElementById('comments-feed');
+        feed.innerHTML = '';
+        if (snap.empty) {
+          feed.innerHTML = '<div style="color:var(--text-muted);font-size:0.85rem;text-align:center;padding:16px;">No comments yet. Be the first! 💬</div>';
+          return;
+        }
+        snap.forEach(d => {
+          const c = d.data();
+          const el = document.createElement('div');
+          el.className = 'comment-item';
+          el.innerHTML = `
+            <img class="comment-avatar" src="${c.avatar || `https://api.dicebear.com/7.x/pixel-art/svg?seed=${c.uid}`}" alt="Avatar">
+            <div class="comment-bubble">
+              <div class="comment-author">${c.name}</div>
+              <div class="comment-text">${c.text}</div>
+              <div class="comment-time">${c.sentAt ? new Date(c.sentAt.toDate()).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : 'just now'}</div>
+            </div>
+          `;
+          feed.appendChild(el);
+        });
+        feed.scrollTop = feed.scrollHeight;
+      });
+    }
+
+    async function sendComment() {
+      if (!currentUser) { alert("Please login to comment."); return; }
+      const input = document.getElementById('comment-input');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      await addDoc(collection(db, "drawComments"), {
+        uid: currentUser.uid,
+        name: currentUserData?.username || currentUserData?.fullName || 'Player',
+        avatar: currentUserData?.profilePhoto || '',
+        text,
+        sentAt: serverTimestamp()
+      });
+    }
+
+    document.getElementById('comment-send').addEventListener('click', sendComment);
+    document.getElementById('comment-input').addEventListener('keydown', e => { if (e.key === 'Enter') sendComment(); });
   </script>
+  <script type="module" src="js/notifications.js"></script>
 </body>
 </html>

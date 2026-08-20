@@ -7,291 +7,1283 @@
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/navbar.css">
   <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/admin.css">
-  <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    body { overflow-x: hidden; }
+    .admin-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 20px;
+      transition: var(--transition-smooth);
+    }
+    .admin-card:hover { border-color: rgba(0,229,255,0.15); }
+    .admin-card-title {
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .admin-card-value {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 800;
+    }
+    .admin-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .section-label {
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      padding: 0 10px;
+      margin-bottom: 6px;
+    }
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 600px) { .form-row-2 { grid-template-columns: 1fr; } }
+    .user-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 16px;
+      border: 1px solid var(--border-glass);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      background: rgba(23,24,34,0.5);
+      transition: var(--transition-smooth);
+    }
+    .user-row:hover { border-color: rgba(0,229,255,0.2); }
+    .user-avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--border-glass); }
+    .user-info { flex: 1; }
+    .user-name { font-weight: 600; font-size: 0.9rem; }
+    .user-email { font-size: 0.78rem; color: var(--text-muted); }
+    .notice-form textarea { min-height: 100px; resize: vertical; }
+    .announcement-item {
+      background: rgba(23,24,34,0.6);
+      border: 1px solid var(--border-glass);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .ann-content { flex: 1; }
+    .ann-title { font-weight: 700; font-size: 0.92rem; margin-bottom: 4px; }
+    .ann-body { font-size: 0.82rem; color: var(--text-muted); }
+    .challenge-review-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 12px 16px;
+      background: rgba(23,24,34,0.5);
+      border: 1px solid var(--border-glass);
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+    .draw-manual-btn {
+      padding: 18px 36px;
+      font-size: 1.1rem;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--secondary), #b8860b);
+      color: #000;
+      border: none;
+      font-family: var(--font-display);
+      font-weight: 800;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s;
+      box-shadow: 0 0 20px rgba(212,175,55,0.3);
+    }
+    .draw-manual-btn:hover { transform: translateY(-2px); box-shadow: 0 0 35px rgba(212,175,55,0.5); }
+    .draw-manual-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .draw-queue-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: rgba(23,24,34,0.6);
+      border: 1px solid var(--border-glass);
+      margin-bottom: 6px;
+      transition: all 0.4s;
+    }
+    .draw-queue-item.revealed {
+      background: rgba(0,229,255,0.05);
+      border-color: rgba(0,229,255,0.3);
+    }
+    .draw-queue-item .dq-idx {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-glass);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700; color: var(--text-muted);
+      flex-shrink: 0;
+    }
+    .draw-queue-item.revealed .dq-idx { background: rgba(0,229,255,0.15); color: var(--primary); border-color: var(--primary); }
+    .tour-card {
+      background: rgba(23,24,34,0.6);
+      border: 1px solid var(--border-glass);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .tour-name { font-weight: 700; font-size: 0.95rem; }
+    .tour-meta { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+  </style>
 </head>
 <body>
   <div class="admin-layout">
     <!-- Sidebar -->
     <div class="sidebar">
-      <div class="sidebar-logo text-gold">EF X TOUR 2026</div>
+      <div class="sidebar-logo">⚡ EF X TOUR 2026</div>
+      <div class="section-label">Main</div>
       <ul class="sidebar-menu">
-        <li class="sidebar-item active"><a href="#" onclick="showSection('overview')">Overview</a></li>
-        <li class="sidebar-item"><a href="#" onclick="showSection('registrations')">Registrations</a></li>
-        <li class="sidebar-item"><a href="#" onclick="showSection('lottery-control')">Lottery Control</a></li>
-        <li class="sidebar-item"><a href="#" onclick="showSection('fixtures-control')">Fixtures Generator</a></li>
-        <li class="sidebar-item"><a href="#" onclick="showSection('match-approvals')">Match Approvals</a></li>
-        <li class="sidebar-item"><a href="#" onclick="showSection('audit-logs')">Audit Logs</a></li>
+        <li class="sidebar-item active"><a href="#" onclick="showSection('overview')"><span class="sidebar-icon">📊</span>Overview</a></li>
+        <li class="sidebar-item"><a href="#" onclick="showSection('announcements')"><span class="sidebar-icon">📢</span>Announcements</a></li>
+        <li class="sidebar-item"><a href="#" onclick="showSection('messaging')"><span class="sidebar-icon">✉️</span>Direct Messages</a></li>
+        <li class="sidebar-item"><a href="#" onclick="showSection('users')"><span class="sidebar-icon">👥</span>Users</a></li>
       </ul>
-      <div style="margin-top: auto; padding: 10px;">
-        <a href="dashboard.html" class="btn btn-outline" style="width: 100%;">Back to Portal</a>
+      <div class="section-label">Tournament</div>
+      <ul class="sidebar-menu">
+        <li class="sidebar-item"><a href="#" onclick="showSection('tournaments')"><span class="sidebar-icon">🏆</span>Tournaments</a></li>
+        <li class="sidebar-item"><a href="#" onclick="showSection('registrations')"><span class="sidebar-icon">📋</span>Registrations</a></li>
+        <li class="sidebar-item"><a href="#" onclick="showSection('challenges')"><span class="sidebar-icon">⚔️</span>Challenges</a></li>
+      </ul>
+      <div class="section-label">Draw, Matches & Live</div>
+      <ul class="sidebar-menu">
+        <li class="sidebar-item"><a href="#" onclick="showSection('draw-control')"><span class="sidebar-icon">🎲</span>Live Draw Control</a></li>
+        <li class="sidebar-item"><a href="#" onclick="showSection('fixtures-control')"><span class="sidebar-icon">📅</span>Fixtures Generator</a></li>
+        <li class="sidebar-item"><a href="#" onclick="showSection('match-approvals')"><span class="sidebar-icon">✅</span>Match Approvals</a></li>
+        <li class="sidebar-item"><a href="#" onclick="showSection('live-streams')"><span class="sidebar-icon">📺</span>Live TV Moderation</a></li>
+        <li class="sidebar-item"><a href="#" onclick="showSection('gallery-mod')"><span class="sidebar-icon">🖼️</span>Gallery Moderation</a></li>
+        <li class="sidebar-item"><a href="#" onclick="showSection('reset-data')"><span class="sidebar-icon">⚠️</span>Reset System Data</a></li>
+        <li class="sidebar-item"><a href="#" onclick="showSection('audit-logs')"><span class="sidebar-icon">📜</span>Audit Logs</a></li>
+      </ul>
+      <div style="margin-top:auto; padding:10px 0;">
+        <a href="dashboard.html" class="btn btn-outline" style="width:100%; font-size:0.85rem;">← Back to Portal</a>
       </div>
     </div>
 
     <!-- Main Content -->
     <div class="admin-content">
-      <!-- Overview Section -->
+
+      <!-- ── Overview ── -->
       <section id="overview-section" class="admin-section active">
-        <h2 class="text-gold" style="margin-bottom: 30px;">Overview Statistics</h2>
+        <h2 class="text-gold" style="margin-bottom:24px; font-size:1.6rem;">📊 Overview</h2>
         <div class="admin-card-grid">
           <div class="admin-card">
             <div class="admin-card-title">Registered Players</div>
-            <div class="admin-card-value" id="stats-total-players">0</div>
+            <div class="admin-card-value text-blue" id="stats-total-players">0</div>
           </div>
           <div class="admin-card">
             <div class="admin-card-title">Pending Approvals</div>
             <div class="admin-card-value" id="stats-pending-approvals">0</div>
           </div>
           <div class="admin-card">
+            <div class="admin-card-title">Active Tournaments</div>
+            <div class="admin-card-value text-gold" id="stats-tours">0</div>
+          </div>
+          <div class="admin-card">
             <div class="admin-card-title">Completed Draws</div>
-            <div class="admin-card-value text-gold" id="stats-draws">0</div>
+            <div class="admin-card-value" id="stats-draws">0</div>
+          </div>
+          <div class="admin-card">
+            <div class="admin-card-title">Pending Challenges</div>
+            <div class="admin-card-value" id="stats-challenges">0</div>
           </div>
         </div>
       </section>
 
-      <!-- Registrations Section -->
+      <!-- ── Announcements ── -->
+      <section id="announcements-section" class="admin-section">
+        <h2 class="text-gold" style="margin-bottom:20px;">📢 Announcements</h2>
+        <div class="admin-card">
+          <h3 style="margin-bottom:16px; font-size:1rem;">Create New Announcement</h3>
+          <div class="form-group">
+            <label for="ann-title">Title *</label>
+            <input type="text" id="ann-title" class="form-input" placeholder="Announcement title">
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="ann-type">Type</label>
+              <select id="ann-type" class="form-input">
+                <option value="info">📌 Info</option>
+                <option value="important">🔥 Important</option>
+                <option value="warning">⚠️ Warning</option>
+                <option value="event">🎮 Event</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="ann-body">Message *</label>
+            <textarea id="ann-body" class="form-input notice-form" placeholder="Write the announcement..."></textarea>
+          </div>
+          <button class="btn btn-primary" id="btn-post-ann">📢 Post Announcement</button>
+        </div>
+        <h3 style="margin:20px 0 12px;">Posted Announcements</h3>
+        <div id="ann-list">
+          <div style="color:var(--text-muted); font-size:0.88rem;">No announcements yet.</div>
+        </div>
+      </section>
+
+      <!-- ── Direct Messages ── -->
+      <section id="messaging-section" class="admin-section">
+        <h2 class="text-blue" style="margin-bottom:20px;">✉️ Direct Messages (Admin to Player)</h2>
+        <div class="admin-card">
+          <h3 style="margin-bottom:16px;">Send a Notification</h3>
+          <div class="form-group">
+            <label for="msg-target">Select Player</label>
+            <select id="msg-target" class="form-input">
+              <option value="ALL">📢 Send to ALL PLAYERS</option>
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="msg-title">Message Title</label>
+            <input type="text" id="msg-title" class="form-input" placeholder="e.g. Important Warning!">
+          </div>
+          <div class="form-group">
+            <label for="msg-body">Message Body</label>
+            <textarea id="msg-body" class="form-input" rows="3" placeholder="Write your message here..."></textarea>
+          </div>
+          <button class="btn btn-primary" id="btn-send-msg">✉️ Send Message</button>
+        </div>
+      </section>
+
+      <!-- ── Users ── -->
+      <section id="users-section" class="admin-section">
+        <h2 class="text-blue" style="margin-bottom:20px;">👥 Registered Users</h2>
+        <div style="margin-bottom:14px;">
+          <input type="text" id="users-search" class="form-input" placeholder="Search by name, email or username..." style="max-width:400px;">
+        </div>
+        <div id="users-list">
+          <div style="color:var(--text-muted);">Loading users...</div>
+        </div>
+      </section>
+
+      <!-- ── Tournaments ── -->
+      <section id="tournaments-section" class="admin-section">
+        <h2 class="text-gold" style="margin-bottom:20px;">🏆 Tournament Management</h2>
+        <div class="admin-card">
+          <h3 style="margin-bottom:16px; font-size:1rem;">Create New Tournament</h3>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="tour-name">Tournament Name *</label>
+              <input type="text" id="tour-name" class="form-input" placeholder="e.g. EF X TOUR Season 01">
+            </div>
+            <div class="form-group">
+              <label for="tour-fee">Entry Fee</label>
+              <input type="text" id="tour-fee" class="form-input" placeholder="e.g. 50 BDT / Free">
+            </div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="tour-slots">Max Slots</label>
+              <input type="number" id="tour-slots" class="form-input" placeholder="e.g. 12" min="2" max="64">
+            </div>
+            <div class="form-group">
+              <label for="tour-status">Status</label>
+              <select id="tour-status" class="form-input">
+                <option value="OPEN">🟢 Open for Registration</option>
+                <option value="CLOSED">🔴 Closed</option>
+                <option value="ONGOING">🔵 Ongoing</option>
+                <option value="COMPLETED">✅ Completed</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="tour-desc">Description</label>
+            <textarea id="tour-desc" class="form-input" rows="2" placeholder="Brief tournament description..."></textarea>
+          </div>
+          <div class="form-group">
+            <label for="tour-clubs">Club Pool (comma-separated)</label>
+            <input type="text" id="tour-clubs" class="form-input" placeholder="Arsenal,Barcelona,Manchester United,Bayern Munich,...">
+          </div>
+          <button class="btn btn-primary" id="btn-create-tour">🏆 Create Tournament</button>
+        </div>
+        <h3 style="margin:20px 0 12px;">All Tournaments</h3>
+        <div id="tours-list"></div>
+      </section>
+
+      <!-- ── Registrations ── -->
       <section id="registrations-section" class="admin-section">
-        <h2 class="text-blue" style="margin-bottom: 20px;">Review Player Submissions</h2>
+        <h2 class="text-blue" style="margin-bottom:20px;">📋 Player Registrations</h2>
         <div class="table-container">
           <table>
             <thead>
               <tr>
-                <th>Player ID / Name</th>
-                <th>Team Name</th>
+                <th>Player</th>
+                <th>Team</th>
                 <th>Preferred Clubs</th>
                 <th>Status</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody id="registrations-table-body">
-              <tr>
-                <td colspan="5" style="text-align: center; color: var(--text-muted);">No submissions to review.</td>
-              </tr>
+              <tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No submissions to review.</td></tr>
             </tbody>
           </table>
         </div>
       </section>
 
-      <!-- Lottery Control Section -->
-      <section id="lottery-control-section" class="admin-section">
-        <h2 class="text-gold" style="margin-bottom: 20px;">Lottery & Allocation Controls</h2>
-        <div class="card" style="margin-bottom: 30px;">
-          <h3>Execute Draw Simulation</h3>
-          <p style="color: var(--text-secondary); margin-bottom: 20px;">Start drawing participants. Allocates clubs to players and updates the Realtime Database state.</p>
-          <button id="btn-start-lottery" class="btn btn-primary">Start Live Allocation</button>
-          <button id="btn-reset-lottery" class="btn btn-outline" style="margin-left: 10px;">Reset State</button>
+      <!-- ── Challenges ── -->
+      <section id="challenges-section" class="admin-section">
+        <h2 class="text-gold" style="margin-bottom:20px;">⚔️ Player Challenges</h2>
+        <div id="challenges-admin-list">
+          <div style="color:var(--text-muted);">No pending challenges.</div>
         </div>
       </section>
 
-      <!-- Fixtures Control Section -->
+      <!-- ── Draw Control ── -->
+      <section id="draw-control-section" class="admin-section">
+        <h2 class="text-gold" style="margin-bottom:20px;">🎲 Live Draw Control</h2>
+
+        <!-- Schedule Draw -->
+        <div class="admin-card" style="margin-bottom:24px;">
+          <h3 style="margin-bottom:16px;">📅 Schedule Draw Date & Time</h3>
+          <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:16px;">Set when the draw will happen. This countdown will appear on the home page and live draw page.</p>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="draw-datetime">Draw Date & Time</label>
+              <input type="datetime-local" id="draw-datetime" class="form-input">
+            </div>
+            <div class="form-group">
+              <label for="draw-live-url">Live Watch URL (YouTube/FB)</label>
+              <input type="url" id="draw-live-url" class="form-input" placeholder="https://youtube.com/live/...">
+            </div>
+          </div>
+          <button class="btn btn-secondary" id="btn-schedule-draw">📅 Save Draw Schedule</button>
+        </div>
+
+        <!-- Manual Draw Control -->
+        <div class="admin-card">
+          <h3 style="margin-bottom:8px;">🎬 Manual Draw — Reveal One by One</h3>
+          <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:20px;">
+            Load approved players below, then click <strong>"Reveal Next Player"</strong> one at a time — just like a live Facebook draw!
+            Each click assigns a random club to the next player.
+          </p>
+
+          <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px;">
+            <button class="btn btn-outline" id="btn-load-draw-queue">🔄 Load Players to Draw Queue</button>
+            <button class="btn btn-danger" id="btn-reset-draw" style="font-size:0.85rem;">🗑️ Reset Draw</button>
+          </div>
+
+          <!-- Queue preview -->
+          <div id="draw-queue-list" style="max-height:280px; overflow-y:auto; margin-bottom:20px;"></div>
+
+          <div style="text-align:center;">
+            <button class="draw-manual-btn" id="btn-reveal-next" disabled>🎲 REVEAL NEXT PLAYER</button>
+            <p id="draw-progress" style="color:var(--text-muted); font-size:0.85rem; margin-top:12px;">Load players first to start the draw.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Fixtures Generator ── -->
       <section id="fixtures-control-section" class="admin-section">
-        <h2 class="text-blue" style="margin-bottom: 20px;">Automatic Fixture Generator</h2>
-        <div class="card">
-          <h3>Generate League Fixtures</h3>
-          <p style="color: var(--text-secondary); margin-bottom: 20px;">Compute matches schedules for players with status APPROVED using Round Robin.</p>
-          <button id="btn-generate-fixtures" class="btn btn-secondary">Generate Matches</button>
+        <h2 class="text-blue" style="margin-bottom:20px;">📅 Fixture Generator</h2>
+        <div class="admin-card">
+          <h3 style="margin-bottom:8px;">Generate League Fixtures</h3>
+          <p style="color:var(--text-secondary); margin-bottom:20px; font-size:0.9rem;">Computes Round Robin fixtures for all players with assigned clubs.</p>
+          <button id="btn-generate-fixtures" class="btn btn-secondary">⚙️ Generate Fixtures</button>
         </div>
       </section>
 
-      <!-- Match Approvals Section -->
+      <!-- ── Match Approvals ── -->
       <section id="match-approvals-section" class="admin-section">
-        <h2 class="text-gold" style="margin-bottom: 20px;">Pending Match Results</h2>
+        <h2 class="text-gold" style="margin-bottom:20px;">✅ Match Result Approvals</h2>
         <div class="table-container">
           <table>
             <thead>
               <tr>
-                <th>Match ID</th>
-                <th>Fixture</th>
+                <th>Match</th>
                 <th>Score</th>
+                <th>Status</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody id="matches-table-body">
-              <tr>
-                <td colspan="4" style="text-align: center; color: var(--text-muted);">No pending match results found.</td>
-              </tr>
+              <tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No pending results.</td></tr>
             </tbody>
           </table>
         </div>
       </section>
 
-      <!-- Audit Logs Section -->
+      <!-- ── Live TV Moderation ── -->
+      <section id="live-streams-section" class="admin-section">
+        <h2 class="text-gold" style="margin-bottom:20px;">📺 Live TV Moderation</h2>
+        <div class="admin-card">
+          <h3 style="margin-bottom:16px;">Active Community Streams</h3>
+          <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:16px;">Manage currently live streams. You can terminate a stream if it contains inappropriate content.</p>
+          <div id="live-streams-admin-list">
+            <div style="color:var(--text-muted); font-size:0.88rem;">Loading streams...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Gallery Moderation ── -->
+      <section id="gallery-mod-section" class="admin-section">
+        <h2 class="text-gold" style="margin-bottom:20px;">🖼️ Gallery Photo Moderation</h2>
+        <div class="admin-card">
+          <h3 style="margin-bottom:16px;">Pending Photo Submissions</h3>
+          <div id="gallery-admin-list">
+            <div style="color:var(--text-muted); font-size:0.88rem;">Loading photo submissions...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Reset System Data ── -->
+      <section id="reset-data-section" class="admin-section">
+        <h2 style="color:#ff1744; margin-bottom:20px;">⚠️ Clear & Reset System Data</h2>
+        <div class="admin-card" style="border-color:rgba(255,23,68,0.4); background:rgba(255,23,68,0.05);">
+          <h3 style="color:#ff1744; margin-bottom:8px;">Start Fresh — Reset Tournament</h3>
+          <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:20px;">
+            Wipe existing registrations, fixtures, league tables, and match results so you can launch a brand new season from scratch! User accounts will remain intact.
+          </p>
+          <button class="btn btn-danger" id="btn-wipe-tournament-data" style="padding:12px 24px; font-weight:800;">🔥 WIPE ALL TOURNAMENT DATA & START FRESH</button>
+        </div>
+      </section>
+
+      <!-- ── Audit Logs ── -->
       <section id="audit-logs-section" class="admin-section">
-        <h2 class="text-blue" style="margin-bottom: 20px;">System Audit Logs</h2>
+        <h2 class="text-blue" style="margin-bottom:20px;">📜 Audit Logs</h2>
         <div class="table-container">
           <table>
             <thead>
-              <tr>
-                <th>Action</th>
-                <th>Actor</th>
-                <th>Target</th>
-                <th>Timestamp</th>
-              </tr>
+              <tr><th>Action</th><th>Actor</th><th>Target</th><th>Timestamp</th></tr>
             </thead>
             <tbody id="audit-table-body">
-              <tr>
-                <td colspan="4" style="text-align: center; color: var(--text-muted);">Audit logs empty.</td>
-              </tr>
+              <tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No audit logs.</td></tr>
             </tbody>
           </table>
         </div>
       </section>
 
-    </div>
-  </div>
+    </div><!-- /admin-content -->
+  </div><!-- /admin-layout -->
 
-  <script src="js/mobile-nav.js"></script>
   <script src="js/firebase-config.js"></script>
   <script type="module">
     import AuthGuard from "./js/auth-guard.js";
     import Utils from "./js/utils.js";
-    import { db, rtdb } from "./js/firebase-init.js";
-    import { collection, getDocs, doc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { ref, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { auth, db, rtdb } from "./js/firebase-init.js";
+    import {
+      collection, getDocs, doc, getDoc, setDoc, updateDoc, addDoc, deleteDoc, orderBy, query, where, limit, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     AuthGuard.guardPage(['SUPER_ADMIN', 'TOURNAMENT_ADMIN']);
 
+    let currentAdminUser = null;
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) currentAdminUser = userDoc.data().fullName || user.email;
+      }
+    });
+
+    // ── Section Navigation ──────────────────────────────────
     window.showSection = function(sectionId) {
-      document.querySelectorAll('.admin-section').forEach(sec => sec.classList.remove('active'));
-      document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+      document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
       document.getElementById(`${sectionId}-section`).classList.add('active');
+      document.querySelectorAll('.sidebar-item a').forEach(a => {
+        if (a.getAttribute('onclick') && a.getAttribute('onclick').includes(sectionId)) {
+          a.closest('.sidebar-item').classList.add('active');
+        }
+      });
+      // Load data for section
+      if (sectionId === 'overview') loadStats();
+      if (sectionId === 'announcements') loadAnnouncements();
+      if (sectionId === 'messaging') loadMessagingUsers();
+      if (sectionId === 'users') loadUsers();
+      if (sectionId === 'tournaments') loadTournaments();
+      if (sectionId === 'registrations') loadRegistrations();
+      if (sectionId === 'challenges') loadChallenges();
+      if (sectionId === 'draw-control') loadDrawControl();
+      if (sectionId === 'match-approvals') loadMatchApprovals();
+      if (sectionId === 'live-streams') loadLiveStreamsAdmin();
+      if (sectionId === 'gallery-mod') loadGalleryAdmin();
+      if (sectionId === 'audit-logs') loadAuditLogs();
     };
 
-    // Load Overview Stats & Registrations list
+    // ── Overview Stats ──────────────────────────────────────
     async function loadStats() {
-      const playersSnap = await getDocs(collection(db, "users"));
-      document.getElementById('stats-total-players').innerText = playersSnap.size;
-      
-      const regsSnap = await getDocs(collection(db, "registrations"));
-      let pending = 0;
-      const regBody = document.getElementById('registrations-table-body');
-      regBody.innerHTML = "";
-
-      regsSnap.forEach(docSnap => {
-        const reg = docSnap.data();
-        if (reg.status === 'SUBMITTED') pending++;
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${reg.playerId}</td>
-          <td>${reg.teamName || "N/A"}</td>
-          <td class="text-blue">${reg.clubPreferences ? reg.clubPreferences.join(', ') : "None"}</td>
-          <td><span class="badge badge-${reg.status === 'APPROVED' ? 'success' : reg.status === 'REJECTED' ? 'danger' : 'pending'}">${reg.status}</span></td>
-          <td>
-            ${reg.status === 'SUBMITTED' ? `
-              <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="updateRegStatus('${reg.playerId}', 'APPROVED')">Approve</button>
-              <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="updateRegStatus('${reg.playerId}', 'REJECTED')">Reject</button>
-            ` : 'No Action'}
-          </td>
-        `;
-        regBody.appendChild(tr);
-      });
-      document.getElementById('stats-pending-approvals').innerText = pending;
+      try {
+        const [usersSnap, toursSnap, regsSnap, drawsSnap, chalSnap] = await Promise.all([
+          getDocs(collection(db, "users")),
+          getDocs(collection(db, "tournaments")),
+          getDocs(collection(db, "registrations")),
+          getDocs(collection(db, "leagueTables")),
+          getDocs(query(collection(db, "challenges"), where("status", "==", "PENDING")))
+        ]);
+        document.getElementById('stats-total-players').textContent = usersSnap.size;
+        document.getElementById('stats-tours').textContent = toursSnap.size;
+        document.getElementById('stats-draws').textContent = drawsSnap.size;
+        document.getElementById('stats-challenges').textContent = chalSnap.size;
+        let pending = 0;
+        regsSnap.forEach(d => { if (d.data().status === 'SUBMITTED') pending++; });
+        document.getElementById('stats-pending-approvals').textContent = pending;
+      } catch (err) { Utils.showToast("Stats load error: " + err.message, "error"); }
     }
     loadStats();
+
+    // ── Announcements ───────────────────────────────────────
+    document.getElementById('btn-post-ann').addEventListener('click', async () => {
+      const title = document.getElementById('ann-title').value.trim();
+      const body = document.getElementById('ann-body').value.trim();
+      const type = document.getElementById('ann-type').value;
+      if (!title || !body) { Utils.showToast("Please fill title and message.", "warning"); return; }
+      Utils.showLoader();
+      try {
+        await addDoc(collection(db, "announcements"), {
+          title, body, type,
+          author: currentAdminUser || 'Admin',
+          createdAt: new Date().toISOString()
+        });
+        await Utils.logAdminAction(db, currentAdminUser||'Admin', "ANNOUNCEMENT_POSTED", title, {});
+        Utils.hideLoader();
+        Utils.showToast("Announcement posted!", "success");
+        document.getElementById('ann-title').value = '';
+        document.getElementById('ann-body').value = '';
+        loadAnnouncements();
+      } catch (err) { Utils.hideLoader(); Utils.showToast(err.message, "error"); }
+    });
+
+    async function loadAnnouncements() {
+      try {
+        const q = query(collection(db, "announcements"), limit(30));
+        const snap = await getDocs(q);
+        const list = document.getElementById('ann-list');
+        if (snap.empty) { list.innerHTML = '<div style="color:var(--text-muted);">No announcements yet.</div>'; return; }
+        list.innerHTML = '';
+        const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        items.sort((a,b) => new Date(b.createdAt||0) - new Date(a.createdAt||0));
+        const icons = { info:'📌', important:'🔥', warning:'⚠️', event:'🎮' };
+        items.forEach(a => {
+          const el = document.createElement('div');
+          el.className = 'announcement-item';
+          const rawDate = a.createdAt?.toDate ? a.createdAt.toDate() : (a.createdAt ? new Date(a.createdAt) : null);
+          const timeText = rawDate && !isNaN(rawDate) ? rawDate.toLocaleString('en-MY', {day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
+          el.innerHTML = `
+            <div class="ann-content">
+              <div class="ann-title">${icons[a.type]||'📌'} ${a.title}</div>
+              <div class="ann-body">${a.body}</div>
+              <div style="font-size:0.72rem; color:var(--text-muted); margin-top:6px;">${timeText} · ${a.author}</div>
+            </div>
+            <button class="btn btn-danger" style="padding:6px 10px; font-size:0.78rem;" onclick="deleteAnnouncement('${a.id}')">Delete</button>
+          `;
+          list.appendChild(el);
+        });
+      } catch (err) { console.warn('Ann load err:', err); }
+    }
+
+    window.deleteAnnouncement = async function(id) {
+      if (!confirm("Delete this announcement?")) return;
+      await deleteDoc(doc(db, "announcements", id));
+      Utils.showToast("Deleted.", "info");
+      loadAnnouncements();
+    };
+
+    // ── Direct Messages ─────────────────────────────────────
+    async function loadMessagingUsers() {
+      try {
+        const snap = await getDocs(collection(db, "users"));
+        const select = document.getElementById('msg-target');
+        select.innerHTML = '<option value="ALL">📢 Send to ALL PLAYERS</option>';
+        snap.forEach(d => {
+          const u = d.data();
+          select.innerHTML += `<option value="${d.id}">${u.fullName || u.username} (@${u.username || d.id.slice(0,6)})</option>`;
+        });
+      } catch (err) {}
+    }
+
+    document.getElementById('btn-send-msg').addEventListener('click', async () => {
+      const target = document.getElementById('msg-target').value;
+      const title = document.getElementById('msg-title').value.trim();
+      const body = document.getElementById('msg-body').value.trim();
+      if (!title || !body) { Utils.showToast("Please fill title and body", "warning"); return; }
+
+      Utils.showLoader();
+      try {
+        const notifData = {
+          type: 'ADMIN',
+          title: title,
+          body: body,
+          createdAt: new Date().toISOString(),
+          read: false
+        };
+
+        if (target === 'ALL') {
+          const snap = await getDocs(collection(db, "users"));
+          const promises = [];
+          snap.forEach(d => {
+            promises.push(addDoc(collection(db, "users", d.id, "notifications"), notifData));
+          });
+          await Promise.all(promises);
+          Utils.showToast(`Message sent to ${promises.length} players!`, "success");
+        } else {
+          await addDoc(collection(db, "users", target, "notifications"), notifData);
+          Utils.showToast("Message sent successfully!", "success");
+        }
+        document.getElementById('msg-title').value = '';
+        document.getElementById('msg-body').value = '';
+      } catch (err) {
+        Utils.showToast(err.message, "error");
+      }
+      Utils.hideLoader();
+    });
+
+    // ── Users ───────────────────────────────────────────────
+    let allUsers = [];
+    async function loadUsers() {
+      try {
+        const snap = await getDocs(collection(db, "users"));
+        allUsers = [];
+        snap.forEach(d => allUsers.push({ id: d.id, ...d.data() }));
+        renderUsers(allUsers);
+      } catch (err) { Utils.showToast("Users load error: " + err.message, "error"); }
+    }
+
+    function renderUsers(users) {
+      const list = document.getElementById('users-list');
+      if (!users.length) { list.innerHTML = '<div style="color:var(--text-muted);">No users found.</div>'; return; }
+      list.innerHTML = '';
+      users.forEach(u => {
+        const el = document.createElement('div');
+        el.className = 'user-row';
+        const avatar = u.profilePhoto || `https://api.dicebear.com/7.x/micah/svg?seed=${encodeURIComponent(u.username||u.uid)}&backgroundColor=b6e3f4&mouth=smile&baseColor=f9c9b6`;
+        el.innerHTML = `
+          <img class="user-avatar" src="${avatar}" alt="Avatar">
+          <div class="user-info">
+            <div class="user-name">${u.fullName || 'Unknown'} ${u.username ? `<span style="color:var(--primary); font-size:0.82rem;">@${u.username}</span>` : ''}</div>
+            <div class="user-email">${u.email || ''} · ${u.country || ''} · ${u.phone || ''}</div>
+          </div>
+          <span class="badge badge-${u.role === 'SUPER_ADMIN' ? 'success' : u.role === 'TOURNAMENT_ADMIN' ? 'info' : 'pending'}">${u.role||'PLAYER'}</span>
+          <select onchange="changeUserRole('${u.id}', this.value)" style="padding:6px 8px; background:var(--bg-tertiary); border:1px solid var(--border-glass); border-radius:6px; color:var(--text-primary); font-size:0.8rem; cursor:pointer;">
+            <option value="">Set Role</option>
+            <option value="PLAYER">PLAYER</option>
+            <option value="TOURNAMENT_ADMIN">ADMIN</option>
+            <option value="SUPER_ADMIN">SUPER ADMIN</option>
+          </select>
+        `;
+        list.appendChild(el);
+      });
+    }
+
+    window.changeUserRole = async function(uid, role) {
+      if (!role) return;
+      if (!confirm(`Change this user's role to ${role}?`)) return;
+      Utils.showLoader();
+      await updateDoc(doc(db, "users", uid), { role });
+      await Utils.logAdminAction(db, currentAdminUser||'Admin', "ROLE_CHANGED", uid, { role });
+      Utils.hideLoader();
+      Utils.showToast(`Role updated to ${role}`, "success");
+      loadUsers();
+    };
+
+    document.getElementById('users-search').addEventListener('input', function() {
+      const q = this.value.toLowerCase();
+      renderUsers(allUsers.filter(u =>
+        (u.fullName||'').toLowerCase().includes(q) ||
+        (u.email||'').toLowerCase().includes(q) ||
+        (u.username||'').toLowerCase().includes(q)
+      ));
+    });
+
+    // ── Tournaments ─────────────────────────────────────────
+    document.getElementById('btn-create-tour').addEventListener('click', async () => {
+      const name = document.getElementById('tour-name').value.trim();
+      const fee = document.getElementById('tour-fee').value.trim();
+      const slots = parseInt(document.getElementById('tour-slots').value) || 12;
+      const status = document.getElementById('tour-status').value;
+      const desc = document.getElementById('tour-desc').value.trim();
+      const clubsRaw = document.getElementById('tour-clubs').value.trim();
+      const clubs = clubsRaw ? clubsRaw.split(',').map(c => c.trim()).filter(Boolean) : ["Arsenal","Barcelona","Manchester United","Bayern Munich","AC Milan","PSG","Chelsea","Real Madrid","Juventus","Atletico Madrid","Liverpool","Inter Milan"];
+      if (!name) { Utils.showToast("Please enter a tournament name.", "warning"); return; }
+      Utils.showLoader();
+      try {
+        await addDoc(collection(db, "tournaments"), {
+          name, fee, slots, status, desc, clubs,
+          createdAt: new Date().toISOString(),
+          createdBy: currentAdminUser || 'Admin'
+        });
+        await Utils.logAdminAction(db, currentAdminUser||'Admin', "TOURNAMENT_CREATED", name, { slots, fee });
+        Utils.hideLoader();
+        Utils.showToast(`Tournament "${name}" created!`, "success");
+        ['tour-name','tour-fee','tour-slots','tour-desc','tour-clubs'].forEach(id => document.getElementById(id).value = '');
+        loadTournaments();
+      } catch (err) { Utils.hideLoader(); Utils.showToast(err.message, "error"); }
+    });
+
+    async function loadTournaments() {
+      try {
+        const snap = await getDocs(collection(db, "tournaments"));
+        const list = document.getElementById('tours-list');
+        if (snap.empty) { list.innerHTML = '<div style="color:var(--text-muted);">No tournaments created yet.</div>'; return; }
+        list.innerHTML = '';
+        const statusColors = { OPEN:'success', CLOSED:'danger', ONGOING:'info', COMPLETED:'pending' };
+        snap.forEach(d => {
+          const t = d.data();
+          const el = document.createElement('div');
+          el.className = 'tour-card';
+          el.innerHTML = `
+            <div>
+              <div class="tour-name">🏆 ${t.name}</div>
+              <div class="tour-meta">Fee: ${t.fee||'Free'} · Slots: ${t.slots||'?'} · ${t.desc||''}</div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <span class="badge badge-${statusColors[t.status]||'info'}">${t.status}</span>
+              <select onchange="updateTourStatus('${d.id}', this.value)" style="padding:6px 8px; background:var(--bg-tertiary); border:1px solid var(--border-glass); border-radius:6px; color:var(--text-primary); font-size:0.8rem; cursor:pointer;">
+                <option value="">Change Status</option>
+                <option value="OPEN">🟢 Open</option>
+                <option value="CLOSED">🔴 Closed</option>
+                <option value="ONGOING">🔵 Ongoing</option>
+                <option value="COMPLETED">✅ Completed</option>
+              </select>
+              <button class="btn btn-danger" style="padding:6px 10px; font-size:0.78rem;" onclick="deleteTour('${d.id}')">Delete</button>
+            </div>
+          `;
+          list.appendChild(el);
+        });
+      } catch (err) { Utils.showToast("Load error: " + err.message, "error"); }
+    }
+
+    window.updateTourStatus = async function(id, status) {
+      if (!status) return;
+      await updateDoc(doc(db, "tournaments", id), { status });
+      Utils.showToast(`Status updated to ${status}`, "success");
+      loadTournaments();
+    };
+
+    window.deleteTour = async function(id) {
+      if (!confirm("Delete this tournament?")) return;
+      await deleteDoc(doc(db, "tournaments", id));
+      Utils.showToast("Tournament deleted.", "info");
+      loadTournaments();
+    };
+
+    // ── Registrations ───────────────────────────────────────
+    async function loadRegistrations() {
+      try {
+        const [regsSnap, usersSnap] = await Promise.all([
+          getDocs(collection(db, "registrations")),
+          getDocs(collection(db, "users"))
+        ]);
+        const userMap = {};
+        usersSnap.forEach(u => { userMap[u.id] = u.data(); });
+
+        const tbody = document.getElementById('registrations-table-body');
+        tbody.innerHTML = '';
+        if (regsSnap.empty) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No registrations yet.</td></tr>';
+          return;
+        }
+        regsSnap.forEach(d => {
+          const r = d.data();
+          const u = userMap[d.id] || {};
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <img src="${u.profilePhoto || `https://api.dicebear.com/7.x/micah/svg?seed=${d.id}&backgroundColor=b6e3f4`}" style="width:32px; height:32px; border-radius:50%;">
+                <div>
+                  <div style="font-weight:600; font-size:0.88rem;">${u.fullName||'Unknown'}</div>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">@${u.username||d.id.slice(0,8)}</div>
+                </div>
+              </div>
+            </td>
+            <td>${r.teamName||'N/A'}</td>
+            <td class="text-blue" style="font-size:0.82rem;">${r.clubPreferences ? r.clubPreferences.filter(Boolean).join(', ') : 'None'}</td>
+            <td><span class="badge badge-${r.status==='APPROVED'?'success':r.status==='REJECTED'?'danger':'pending'}">${r.status}</span></td>
+            <td>
+              ${r.status === 'SUBMITTED' ? `
+                <button class="btn btn-primary" style="padding:6px 10px; font-size:0.78rem; margin-right:4px;" onclick="updateRegStatus('${d.id}', 'APPROVED')">Approve</button>
+                <button class="btn btn-danger" style="padding:6px 10px; font-size:0.78rem;" onclick="updateRegStatus('${d.id}', 'REJECTED')">Reject</button>
+              ` : '<span style="color:var(--text-muted);">—</span>'}
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) { Utils.showToast("Error: " + err.message, "error"); }
+    }
 
     window.updateRegStatus = async function(playerId, status) {
       Utils.showLoader();
       try {
-        await updateDoc(doc(db, "registrations", playerId), { status });
-        
-        // Also update matching user payment status
-        await updateDoc(doc(db, "payments", playerId), { 
-          status: status === 'APPROVED' ? 'COMPLETED' : 'REJECTED' 
-        });
-
+        await updateDoc(doc(db, "registrations", playerId), { status, reviewedAt: new Date().toISOString() });
+        await Utils.logAdminAction(db, currentAdminUser||'Admin', "REG_STATUS_UPDATE", playerId, { status });
         Utils.hideLoader();
-        Utils.showToast(`Registration status set to ${status}`, "success");
+        Utils.showToast(`Registration ${status === 'APPROVED' ? 'approved ✓' : 'rejected ✗'}`, status === 'APPROVED' ? 'success' : 'error');
+        loadRegistrations();
         loadStats();
-      } catch (err) {
-        Utils.hideLoader();
-        Utils.showToast(err.message, "error");
-      }
+      } catch (err) { Utils.hideLoader(); Utils.showToast(err.message, "error"); }
     };
 
-    // Start Live Lottery Allocation Simulation
-    document.getElementById('btn-start-lottery').addEventListener('click', async () => {
-      Utils.showToast("Starting drawing sequence...", "info");
-      
-      // Setup default club pool array
-      const clubPool = ["Arsenal", "Barcelona", "Manchester United", "Bayern Munich", "AC Milan", "PSG"];
-      
-      // Get all approved registrations
-      const regsSnap = await getDocs(collection(db, "registrations"));
-      let playersToAssign = [];
-      regsSnap.forEach(d => {
-        if (d.data().status === 'APPROVED') {
-          playersToAssign.push(d.data().playerId);
-        }
-      });
+    // ── Challenges ──────────────────────────────────────────
+    async function loadChallenges() {
+      try {
+        const [chalSnap, usersSnap] = await Promise.all([
+          getDocs(collection(db, "challenges")),
+          getDocs(collection(db, "users"))
+        ]);
+        const userMap = {};
+        usersSnap.forEach(u => { userMap[u.id] = u.data(); });
 
-      if (playersToAssign.length === 0) {
-        Utils.showToast("No approved players available to draw!", "warning");
-        return;
-      }
-
-      // Shuffling simulation step 1
-      const lotteryCurrentRef = ref(rtdb, 'lottery/current');
-      
-      await set(lotteryCurrentRef, {
-        status: "LIVE",
-        shufflingPlayer: "Afiq...",
-        shufflingClub: "Arsenal..."
-      });
-
-      // Simulate a reveal draw event after 3 seconds
-      setTimeout(async () => {
-        const assignedPlayerId = playersToAssign[0]; // Grab first player for presentation
-        const userDocRef = doc(db, "users", assignedPlayerId);
-        const userSnap = await getDocs(collection(db, "users"));
-        let playerName = "Afiq";
-        userSnap.forEach(u => {
-          if (u.id === assignedPlayerId) playerName = u.data().fullName;
+        const list = document.getElementById('challenges-admin-list');
+        if (chalSnap.empty) { list.innerHTML = '<div style="color:var(--text-muted);">No challenges found.</div>'; return; }
+        list.innerHTML = '';
+        chalSnap.forEach(d => {
+          const c = d.data();
+          const challenger = userMap[c.challengerUid] || {};
+          const target = userMap[c.targetUid] || {};
+          const el = document.createElement('div');
+          el.className = 'challenge-review-item';
+          el.innerHTML = `
+            <div>
+              <div style="font-weight:700; font-size:0.9rem;">⚔️ ${challenger.username||'?'} challenged ${target.username||'?'}</div>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-top:3px;">${c.message||'No message'}</div>
+              <div style="font-size:0.72rem; color:var(--text-muted); margin-top:3px;">${new Date(c.createdAt).toLocaleString()}</div>
+            </div>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <span class="badge badge-${c.status==='PENDING'?'pending':c.status==='APPROVED'?'success':'danger'}">${c.status}</span>
+              ${c.status === 'PENDING' ? `
+                <button class="btn btn-primary" style="padding:6px 10px; font-size:0.78rem;" onclick="approveChallenge('${d.id}')">Approve</button>
+                <button class="btn btn-danger" style="padding:6px 10px; font-size:0.78rem;" onclick="rejectChallenge('${d.id}')">Reject</button>
+              ` : ''}
+            </div>
+          `;
+          list.appendChild(el);
         });
+      } catch (err) { Utils.showToast("Error: " + err.message, "error"); }
+    }
 
-        const allocatedClub = clubPool[Math.floor(Math.random() * clubPool.length)];
+    window.approveChallenge = async function(id) {
+      await updateDoc(doc(db, "challenges", id), { status: 'APPROVED', reviewedAt: new Date().toISOString() });
+      Utils.showToast("Challenge approved! Add to fixtures manually.", "success");
+      loadChallenges();
+    };
+    window.rejectChallenge = async function(id) {
+      await updateDoc(doc(db, "challenges", id), { status: 'REJECTED', reviewedAt: new Date().toISOString() });
+      Utils.showToast("Challenge rejected.", "info");
+      loadChallenges();
+    };
 
-        // Save to RTDB
-        await set(lotteryCurrentRef, {
-          status: "REVEALED",
-          activePlayer: playerName,
-          activeClub: allocatedClub,
-          assignments: {
-            [assignedPlayerId]: {
-              playerName: playerName,
-              clubName: allocatedClub,
-              timestamp: new Date().toISOString()
-            }
+    // ── Draw Control ────────────────────────────────────────
+    let drawQueue = [];
+    let drawIndex = 0;
+    let clubPool = ["Arsenal","Barcelona","Manchester United","Bayern Munich","AC Milan","PSG","Chelsea","Real Madrid","Juventus","Atletico Madrid","Liverpool","Inter Milan"];
+    let usedClubs = new Set();
+
+    async function loadDrawControl() {
+      // Load current draw config
+      try {
+        const cfg = await getDoc(doc(db, "drawConfig", "current"));
+        if (cfg.exists()) {
+          const d = cfg.data();
+          if (d.scheduledAt) document.getElementById('draw-datetime').value = d.scheduledAt.slice(0,16);
+          if (d.liveUrl) document.getElementById('draw-live-url').value = d.liveUrl;
+        }
+      } catch (_) {}
+    }
+
+    document.getElementById('btn-schedule-draw').addEventListener('click', async () => {
+      const dt = document.getElementById('draw-datetime').value;
+      const url = document.getElementById('draw-live-url').value.trim();
+      if (!dt) { Utils.showToast("Please select a date and time.", "warning"); return; }
+      Utils.showLoader();
+      try {
+        await setDoc(doc(db, "drawConfig", "current"), {
+          scheduledAt: new Date(dt).toISOString(),
+          liveUrl: url,
+          status: 'SCHEDULED',
+          updatedAt: new Date().toISOString()
+        });
+        await Utils.logAdminAction(db, currentAdminUser||'Admin', "DRAW_SCHEDULED", dt, {});
+        Utils.hideLoader();
+        Utils.showToast("Draw scheduled! Countdown will show on home page.", "success");
+      } catch (err) { Utils.hideLoader(); Utils.showToast(err.message, "error"); }
+    });
+
+    document.getElementById('btn-load-draw-queue').addEventListener('click', async () => {
+      Utils.showLoader();
+      try {
+        // Load approved registrations and their club pools
+        const regsSnap = await getDocs(collection(db, "registrations"));
+        const usersSnap = await getDocs(collection(db, "users"));
+        const userMap = {};
+        usersSnap.forEach(u => { userMap[u.id] = u.data(); });
+
+        // Also load tournament clubs if available
+        const toursSnap = await getDocs(query(collection(db, "tournaments"), where("status","==","ONGOING")));
+        if (!toursSnap.empty) {
+          clubPool = toursSnap.docs[0].data().clubs || clubPool;
+        }
+
+        drawQueue = [];
+        regsSnap.forEach(d => {
+          if (d.data().status === 'APPROVED') {
+            drawQueue.push({
+              uid: d.id,
+              name: userMap[d.id]?.fullName || userMap[d.id]?.username || d.id,
+              prefs: d.data().clubPreferences || []
+            });
           }
         });
 
-        // Save to Firestore Standings Table
-        await setDoc(doc(db, "leagueTables", assignedPlayerId), {
-          playerId: assignedPlayerId,
-          playerName: playerName,
-          clubName: allocatedClub,
-          points: 0,
-          played: 0,
-          wins: 0,
-          draws: 0,
-          losses: 0,
-          goalDifference: 0
+        if (!drawQueue.length) {
+          Utils.hideLoader();
+          Utils.showToast("No approved players found!", "warning");
+          return;
+        }
+
+        // Shuffle queue
+        drawQueue = drawQueue.sort(() => Math.random() - 0.5);
+        drawIndex = 0;
+        usedClubs = new Set();
+
+        renderDrawQueue();
+        document.getElementById('btn-reveal-next').disabled = false;
+        document.getElementById('draw-progress').textContent = `${drawQueue.length} players in queue. Ready to draw!`;
+
+        // Set RTDB to lobby
+        await set(ref(rtdb, 'lottery/current'), { status: 'LOBBY', playerCount: drawQueue.length });
+        Utils.hideLoader();
+        Utils.showToast(`${drawQueue.length} players loaded! Click Reveal to start.`, "success");
+      } catch (err) { Utils.hideLoader(); Utils.showToast(err.message, "error"); }
+    });
+
+    function renderDrawQueue() {
+      const list = document.getElementById('draw-queue-list');
+      list.innerHTML = '';
+      drawQueue.forEach((p, i) => {
+        const el = document.createElement('div');
+        el.className = `draw-queue-item ${i < drawIndex ? 'revealed' : ''}`;
+        el.id = `dq-${i}`;
+        el.innerHTML = `
+          <div class="dq-idx">${i + 1}</div>
+          <div style="flex:1;">
+            <div style="font-weight:600; font-size:0.9rem;">${p.name}</div>
+            <div style="font-size:0.78rem; color:${i < drawIndex ? 'var(--primary)' : 'var(--text-muted)'};">${i < drawIndex ? '✅ Revealed: ' + (p.assignedClub||'') : 'Waiting...'}</div>
+          </div>
+        `;
+        list.appendChild(el);
+      });
+    }
+
+    document.getElementById('btn-reveal-next').addEventListener('click', async () => {
+      if (drawIndex >= drawQueue.length) {
+        Utils.showToast("All players have been drawn!", "success");
+        return;
+      }
+
+      const player = drawQueue[drawIndex];
+      // Pick club
+      let club = null;
+      const shuffled = [...clubPool].sort(() => Math.random() - 0.5);
+      for (const pref of player.prefs) {
+        if (pref && !usedClubs.has(pref)) { club = pref; break; }
+      }
+      if (!club) {
+        for (const c of shuffled) {
+          if (!usedClubs.has(c)) { club = c; break; }
+        }
+      }
+      if (!club) club = shuffled[drawIndex % shuffled.length];
+      usedClubs.add(club);
+      player.assignedClub = club;
+
+      // Animate RTDB — LIVE state first
+      await set(ref(rtdb, 'lottery/current'), {
+        status: 'LIVE',
+        shufflingPlayer: player.name,
+        shufflingClub: '???'
+      });
+
+      // After shuffle animation (3s) — reveal
+      setTimeout(async () => {
+        await set(ref(rtdb, 'lottery/current'), {
+          status: 'REVEALED',
+          activePlayer: player.name,
+          activeClub: club,
+          revealedIndex: drawIndex + 1,
+          totalPlayers: drawQueue.length
         });
 
-        // Audit Log entry
-        await Utils.logAdminAction(db, "Super Admin", "LOTTERY_COMPLETE", assignedPlayerId, {
-          clubAllocated: allocatedClub
+        // Save to Firestore
+        await setDoc(doc(db, "leagueTables", player.uid), {
+          playerId: player.uid, playerName: player.name, clubName: club,
+          points: 0, played: 0, wins: 0, draws: 0, losses: 0, goalDifference: 0
         });
 
-        Utils.showToast("Lottery drawing assignment successfully saved!", "success");
+        drawIndex++;
+        renderDrawQueue();
+
+        const remaining = drawQueue.length - drawIndex;
+        if (remaining > 0) {
+          document.getElementById('draw-progress').textContent = `✅ ${drawIndex} revealed · ${remaining} remaining`;
+        } else {
+          document.getElementById('draw-progress').textContent = '🎉 All players drawn! Draw complete!';
+          document.getElementById('btn-reveal-next').disabled = true;
+          await set(ref(rtdb, 'lottery/current'), {
+            status: 'COMPLETED',
+            totalPlayers: drawQueue.length,
+            completedAt: new Date().toISOString()
+          });
+          await setDoc(doc(db, "drawConfig", "current"), {
+            status: 'COMPLETED',
+            completedAt: new Date().toISOString()
+          }, { merge: true });
+          await Utils.logAdminAction(db, currentAdminUser||'Admin', "DRAW_COMPLETED", "all", { count: drawQueue.length });
+        }
       }, 3000);
     });
 
-    document.getElementById('btn-reset-lottery').addEventListener('click', async () => {
-      const lotteryCurrentRef = ref(rtdb, 'lottery/current');
-      await set(lotteryCurrentRef, null);
-      Utils.showToast("Lottery reset successful.", "info");
+    document.getElementById('btn-reset-draw').addEventListener('click', async () => {
+      if (!confirm("Reset the draw? This clears the lottery state from RTDB.")) return;
+      drawQueue = []; drawIndex = 0; usedClubs = new Set();
+      document.getElementById('draw-queue-list').innerHTML = '';
+      document.getElementById('btn-reveal-next').disabled = true;
+      document.getElementById('draw-progress').textContent = "Load players first to start the draw.";
+      await set(ref(rtdb, 'lottery/current'), null);
+      Utils.showToast("Draw reset.", "info");
     });
+
+    // ── Fixture Generator ───────────────────────────────────
+    document.getElementById('btn-generate-fixtures').addEventListener('click', async () => {
+      Utils.showLoader();
+      try {
+        const tablesSnap = await getDocs(collection(db, "leagueTables"));
+        const players = [];
+        tablesSnap.forEach(d => players.push({ id: d.id, ...d.data() }));
+        if (players.length < 2) { Utils.hideLoader(); Utils.showToast("Need at least 2 players with club assignments!", "warning"); return; }
+        const oldFixtures = await getDocs(collection(db, "fixtures"));
+        await Promise.all(oldFixtures.docs.map(d => deleteDoc(doc(db, "fixtures", d.id))));
+        const fxPromises = [];
+        let matchday = 1;
+        for (let i = 0; i < players.length; i++) {
+          for (let j = i + 1; j < players.length; j++) {
+            fxPromises.push(addDoc(collection(db, "fixtures"), {
+              homePlayer: players[i].id, homePlayerName: players[i].playerName, homeClub: players[i].clubName,
+              awayPlayer: players[j].id, awayPlayerName: players[j].playerName, awayClub: players[j].clubName,
+              matchday, status: "PENDING", createdAt: new Date().toISOString()
+            }));
+            matchday++;
+          }
+        }
+        await Promise.all(fxPromises);
+        await Utils.logAdminAction(db, currentAdminUser||'Admin', "FIXTURES_GENERATED", "all", { count: fxPromises.length });
+        Utils.hideLoader();
+        Utils.showToast(`${fxPromises.length} fixtures generated!`, "success");
+      } catch (err) { Utils.hideLoader(); Utils.showToast("Error: " + err.message, "error"); }
+    });
+
+    // ── Match Approvals ─────────────────────────────────────
+    async function loadMatchApprovals() {
+      try {
+        const snap = await getDocs(collection(db, "matchResults"));
+        const tbody = document.getElementById('matches-table-body');
+        tbody.innerHTML = '';
+        const pending = [];
+        snap.forEach(d => { if (d.data().status === 'PENDING') pending.push({ id: d.id, ...d.data() }); });
+        if (!pending.length) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No pending results.</td></tr>'; return; }
+        pending.forEach(m => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${m.homePlayerName||'?'} vs ${m.awayPlayerName||'?'}</td>
+            <td class="text-gold" style="font-weight:700;">${m.homeScore??'?'} — ${m.awayScore??'?'}</td>
+            <td><span class="badge badge-pending">PENDING</span></td>
+            <td>
+              <button class="btn btn-primary" style="padding:6px 10px; font-size:0.78rem; margin-right:4px;" onclick="approveMatch('${m.id}')">Approve</button>
+              <button class="btn btn-danger" style="padding:6px 10px; font-size:0.78rem;" onclick="rejectMatch('${m.id}')">Reject</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) { Utils.showToast(err.message, "error"); }
+    }
+
+    window.approveMatch = async function(matchId) {
+      Utils.showLoader();
+      try {
+        const md = await getDoc(doc(db, "matchResults", matchId));
+        if (!md.exists()) throw new Error("Match not found");
+        const m = md.data();
+        await updateDoc(doc(db, "matchResults", matchId), { status: 'APPROVED' });
+        async function updateTable(pid, myScore, oppScore) {
+          const ref_ = doc(db, "leagueTables", pid);
+          const snap = await getDoc(ref_);
+          if (!snap.exists()) return;
+          const t = snap.data();
+          const win = myScore > oppScore, draw = myScore === oppScore;
+          await updateDoc(ref_, {
+            played: (t.played||0)+1, wins: (t.wins||0)+(win?1:0), draws: (t.draws||0)+(draw?1:0),
+            losses: (t.losses||0)+(!win&&!draw?1:0), points: (t.points||0)+(win?3:draw?1:0),
+            goalDifference: (t.goalDifference||0)+(myScore-oppScore)
+          });
+        }
+        await updateTable(m.homePlayer, m.homeScore, m.awayScore);
+        await updateTable(m.awayPlayer, m.awayScore, m.homeScore);
+        await Utils.logAdminAction(db, currentAdminUser||'Admin', "MATCH_APPROVED", matchId, {});
+        Utils.hideLoader(); Utils.showToast("Match approved & standings updated!", "success");
+        loadMatchApprovals();
+      } catch (err) { Utils.hideLoader(); Utils.showToast(err.message, "error"); }
+    };
+
+    window.rejectMatch = async function(matchId) {
+      await updateDoc(doc(db, "matchResults", matchId), { status: 'REJECTED' });
+      Utils.showToast("Match rejected.", "warning");
+      loadMatchApprovals();
+    };
+
+    // ── Live TV Moderation ──────────────────────────────────
+    async function loadLiveStreamsAdmin() {
+      try {
+        const snap = await getDocs(query(collection(db, "liveStreams"), where("status", "==", "LIVE")));
+        const list = document.getElementById('live-streams-admin-list');
+        list.innerHTML = '';
+        if (snap.empty) { list.innerHTML = '<div style="color:var(--text-muted); font-size:0.88rem;">No active streams.</div>'; return; }
+        
+        snap.forEach(d => {
+          const s = d.data();
+          const el = document.createElement('div');
+          el.className = 'challenge-review-item';
+          el.innerHTML = `
+            <div>
+              <div style="font-weight:700; font-size:0.9rem;">📺 ${s.title}</div>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-top:3px;">Streamer: ${s.streamerName}</div>
+              <div style="font-size:0.75rem; color:var(--text-muted); margin-top:3px;">URL: <a href="${s.url}" target="_blank" style="color:var(--primary);">${s.url}</a></div>
+            </div>
+            <button class="btn btn-danger" style="padding:6px 12px; font-size:0.8rem;" onclick="terminateStream('${d.id}')">🛑 Terminate Stream</button>
+          `;
+          list.appendChild(el);
+        });
+      } catch (err) { Utils.showToast(err.message, "error"); }
+    }
+
+    window.terminateStream = async function(uid) {
+      if (!confirm("Are you sure you want to terminate this stream?")) return;
+      Utils.showLoader();
+      try {
+        await deleteDoc(doc(db, "liveStreams", uid));
+        Utils.hideLoader();
+        Utils.showToast("Stream terminated.", "info");
+        loadLiveStreamsAdmin();
+      } catch (err) { Utils.hideLoader(); Utils.showToast(err.message, "error"); }
+    }
+
+    // ── Gallery Moderation ──────────────────────────────────
+    async function loadGalleryAdmin() {
+      try {
+        const snap = await getDocs(query(collection(db, "galleryPhotos"), where("status", "==", "PENDING")));
+        const list = document.getElementById('gallery-admin-list');
+        list.innerHTML = '';
+        if (snap.empty) { list.innerHTML = '<div style="color:var(--text-muted); font-size:0.88rem;">No pending photos to review.</div>'; return; }
+
+        snap.forEach(d => {
+          const item = d.data();
+          const el = document.createElement('div');
+          el.className = 'challenge-review-item';
+          el.innerHTML = `
+            <div style="display:flex; gap:12px; align-items:center;">
+              <img src="${item.imageUrl}" style="width:60px; height:60px; object-fit:cover; border-radius:8px;">
+              <div>
+                <div style="font-weight:700; font-size:0.9rem;">${item.title}</div>
+                <div style="font-size:0.8rem; color:var(--text-muted);">By: ${item.authorName}</div>
+              </div>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-primary" style="padding:6px 12px; font-size:0.8rem;" onclick="approvePhoto('${d.id}')">✅ Approve</button>
+              <button class="btn btn-danger" style="padding:6px 12px; font-size:0.8rem;" onclick="rejectPhoto('${d.id}')">❌ Reject</button>
+            </div>
+          `;
+          list.appendChild(el);
+        });
+      } catch (err) { Utils.showToast(err.message, "error"); }
+    }
+
+    window.approvePhoto = async function(pid) {
+      await updateDoc(doc(db, "galleryPhotos", pid), { status: 'APPROVED' });
+      Utils.showToast("Photo approved and published to gallery!", "success");
+      loadGalleryAdmin();
+    };
+
+    window.rejectPhoto = async function(pid) {
+      await deleteDoc(doc(db, "galleryPhotos", pid));
+      Utils.showToast("Photo rejected.", "info");
+      loadGalleryAdmin();
+    };
+
+    // ── Reset System Data ──────────────────────────────────
+    document.getElementById('btn-wipe-tournament-data')?.addEventListener('click', async () => {
+      const confirm1 = confirm("⚠️ Are you SURE you want to wipe all tournament data (Registrations, League Tables, Fixtures, Match Results)?");
+      if (!confirm1) return;
+      const confirm2 = prompt("Type 'RESET' in ALL CAPS to confirm starting fresh:");
+      if (confirm2 !== 'RESET') { Utils.showToast("Cancellation: Reset phrase did not match.", "warning"); return; }
+
+      Utils.showLoader();
+      try {
+        const collectionsToWipe = ["registrations", "leagueTables", "fixtures", "matchResults", "challenges"];
+        for (const colName of collectionsToWipe) {
+          const snap = await getDocs(collection(db, colName));
+          const deletePromises = snap.docs.map(d => deleteDoc(doc(db, colName, d.id)));
+          await Promise.all(deletePromises);
+        }
+        await Utils.logAdminAction(db, currentAdminUser || 'Admin', "DATABASE_WIPED_FRESH", "all", {});
+        Utils.hideLoader();
+        Utils.showToast("🎉 System successfully reset! Ready for a brand new season.", "success");
+        loadStats();
+      } catch (err) {
+        Utils.hideLoader();
+        Utils.showToast("Error wiping data: " + err.message, "error");
+      }
+    });
+
+    // ── Audit Logs ──────────────────────────────────────────
+    async function loadAuditLogs() {
+      try {
+        const snap = await getDocs(collection(db, "auditLogs"));
+        const tbody = document.getElementById('audit-table-body');
+        tbody.innerHTML = '';
+        if (snap.empty) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No logs.</td></tr>'; return; }
+        const logs = [];
+        snap.forEach(d => logs.push(d.data()));
+        logs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        logs.slice(0, 50).forEach(log => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><span class="badge badge-info">${log.action}</span></td>
+            <td>${log.actor}</td>
+            <td style="font-size:0.8rem; word-break:break-all; max-width:200px;">${log.target}</td>
+            <td style="font-size:0.8rem; color:var(--text-secondary);">${new Date(log.timestamp).toLocaleString()}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) { Utils.showToast(err.message, "error"); }
+    }
   </script>
+  <script type="module" src="js/floating-chat.js"></script>
 </body>
 </html>

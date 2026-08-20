@@ -7,87 +7,482 @@
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/navbar.css">
   <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/dashboard.css">
-  <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    .dash-layout {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .dash-layout { grid-template-columns: 1fr; }
+    }
+
+    /* Profile Card */
+    .profile-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: 18px;
+      overflow: hidden;
+      position: relative;
+    }
+    .profile-banner {
+      height: 80px;
+      background: linear-gradient(135deg, rgba(0,229,255,0.25), rgba(212,175,55,0.15));
+    }
+    .profile-avatar-wrap {
+      position: relative;
+      margin: -44px 0 0 24px;
+      width: 88px;
+    }
+    .profile-avatar {
+      width: 88px; height: 88px;
+      border-radius: 50%;
+      border: 3px solid var(--bg-secondary);
+      background: var(--bg-tertiary);
+      object-fit: cover;
+    }
+    .online-dot {
+      position: absolute;
+      bottom: 4px; right: 4px;
+      width: 14px; height: 14px;
+      background: var(--success);
+      border-radius: 50%;
+      border: 2px solid var(--bg-secondary);
+    }
+    .profile-body {
+      padding: 12px 24px 24px;
+    }
+    .profile-name {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .profile-username {
+      font-size: 0.85rem;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+    .profile-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .profile-bio {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      border-top: 1px solid var(--border-glass);
+      padding-top: 12px;
+      margin-top: 4px;
+    }
+    .profile-info-list {
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .p-info-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.83rem;
+      color: var(--text-secondary);
+    }
+    .p-info-row span:first-child { min-width: 16px; text-align: center; }
+    .profile-actions {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 600px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .stat-box {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: 12px;
+      padding: 16px 14px;
+      text-align: center;
+      transition: var(--transition-smooth);
+    }
+    .stat-box:hover { border-color: rgba(0,229,255,0.2); transform: translateY(-2px); }
+    .stat-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 4px; }
+    .stat-value { font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; }
+
+    /* Section Card */
+    .dash-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 20px;
+    }
+    .dash-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .dash-card-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1rem;
+      color: #fff;
+    }
+
+    /* Match card */
+    .match-card {
+      background: rgba(23,24,34,0.7);
+      border: 1px solid var(--border-glass);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .match-team { flex: 1; text-align: center; }
+    .match-player { font-weight: 700; font-size: 0.92rem; }
+    .match-club { font-size: 0.78rem; color: var(--primary); margin-top: 2px; }
+    .match-vs {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--secondary);
+      min-width: 40px;
+      text-align: center;
+    }
+
+    /* Challenge System */
+    .challenge-form {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+    .challenge-form select, .challenge-form input {
+      flex: 1;
+    }
+    .challenge-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      background: rgba(23,24,34,0.7);
+      border: 1px solid var(--border-glass);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      gap: 10px;
+    }
+    .challenge-item .ci-info { flex: 1; }
+    .challenge-item .ci-name { font-weight: 600; font-size: 0.9rem; }
+    .challenge-item .ci-msg { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* Chat Section */
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      height: 420px;
+      background: rgba(8,8,12,0.7);
+      border-radius: 12px;
+      border: 1px solid var(--border-glass);
+      overflow: hidden;
+    }
+    .chat-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-glass);
+      background: var(--bg-secondary);
+      flex-wrap: wrap;
+    }
+    .chat-toolbar select {
+      flex: 1;
+      min-width: 120px;
+      padding: 7px 10px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-glass);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.85rem;
+    }
+    #chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .chat-empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+    .chat-msg { display: flex; }
+    .chat-msg-mine { justify-content: flex-end; }
+    .chat-msg-theirs { justify-content: flex-start; }
+    .chat-bubble {
+      max-width: 70%;
+      padding: 9px 14px;
+      border-radius: 16px;
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+    .chat-msg-mine .chat-bubble {
+      background: rgba(0,229,255,0.15);
+      border: 1px solid rgba(0,229,255,0.2);
+      border-bottom-right-radius: 4px;
+    }
+    .chat-msg-theirs .chat-bubble {
+      background: rgba(23,24,34,0.9);
+      border: 1px solid var(--border-glass);
+      border-bottom-left-radius: 4px;
+    }
+    .chat-sender { font-size: 0.72rem; color: var(--primary); font-weight: 700; display: block; margin-bottom: 2px; }
+    .chat-time { font-size: 0.68rem; color: var(--text-muted); display: block; margin-top: 4px; text-align: right; }
+    .chat-input-row {
+      display: flex;
+      gap: 8px;
+      padding: 10px 12px;
+      border-top: 1px solid var(--border-glass);
+      background: var(--bg-secondary);
+    }
+    .chat-input-row input {
+      flex: 1;
+      padding: 9px 14px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-glass);
+      border-radius: 20px;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+    }
+    .chat-input-row input:focus { outline: none; border-color: var(--primary); }
+    .chat-send-btn {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #000;
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      border: none; cursor: pointer;
+      transition: var(--transition-smooth);
+      flex-shrink: 0;
+    }
+    .chat-send-btn:hover { transform: scale(1.1); box-shadow: 0 0 12px var(--primary-glow); }
+  </style>
 </head>
 <body>
-  <!-- Header -->
   <header>
     <div class="nav-container">
       <div class="logo-area">
-        <span class="logo-title">EF X TOUR 2026</span>
+        <a href="index.html" style="-webkit-text-fill-color:initial; text-decoration:none;">
+          <span class="logo-title">⚡ EF X TOUR 2026</span>
+        </a>
       </div>
-      <ul class="nav-links">
+      <ul class="nav-links" id="main-nav">
         <li><a href="dashboard.html" class="nav-link active">Dashboard</a></li>
-        <li><a href="registration.html" class="nav-link">Tournament Registration</a></li>
+        <li><a href="registration.html" class="nav-link">Tournament Reg</a></li>
         <li><a href="live-draw.html" class="nav-link">Live Draw</a></li>
         <li><a href="standings.html" class="nav-link">Standings</a></li>
         <li><a href="fixtures.html" class="nav-link">Fixtures</a></li>
       </ul>
       <div class="nav-auth">
-        <button id="btn-logout" class="btn btn-outline" style="padding: 8px 16px;">Logout</button>
+        <img id="nav-avatar" class="nav-user-avatar" src="https://api.dicebear.com/7.x/micah/svg?seed=default&backgroundColor=b6e3f4" alt="Avatar">
+        <button id="btn-logout" class="btn btn-outline" style="padding:8px 18px; font-size:0.85rem;">Logout</button>
       </div>
-      <button class="hamburger" aria-label="Toggle navigation">
+      <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
   </header>
-  <div class="mobile-nav-overlay"></div>
+  <div class="mobile-nav-overlay" id="nav-overlay"></div>
 
-  <!-- Dashboard Content -->
-  <div class="dashboard-grid">
+  <div class="dash-layout" id="dash-layout" style="opacity:0; transition:opacity 0.4s;">
+    <!-- Left Column: Profile + Actions -->
     <div>
-      <div class="profile-card">
-        <img id="p-avatar" src="https://via.placeholder.com/100" alt="Avatar" class="profile-avatar">
-        <div class="profile-info">
-          <h2 id="p-name">Loading Profile...</h2>
-          <p id="p-username">@username</p>
-          <div style="margin-top: 10px;">
-            <span id="p-role-badge" class="badge badge-info">Player</span>
-            <span id="p-registration-badge" class="badge badge-pending">Registration: None</span>
+      <!-- Profile Card -->
+      <div class="profile-card" style="margin-bottom:20px;">
+        <div class="profile-banner" id="profile-banner"></div>
+        <div class="profile-avatar-wrap">
+          <img id="p-avatar" class="profile-avatar" src="https://api.dicebear.com/7.x/micah/svg?seed=loading&backgroundColor=b6e3f4" alt="Avatar">
+          <span class="online-dot"></span>
+        </div>
+        <div class="profile-body">
+          <div class="profile-name" id="p-name">Loading...</div>
+          <div class="profile-username" id="p-username">@username</div>
+          <div class="profile-badges" id="p-badges">
+            <span class="badge badge-info" id="p-role-badge">Player</span>
+            <span class="badge badge-pending" id="p-reg-badge">Not Registered</span>
           </div>
+          <div class="profile-info-list" id="p-info-list"></div>
+          <div class="profile-bio" id="p-bio" style="display:none;"></div>
+          <div class="profile-actions" id="p-actions"></div>
         </div>
       </div>
 
-      <!-- Stats Grid -->
-      <h3 style="margin-bottom: 20px; font-size: 1.5rem; text-transform: uppercase;">League Statistics</h3>
-      <div class="stats-grid">
-        <div class="stat-box">
-          <div>Club Assigned</div>
-          <div class="stat-value text-gold" id="p-club">N/A</div>
+      <!-- Next Match -->
+      <div class="dash-card" style="margin-bottom:20px;">
+        <div class="dash-card-header">
+          <div class="dash-card-title">⚽ Next Match</div>
         </div>
-        <div class="stat-box">
-          <div>Matches</div>
-          <div class="stat-value" id="s-played">0</div>
+        <div id="next-match-details" style="color:var(--text-muted); font-size:0.88rem; text-align:center;">
+          No match scheduled yet.
         </div>
-        <div class="stat-box">
-          <div>Wins</div>
-          <div class="stat-value" id="s-wins">0</div>
+      </div>
+
+      <!-- Registration Steps -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <div class="dash-card-title">📋 How It Works</div>
         </div>
-        <div class="stat-box">
-          <div>Points</div>
-          <div class="stat-value text-blue" id="s-points">0</div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div style="display:flex; gap:12px; align-items:flex-start;">
+            <div style="min-width:26px; height:26px; border-radius:50%; background:rgba(0,229,255,0.15); border:1px solid var(--primary); display:flex; align-items:center; justify-content:center; font-size:0.78rem; font-weight:700; color:var(--primary);">1</div>
+            <div style="font-size:0.875rem; color:var(--text-secondary);">Register for a tournament from <strong>Tournament Reg</strong> page</div>
+          </div>
+          <div style="display:flex; gap:12px; align-items:flex-start;">
+            <div style="min-width:26px; height:26px; border-radius:50%; background:rgba(0,229,255,0.15); border:1px solid var(--primary); display:flex; align-items:center; justify-content:center; font-size:0.78rem; font-weight:700; color:var(--primary);">2</div>
+            <div style="font-size:0.875rem; color:var(--text-secondary);">Pay registration fee to Organizer Afiq directly</div>
+          </div>
+          <div style="display:flex; gap:12px; align-items:flex-start;">
+            <div style="min-width:26px; height:26px; border-radius:50%; background:rgba(212,175,55,0.15); border:1px solid var(--secondary); display:flex; align-items:center; justify-content:center; font-size:0.78rem; font-weight:700; color:var(--secondary);">3</div>
+            <div style="font-size:0.875rem; color:var(--text-secondary);">Wait for admin approval &amp; watch the <strong>Live Draw</strong></div>
+          </div>
+          <div style="display:flex; gap:12px; align-items:flex-start;">
+            <div style="min-width:26px; height:26px; border-radius:50%; background:rgba(0,230,118,0.15); border:1px solid var(--success); display:flex; align-items:center; justify-content:center; font-size:0.78rem; font-weight:700; color:var(--success);">4</div>
+            <div style="font-size:0.875rem; color:var(--text-secondary);">Play your fixtures &amp; submit results!</div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Sidebar details -->
+    <!-- Right Column: Stats + Tabs -->
     <div>
-      <div class="card" style="margin-bottom: 30px;">
-        <h3 class="text-gold" style="margin-bottom: 15px;">Next Match</h3>
-        <div id="next-match-details" style="text-align: center; color: var(--text-secondary);">
-          No match scheduled yet. Club draw is pending.
+      <!-- Stats -->
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-box">
+          <div class="stat-label">Club</div>
+          <div class="stat-value text-gold" id="p-club" style="font-size:0.95rem; word-break:break-word;">Pending</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Played</div>
+          <div class="stat-value" id="s-played">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Wins</div>
+          <div class="stat-value" id="s-wins">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Points</div>
+          <div class="stat-value text-blue" id="s-points">0</div>
         </div>
       </div>
 
-      <div class="card">
-        <h3 class="text-blue" style="margin-bottom: 15px;">Registration Steps</h3>
-        <ul style="color: var(--text-secondary); padding-left: 20px; font-size: 0.95rem;">
-          <li style="margin-bottom: 10px;">Go to Tournament Registration</li>
-          <li style="margin-bottom: 10px;">Enter payment references & transaction screenshot</li>
-          <li style="margin-bottom: 10px;">Wait for payment verification status approval</li>
-          <li style="margin-bottom: 10px;">Join Club Allocation draw lobby</li>
-        </ul>
+      <!-- Tabs -->
+      <div class="dash-card" style="padding:0; overflow:hidden;">
+        <div style="display:flex; border-bottom:1px solid var(--border-glass); background:var(--bg-secondary); overflow-x:auto;">
+          <button class="tab-btn active" data-tab="chat" style="flex:1; min-width:100px; padding:14px; border:none; background:none; color:var(--text-secondary); font-family:var(--font-display); font-weight:600; cursor:pointer; font-size:0.88rem; transition:all 0.2s; text-transform:uppercase; letter-spacing:0.5px;">💬 Messenger</button>
+          <button class="tab-btn" data-tab="challenges" style="flex:1; min-width:100px; padding:14px; border:none; background:none; color:var(--text-secondary); font-family:var(--font-display); font-weight:600; cursor:pointer; font-size:0.88rem; transition:all 0.2s; text-transform:uppercase; letter-spacing:0.5px;">⚔️ Challenges</button>
+          <button class="tab-btn" data-tab="history" style="flex:1; min-width:100px; padding:14px; border:none; background:none; color:var(--text-secondary); font-family:var(--font-display); font-weight:600; cursor:pointer; font-size:0.88rem; transition:all 0.2s; text-transform:uppercase; letter-spacing:0.5px;">📊 History</button>
+          <button class="tab-btn" data-tab="live" style="flex:1; min-width:100px; padding:14px; border:none; background:none; color:var(--text-secondary); font-family:var(--font-display); font-weight:600; cursor:pointer; font-size:0.88rem; transition:all 0.2s; text-transform:uppercase; letter-spacing:0.5px;">📺 Go Live</button>
+        </div>
+
+        <!-- Messenger Chat Tab -->
+        <div class="tab-content" id="tab-chat" style="padding:16px;">
+          <div style="display:grid; grid-template-columns: 240px 1fr; gap:12px; height:460px; background:rgba(8,8,12,0.8); border:1px solid var(--border-glass); border-radius:14px; overflow:hidden;">
+            <!-- Contacts -->
+            <div style="border-right:1px solid var(--border-glass); display:flex; flex-direction:column; background:var(--bg-secondary);">
+              <div style="padding:10px; border-bottom:1px solid var(--border-glass);">
+                <input type="text" id="chat-search" class="form-input" placeholder="Search player..." style="padding:6px 10px; font-size:0.8rem; width:100%;">
+              </div>
+              <div id="chat-contacts-list" style="flex:1; overflow-y:auto; padding:6px;">
+                <div style="color:var(--text-muted); font-size:0.8rem; text-align:center; padding:20px;">Loading players...</div>
+              </div>
+            </div>
+            <!-- Chat Window -->
+            <div style="display:flex; flex-direction:column;">
+              <div id="chat-active-header" style="padding:10px 16px; background:var(--bg-secondary); border-bottom:1px solid var(--border-glass); font-weight:700; font-size:0.9rem; color:#fff;">
+                Select a player to chat 💬
+              </div>
+              <div id="chat-msg-container" style="flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:8px;">
+                <div style="color:var(--text-muted); font-size:0.85rem; text-align:center; margin:auto;">Click a player on the left to start messaging!</div>
+              </div>
+              <div style="padding:10px; background:var(--bg-secondary); border-top:1px solid var(--border-glass); display:flex; gap:8px;">
+                <input type="text" id="dash-chat-input" class="form-input" placeholder="Type a message..." style="flex:1; border-radius:20px; font-size:0.85rem;" disabled>
+                <button id="dash-chat-send" class="btn btn-primary" style="border-radius:20px; padding:6px 16px; font-size:0.85rem;" disabled>Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Challenges Tab -->
+        <div class="tab-content" id="tab-challenges" style="padding:16px;">
+          <div class="dash-card" style="margin-bottom:14px; padding:16px;">
+            <div class="dash-card-title" style="margin-bottom:12px;">Send a Challenge</div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <select id="challenge-target" class="form-input" style="width:100%;">
+                <option value="">Select player to challenge...</option>
+              </select>
+              <input type="text" id="challenge-msg" class="form-input" placeholder="Optional message (e.g. 'Let's play tonight!')">
+              <button class="btn btn-primary" id="btn-send-challenge" style="width:100%;">⚔️ Send Challenge</button>
+            </div>
+          </div>
+          <div class="dash-card-title" style="margin-bottom:12px;">Incoming Challenges</div>
+          <div id="challenges-list">
+            <div style="color:var(--text-muted); font-size:0.85rem; text-align:center; padding:20px;">No pending challenges.</div>
+          </div>
+        </div>
+
+        <!-- History Tab -->
+        <div class="tab-content" id="tab-history" style="padding:16px; display:none;">
+          <div id="match-history-list">
+            <div style="color:var(--text-muted); font-size:0.85rem; text-align:center; padding:20px;">No match history yet.</div>
+          </div>
+        </div>
+
+        <!-- Go Live Tab -->
+        <div class="tab-content" id="tab-live" style="padding:16px; display:none;">
+          <div class="dash-card" style="margin-bottom:14px; padding:16px;">
+            <div class="dash-card-title" style="margin-bottom:12px;">Start a Community Stream</div>
+            <div style="background:rgba(0,229,255,0.08); border:1px solid rgba(0,229,255,0.2); border-radius:12px; padding:14px; margin-bottom:16px; text-align:center;">
+              <div style="font-weight:700; color:var(--primary); margin-bottom:4px;">🎥 New! Direct WebRTC Broadcast Studio</div>
+              <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:10px;">Stream your gameplay directly from browser without YouTube or Facebook!</p>
+              <a href="studio.html" class="btn btn-primary" style="padding:8px 20px; font-size:0.85rem;">Launch WebRTC Studio →</a>
+            </div>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:12px;">Or paste your YouTube / Facebook Live link:</p>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <input type="text" id="stream-title" class="form-input" placeholder="Stream Title (e.g. Afiq vs John - Division 1)">
+              <input type="url" id="stream-url" class="form-input" placeholder="YouTube/FB Live URL">
+              <button class="btn btn-primary" id="btn-go-live" style="width:100%;">🔴 Publish Stream</button>
+            </div>
+          </div>
+          
+          <div class="dash-card" style="padding:16px;" id="active-stream-card" style="display:none;">
+            <div class="dash-card-title" style="margin-bottom:12px; color:var(--success);">Your Stream is Live!</div>
+            <a href="streams.html" class="btn btn-outline" style="width:100%; margin-bottom:10px;">View on Live TV</a>
+            <button class="btn btn-danger" id="btn-end-stream" style="width:100%;">🛑 End Stream</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -97,58 +492,437 @@
   <script type="module">
     import AuthGuard from "./js/auth-guard.js";
     import AuthService from "./js/auth.js";
+    import Utils from "./js/utils.js";
     import { auth, db } from "./js/firebase-init.js";
-    import { doc, getDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import {
+      doc, getDoc, collection, getDocs, query, where, addDoc, setDoc, deleteDoc, onSnapshot, orderBy, limit
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     AuthGuard.guardPage();
 
-    document.getElementById('btn-logout').addEventListener('click', () => {
-      AuthService.logoutUser();
+    // Logout
+    document.getElementById('btn-logout').addEventListener('click', () => AuthService.logoutUser());
+
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.tab-btn').forEach(b => {
+          b.classList.remove('active');
+          b.style.color = 'var(--text-secondary)';
+          b.style.borderBottom = '';
+          b.style.background = '';
+        });
+        document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+        this.classList.add('active');
+        this.style.color = 'var(--primary)';
+        this.style.borderBottom = '2px solid var(--primary)';
+        this.style.background = 'rgba(0,229,255,0.05)';
+        document.getElementById('tab-' + this.dataset.tab).style.display = 'block';
+      });
     });
+    // Init first tab
+    document.querySelector('.tab-btn.active').click();
+
+    let currentUid = null;
 
     onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        // Fetch profile
+      if (!user) return;
+      currentUid = user.uid;
+
+      try {
+        // Load user profile
         const userDoc = await getDoc(doc(db, "users", user.uid));
         if (userDoc.exists()) {
           const data = userDoc.data();
-          document.getElementById('p-name').innerText = data.fullName;
-          document.getElementById('p-username').innerText = `@${data.username}`;
-          document.getElementById('p-role-badge').innerText = data.role;
-          if (data.profilePhoto) {
-            document.getElementById('p-avatar').src = data.profilePhoto;
-          }
-          
+          document.getElementById('p-name').textContent = data.fullName || 'Player';
+          document.getElementById('p-username').textContent = '@' + (data.username || 'unknown');
+
+          // Avatar
+          const avatarUrl = data.profilePhoto ||
+            `https://api.dicebear.com/7.x/micah/svg?seed=${encodeURIComponent(data.username||'player')}&backgroundColor=b6e3f4&mouth=smile&baseColor=f9c9b6`;
+          document.getElementById('p-avatar').src = avatarUrl;
+          document.getElementById('nav-avatar').src = avatarUrl;
+
+          // Role badge
+          const roleBadge = document.getElementById('p-role-badge');
           if (data.role === 'SUPER_ADMIN') {
-            document.getElementById('p-role-badge').className = "badge badge-success";
-            document.getElementById('p-role-badge').innerText += " (Access Panel below)";
-            const adminLink = document.createElement('div');
-            adminLink.style.marginTop = "20px";
-            adminLink.innerHTML = `<a href="admin.html" class="btn btn-secondary">Go to Admin control Center</a>`;
-            document.querySelector('.profile-info').appendChild(adminLink);
+            roleBadge.textContent = '👑 SUPER ADMIN';
+            roleBadge.className = 'badge badge-success';
+          } else if (data.role === 'TOURNAMENT_ADMIN') {
+            roleBadge.textContent = '🛡️ ADMIN';
+            roleBadge.className = 'badge badge-info';
+          } else {
+            roleBadge.textContent = '🎮 PLAYER';
+            roleBadge.className = 'badge badge-info';
           }
+
+          // Info list
+          const infoList = document.getElementById('p-info-list');
+          if (data.country) infoList.innerHTML += `<div class="p-info-row"><span>🌍</span><span>${data.country}</span></div>`;
+          if (data.phone) infoList.innerHTML += `<div class="p-info-row"><span>📱</span><span>${data.phone}</span></div>`;
+          infoList.innerHTML += `<div class="p-info-row"><span>📧</span><span>${data.email||user.email}</span></div>`;
+
+          // Bio
+          if (data.bio) {
+            const bio = document.getElementById('p-bio');
+            bio.style.display = 'block';
+            bio.textContent = '"' + data.bio + '"';
+          }
+
+          // Admin panel button
+          const actionsDiv = document.getElementById('p-actions');
+          if (data.role === 'SUPER_ADMIN' || data.role === 'TOURNAMENT_ADMIN') {
+            actionsDiv.innerHTML += `<a href="admin.html" class="btn btn-secondary" style="width:100%;">🛡️ Admin Control Center</a>`;
+          }
+          actionsDiv.innerHTML += `<a href="registration.html" class="btn btn-primary" style="width:100%;">📋 Tournament Registration</a>`;
         }
 
-        // Fetch registration details
+        // Registration badge
         const regDoc = await getDoc(doc(db, "registrations", user.uid));
-        const badge = document.getElementById('p-registration-badge');
+        const regBadge = document.getElementById('p-reg-badge');
         if (regDoc.exists()) {
-          const regData = regDoc.data();
-          badge.innerText = `Registration: ${regData.status}`;
-          if (regData.status === 'APPROVED') {
-            badge.className = "badge badge-success";
-          } else if (regData.status === 'REJECTED') {
-            badge.className = "badge badge-danger";
-          } else {
-            badge.className = "badge badge-pending";
-          }
-        } else {
-          badge.innerText = "Registration: NOT REGISTERED";
-          badge.className = "badge badge-danger";
+          const rd = regDoc.data();
+          const statusMap = { APPROVED: ['badge-success','✅ Approved'], REJECTED: ['badge-danger','❌ Rejected'], SUBMITTED: ['badge-pending','⏳ Submitted'] };
+          const [cls, lbl] = statusMap[rd.status] || ['badge-pending', rd.status];
+          regBadge.className = 'badge ' + cls;
+          regBadge.textContent = lbl;
         }
+
+        // League stats
+        const statsDoc = await getDoc(doc(db, "leagueTables", user.uid));
+        if (statsDoc.exists()) {
+          const s = statsDoc.data();
+          document.getElementById('p-club').textContent = s.clubName || 'N/A';
+          document.getElementById('s-played').textContent = s.played || 0;
+          document.getElementById('s-wins').textContent = s.wins || 0;
+          document.getElementById('s-points').textContent = s.points || 0;
+        }
+
+        // Next match
+        const fixturesSnap = await getDocs(query(collection(db, "fixtures"), where("status", "==", "PENDING")));
+        const nextMatchDiv = document.getElementById('next-match-details');
+        let found = false;
+        fixturesSnap.forEach(d => {
+          if (found) return;
+          const f = d.data();
+          if (f.homePlayer === user.uid || f.awayPlayer === user.uid) {
+            found = true;
+            nextMatchDiv.innerHTML = `
+              <div class="match-card">
+                <div class="match-team">
+                  <div class="match-player">${f.homePlayerName||'Home'}</div>
+                  <div class="match-club">${f.homeClub||''}</div>
+                </div>
+                <div class="match-vs">VS</div>
+                <div class="match-team">
+                  <div class="match-player">${f.awayPlayerName||'Away'}</div>
+                  <div class="match-club">${f.awayClub||''}</div>
+                </div>
+              </div>
+            `;
+          }
+        });
+
+        // Match history
+        await loadMatchHistory(user.uid);
+
+        // Load other users for messenger chat and challenge
+        await loadUsersForMessenger(user.uid);
+
+        // Load challenges
+        await loadChallenges(user.uid);
+
+        // Check if user has an active stream
+        checkActiveStream(user.uid);
+
+      } catch (err) {
+        console.error("Dashboard error:", err);
       }
+
+      // Reveal – always show page even if error
+      document.getElementById('dash-layout').style.opacity = '1';
+    });
+
+    let allPlayersMap = {};
+    let activeChatUid = null;
+    let chatUnsub = null;
+
+    async function loadUsersForMessenger(myUid) {
+      const snap = await getDocs(collection(db, "users"));
+      const contactsDiv = document.getElementById('chat-contacts-list');
+      const chalSel = document.getElementById('challenge-target');
+      contactsDiv.innerHTML = '';
+      allPlayersMap = {};
+
+      snap.forEach(d => {
+        if (d.id === myUid) return;
+        const u = d.data();
+        allPlayersMap[d.id] = u;
+        const name = u.fullName || u.username || 'Player';
+        const avatar = u.profilePhoto || `https://api.dicebear.com/7.x/micah/svg?seed=${d.id}&backgroundColor=b6e3f4`;
+
+        const el = document.createElement('div');
+        el.className = 'messenger-contact-item';
+        el.dataset.name = name.toLowerCase();
+        el.style.cssText = 'display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px; cursor:pointer; margin-bottom:4px; transition:background 0.2s;';
+        el.innerHTML = `
+          <img src="${avatar}" style="width:34px; height:34px; border-radius:50%; object-fit:cover;">
+          <div style="font-weight:600; font-size:0.85rem; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${name}</div>
+        `;
+        el.addEventListener('click', () => {
+          document.querySelectorAll('.messenger-contact-item').forEach(ci => ci.style.background = '');
+          el.style.background = 'rgba(0,229,255,0.12)';
+          selectMessengerChat(d.id, name, avatar);
+        });
+        contactsDiv.appendChild(el);
+
+        chalSel.innerHTML += `<option value="${d.id}">${name}</option>`;
+      });
+
+      // Filter search box
+      document.getElementById('chat-search')?.addEventListener('input', function() {
+        const q = this.value.toLowerCase().trim();
+        document.querySelectorAll('.messenger-contact-item').forEach(item => {
+          item.style.display = item.dataset.name.includes(q) ? 'flex' : 'none';
+        });
+      });
+    }
+
+    function selectMessengerChat(targetUid, name, avatar) {
+      activeChatUid = targetUid;
+      document.getElementById('chat-active-header').innerHTML = `
+        <div style="display:flex; align-items:center; gap:8px;">
+          <img src="${avatar}" style="width:28px; height:28px; border-radius:50%;">
+          <span>${name}</span>
+        </div>
+      `;
+      document.getElementById('dash-chat-input').disabled = false;
+      document.getElementById('dash-chat-send').disabled = false;
+
+      if (chatUnsub) chatUnsub();
+      const chatId = [currentUid, targetUid].sort().join('_');
+      const q = query(collection(db, "chats", chatId, "messages"), limit(50));
+
+      chatUnsub = onSnapshot(q, (snap) => {
+        const container = document.getElementById('chat-msg-container');
+        container.innerHTML = '';
+
+        if (snap.empty) {
+          container.innerHTML = '<div style="color:var(--text-muted); font-size:0.85rem; text-align:center; margin:auto;">No messages yet. Say hello to start chatting! 💬</div>';
+          return;
+        }
+
+        const msgs = snap.docs.map(d => d.data());
+        msgs.sort((a,b) => new Date(a.sentAt?.toDate ? a.sentAt.toDate() : a.sentAt || 0) - new Date(b.sentAt?.toDate ? b.sentAt.toDate() : b.sentAt || 0));
+
+        msgs.forEach(m => {
+          const isMine = m.senderUid === currentUid;
+          const sentDate = m.sentAt?.toDate ? m.sentAt.toDate() : new Date(m.sentAt || Date.now());
+          
+          const msgEl = document.createElement('div');
+          msgEl.style.cssText = `display:flex; ${isMine ? 'justify-content:flex-end' : 'justify-content:flex-start'}; margin-bottom:6px;`;
+          msgEl.innerHTML = `
+            <div style="max-width:75%; padding:8px 12px; border-radius:14px; font-size:0.85rem; line-height:1.4; ${isMine ? 'background:var(--primary); color:#000; border-bottom-right-radius:2px;' : 'background:var(--bg-tertiary); color:#fff; border:1px solid var(--border-glass); border-bottom-left-radius:2px;'}">
+              <div>${m.text}</div>
+              <div style="font-size:0.65rem; opacity:0.7; margin-top:4px; text-align:right;">${sentDate.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>
+            </div>
+          `;
+          container.appendChild(msgEl);
+        });
+        container.scrollTop = container.scrollHeight;
+      }, (err) => {
+        console.error("Chat error:", err);
+      });
+    }
+
+    document.getElementById('dash-chat-send').addEventListener('click', sendMessengerMsg);
+    document.getElementById('dash-chat-input').addEventListener('keydown', e => { if (e.key === 'Enter') sendMessengerMsg(); });
+
+    async function sendMessengerMsg() {
+      const input = document.getElementById('dash-chat-input');
+      const text = input.value.trim();
+      if (!text || !activeChatUid) { 
+        if (!activeChatUid) Utils.showToast('Select a contact first!', 'warning');
+        return; 
+      }
+      input.value = '';
+      const chatId = [currentUid, activeChatUid].sort().join('_');
+      
+      // Get sender name from stored profile data
+      const meDoc = document.getElementById('p-name').textContent || 'Player';
+      try {
+        await addDoc(collection(db, "chats", chatId, "messages"), {
+          senderUid: currentUid,
+          senderName: meDoc,
+          text,
+          sentAt: new Date().toISOString()
+        });
+      } catch (err) {
+        console.error('Send msg error:', err);
+        Utils.showToast('Message failed to send!', 'error');
+      }
+    }
+
+    // Realtime Challenges (Incoming + Outgoing)
+    function loadChallenges(myUid) {
+      const qIn = query(collection(db, "challenges"), where("targetUid", "==", myUid));
+      const qOut = query(collection(db, "challenges"), where("challengerUid", "==", myUid));
+
+      onSnapshot(qIn, (snapIn) => {
+        renderChallengesList(snapIn, true);
+      });
+      onSnapshot(qOut, (snapOut) => {
+        renderChallengesList(snapOut, false);
+      });
+    }
+
+    let challengesMap = {};
+    function renderChallengesList(snap, isIncoming) {
+      snap.forEach(d => { challengesMap[d.id] = { id: d.id, isIncoming, ...d.data() }; });
+      const list = document.getElementById('challenges-list');
+      const items = Object.values(challengesMap);
+
+      if (!items.length) {
+        list.innerHTML = '<div style="color:var(--text-muted); font-size:0.85rem; text-align:center; padding:20px;">No pending challenges.</div>';
+        return;
+      }
+
+      list.innerHTML = '';
+      items.forEach(c => {
+        const item = document.createElement('div');
+        item.className = 'challenge-item';
+        const label = c.isIncoming ? `⚔️ From: ${c.challengerName || 'Unknown'}` : `⚔️ Sent to: ${allPlayersMap[c.targetUid]?.fullName || 'Player'}`;
+        item.innerHTML = `
+          <div class="ci-info">
+            <div class="ci-name" style="font-weight:700; color:#fff;">${label}</div>
+            <div class="ci-msg" style="font-size:0.82rem; color:var(--text-secondary); margin-top:2px;">"${c.message || 'Ready to play!'}"</div>
+          </div>
+          <span class="badge badge-${c.status === 'PENDING' ? 'pending' : c.status === 'APPROVED' ? 'success' : 'danger'}">${c.status}</span>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    document.getElementById('btn-send-challenge').addEventListener('click', async () => {
+      if (!currentUid) return;
+      const targetUid = document.getElementById('challenge-target').value;
+      const msg = document.getElementById('challenge-msg').value.trim();
+      if (!targetUid) { Utils.showToast('Please select a player to challenge.', "warning"); return; }
+
+      Utils.showLoader();
+      try {
+        const meDoc = await getDoc(doc(db, "users", currentUid));
+        const myName = meDoc.exists() ? (meDoc.data().fullName || meDoc.data().username) : 'Player';
+
+        // 1. Create challenge doc
+        await addDoc(collection(db, "challenges"), {
+          challengerUid: currentUid,
+          challengerName: myName,
+          targetUid,
+          message: msg,
+          status: 'PENDING',
+          createdAt: new Date().toISOString()
+        });
+
+        // 2. Send notification to target player
+        await addDoc(collection(db, "users", targetUid, "notifications"), {
+          type: 'SOCIAL',
+          title: '⚔️ New Challenge Received!',
+          body: `${myName} challenged you to a match! "${msg || 'Let\'s play!'}"`,
+          createdAt: new Date().toISOString(),
+          read: false
+        });
+
+        document.getElementById('challenge-msg').value = '';
+        document.getElementById('challenge-target').value = '';
+        Utils.showToast('✅ Challenge sent! Waiting for Admin approval.', "success");
+      } catch (err) {
+        Utils.showToast("Challenge error: " + err.message, "error");
+      }
+      Utils.hideLoader();
+    });
+
+    // Match history
+    async function loadMatchHistory(myUid) {
+      const snap = await getDocs(collection(db, "matchResults"));
+      const list = document.getElementById('match-history-list');
+      const myMatches = [];
+      snap.forEach(d => {
+        const m = d.data();
+        if (m.homePlayer === myUid || m.awayPlayer === myUid) myMatches.push(m);
+      });
+      if (!myMatches.length) return;
+      list.innerHTML = '';
+      myMatches.forEach(m => {
+        const isHome = m.homePlayer === myUid;
+        const myScore = isHome ? m.homeScore : m.awayScore;
+        const oppScore = isHome ? m.awayScore : m.homeScore;
+        const oppName = isHome ? m.awayPlayerName : m.homePlayerName;
+        const result = myScore > oppScore ? 'W' : myScore < oppScore ? 'L' : 'D';
+        const resultColor = result === 'W' ? 'var(--success)' : result === 'L' ? 'var(--error)' : 'var(--warning)';
+        const item = document.createElement('div');
+        item.className = 'challenge-item';
+        item.innerHTML = `
+          <div class="ci-info">
+            <div class="ci-name">vs ${oppName||'Unknown'}</div>
+            <div class="ci-msg" style="color:${resultColor}; font-weight:700;">${myScore} — ${oppScore} · ${result}</div>
+          </div>
+          <span class="badge badge-${m.status === 'APPROVED' ? 'success' : 'pending'}">${m.status}</span>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    // Streams logic
+    function checkActiveStream(uid) {
+      onSnapshot(doc(db, "liveStreams", uid), (d) => {
+        const activeCard = document.getElementById('active-stream-card');
+        const goLiveBtn = document.getElementById('btn-go-live');
+        if (d.exists() && d.data().status === 'LIVE') {
+          activeCard.style.display = 'block';
+          goLiveBtn.disabled = true;
+          goLiveBtn.textContent = 'Stream Already Active';
+        } else {
+          activeCard.style.display = 'none';
+          goLiveBtn.disabled = false;
+          goLiveBtn.textContent = '🔴 Go Live';
+        }
+      });
+    }
+
+    document.getElementById('btn-go-live').addEventListener('click', async () => {
+      const title = document.getElementById('stream-title').value.trim();
+      const url = document.getElementById('stream-url').value.trim();
+      if (!title || !url) { alert("Please enter title and URL."); return; }
+
+      const meDoc = await getDoc(doc(db, "users", currentUid));
+      const myName = meDoc.exists() ? (meDoc.data().username || meDoc.data().fullName) : 'Player';
+      const myAvatar = meDoc.exists() ? meDoc.data().profilePhoto : '';
+
+      try {
+        await setDoc(doc(db, "liveStreams", currentUid), {
+          title,
+          url,
+          streamerUid: currentUid,
+          streamerName: myName,
+          streamerAvatar: myAvatar,
+          status: 'LIVE',
+          startedAt: new Date().toISOString()
+        });
+        alert("✅ Stream is now live on Live TV!");
+      } catch (err) { alert(err.message); }
+    });
+
+    document.getElementById('btn-end-stream').addEventListener('click', async () => {
+      if (!confirm("End your stream?")) return;
+      try {
+        await deleteDoc(doc(db, "liveStreams", currentUid));
+        alert("🛑 Stream ended.");
+      } catch (err) { alert(err.message); }
     });
   </script>
+  <script type="module" src="js/notifications.js"></script>
+  <script type="module" src="js/floating-chat.js"></script>
 </body>
 </html>

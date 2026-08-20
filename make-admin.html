@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Make Admin</title>
+</head>
+<body>
+  <h1>Make Me Admin</h1>
+  <p>Please login first, then click the button below to become an admin.</p>
+  <button id="btn-make-admin">Make Me SUPER_ADMIN</button>
+  <div id="status"></div>
+
+  <script src="js/firebase-config.js"></script>
+  <script type="module">
+    import { auth, db } from "./js/firebase-init.js";
+    import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    let currentUser = null;
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user;
+      if (user) {
+        document.getElementById('status').innerText = `Logged in as: ${user.email}`;
+      } else {
+        document.getElementById('status').innerText = `Not logged in.`;
+      }
+    });
+
+    document.getElementById('btn-make-admin').addEventListener('click', async () => {
+      if (!currentUser) {
+        alert("Please login on the main site first.");
+        return;
+      }
+      try {
+        await setDoc(doc(db, "users", currentUser.uid), {
+          role: "SUPER_ADMIN",
+          email: currentUser.email,
+          uid: currentUser.uid,
+          fullName: "Admin",
+          createdAt: new Date().toISOString()
+        }, { merge: true });
+        document.getElementById('status').innerText = `Success! ${currentUser.email} is now a SUPER_ADMIN.`;
+      } catch (err) {
+        document.getElementById('status').innerText = `Error: ${err.message}`;
+      }
+    });
+  </script>
+</body>
+</html>

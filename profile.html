@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Player Profile | EF X TOUR 2026</title>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    .profile-page {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+    
+    .pub-profile-header {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .pub-banner {
+      height: 160px;
+      background: linear-gradient(135deg, rgba(212,175,55,0.2), rgba(0,229,255,0.15));
+      position: relative;
+    }
+    .pub-banner::after {
+      content: ''; position: absolute; inset: 0;
+      background: url('https://www.transparenttextures.com/patterns/cubes.png');
+      opacity: 0.1;
+    }
+    .pub-avatar-container {
+      position: absolute;
+      bottom: -40px; left: 40px;
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      border: 4px solid var(--bg-secondary);
+      background: var(--bg-tertiary);
+      overflow: hidden;
+    }
+    .pub-avatar { width: 100%; height: 100%; object-fit: cover; }
+    
+    .pub-body {
+      padding: 56px 40px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+    .pub-info { flex: 1; min-width: 280px; }
+    .pub-name {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .pub-username {
+      font-size: 1rem;
+      color: var(--primary);
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+    .pub-bio {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 16px;
+      max-width: 500px;
+    }
+    
+    .pub-stats {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .pub-stat-box {
+      background: rgba(23,24,34,0.6);
+      border: 1px solid var(--border-glass);
+      border-radius: 12px;
+      padding: 16px 24px;
+      text-align: center;
+      min-width: 110px;
+    }
+    .pub-stat-val {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .pub-stat-lbl {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+    
+    .pub-history-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .match-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      background: rgba(23,24,34,0.5);
+      border: 1px solid var(--border-glass);
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    .match-item:last-child { margin-bottom: 0; }
+    .match-score { font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; }
+    .match-result-W { color: var(--success); }
+    .match-result-L { color: var(--error); }
+    .match-result-D { color: var(--warning); }
+    
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav-container">
+      <div class="logo-area">
+        <a href="index.html" style="-webkit-text-fill-color:initial;text-decoration:none;">
+          <span class="logo-title">⚡ EF X TOUR 2026</span>
+        </a>
+      </div>
+      <ul class="nav-links" id="main-nav">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="streams.html" class="nav-link">Live TV</a></li>
+        <li><a href="standings.html" class="nav-link">Standings</a></li>
+        <li><a href="fixtures.html" class="nav-link">Fixtures</a></li>
+      </ul>
+      <div class="nav-auth">
+        <a href="dashboard.html" class="btn btn-outline" style="padding:8px 16px; font-size:0.85rem;" id="nav-btn-dash">Dashboard</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="profile-page" id="profile-content" style="display:none;">
+    <div class="pub-profile-header">
+      <div class="pub-banner">
+        <div class="pub-avatar-container">
+          <img src="" id="prof-avatar" class="pub-avatar">
+        </div>
+      </div>
+      <div class="pub-body">
+        <div class="pub-info">
+          <div class="pub-name" id="prof-name">Loading...</div>
+          <div class="pub-username" id="prof-username">@loading</div>
+          <div style="margin-bottom:12px;" id="prof-badges"></div>
+          <div class="pub-bio" id="prof-bio"></div>
+          <div style="font-size:0.85rem; color:var(--text-muted);" id="prof-joined"></div>
+        </div>
+        <div class="pub-stats">
+          <div class="pub-stat-box">
+            <div class="pub-stat-val text-gold" id="stat-club" style="font-size:1.2rem; margin-top:8px;">—</div>
+            <div class="pub-stat-lbl">Current Club</div>
+          </div>
+          <div class="pub-stat-box">
+            <div class="pub-stat-val text-blue" id="stat-winrate">0%</div>
+            <div class="pub-stat-lbl">Win Rate</div>
+          </div>
+          <div class="pub-stat-box">
+            <div class="pub-stat-val" id="stat-pts">0</div>
+            <div class="pub-stat-lbl">League Pts</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pub-history-card">
+      <h3 style="font-family:var(--font-display); font-size:1.1rem; margin-bottom:16px;">Recent Matches</h3>
+      <div id="prof-history">
+        <div style="color:var(--text-muted); font-size:0.9rem; text-align:center; padding:20px;">No match history found.</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="loading-err" style="text-align:center; padding:100px 24px; color:var(--text-muted);">
+    Loading profile...
+  </div>
+
+  <script src="js/firebase-config.js"></script>
+  <script type="module">
+    import { db } from "./js/firebase-init.js";
+    import { doc, getDoc, collection, query, where, getDocs, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    async function loadProfile() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const uid = urlParams.get('uid');
+      
+      if (!uid) {
+        document.getElementById('loading-err').textContent = "Player not found. Invalid URL.";
+        return;
+      }
+
+      try {
+        const userDoc = await getDoc(doc(db, "users", uid));
+        if (!userDoc.exists()) {
+          document.getElementById('loading-err').textContent = "Player not found.";
+          return;
+        }
+
+        const u = userDoc.data();
+        document.getElementById('profile-content').style.display = 'block';
+        document.getElementById('loading-err').style.display = 'none';
+
+        document.getElementById('prof-name').textContent = u.fullName || u.username || 'Unknown Player';
+        document.getElementById('prof-username').textContent = `@${u.username || uid.slice(0,8)}`;
+        const avatarSeed = encodeURIComponent(u.username || uid);
+        document.getElementById('prof-avatar').src = u.profilePhoto || `https://api.dicebear.com/7.x/adventurer/svg?seed=${avatarSeed}&backgroundColor=b6e3f4`;
+        document.getElementById('prof-bio').textContent = u.bio ? `"${u.bio}"` : '';
+        
+        // Safe date parsing (handles Firestore Timestamp or ISO string)
+        let joinedText = '';
+        try {
+          const rawDate = u.createdAt?.toDate ? u.createdAt.toDate() : (u.createdAt ? new Date(u.createdAt) : null);
+          if (rawDate && !isNaN(rawDate)) joinedText = `Joined ${rawDate.toLocaleDateString('en-MY', {month:'long', year:'numeric'})}`;
+        } catch (_) {}
+        document.getElementById('prof-joined').textContent = joinedText;
+
+        // Role badges
+        const badges = document.getElementById('prof-badges');
+        if (u.role === 'SUPER_ADMIN' || u.role === 'TOURNAMENT_ADMIN') {
+          badges.innerHTML += `<span class="badge badge-success">STAFF</span> `;
+        }
+        badges.innerHTML += `<span class="badge badge-info">VERIFIED PLAYER</span>`;
+
+        // Stats
+        const statsDoc = await getDoc(doc(db, "leagueTables", uid));
+        let played = 0, wins = 0;
+        if (statsDoc.exists()) {
+          const s = statsDoc.data();
+          played = s.played || 0;
+          wins = s.wins || 0;
+          document.getElementById('stat-club').textContent = s.clubName || 'None';
+          document.getElementById('stat-pts').textContent = s.points || 0;
+        }
+        
+        const winrate = played > 0 ? Math.round((wins / played) * 100) : 0;
+        document.getElementById('stat-winrate').textContent = winrate + '%';
+
+        // History
+        const matchesRef = collection(db, "matchResults");
+        const homeQ = query(matchesRef, where("homePlayer", "==", uid), where("status", "==", "APPROVED"), limit(10));
+        const awayQ = query(matchesRef, where("awayPlayer", "==", uid), where("status", "==", "APPROVED"), limit(10));
+        
+        const [hSnap, aSnap] = await Promise.all([getDocs(homeQ), getDocs(awayQ)]);
+        const matches = [];
+        hSnap.forEach(d => matches.push(d.data()));
+        aSnap.forEach(d => matches.push(d.data()));
+        
+        matches.sort((a, b) => {
+          const da = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
+          const db2 = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
+          return db2 - da;
+        });
+        
+        const histDiv = document.getElementById('prof-history');
+        if (matches.length > 0) {
+          histDiv.innerHTML = '';
+          matches.slice(0,10).forEach(m => {
+            const isHome = m.homePlayer === uid;
+            const myScore = isHome ? m.homeScore : m.awayScore;
+            const oppScore = isHome ? m.awayScore : m.homeScore;
+            const oppName = isHome ? m.awayPlayerName : m.homePlayerName;
+            
+            let res = 'D';
+            if (myScore > oppScore) res = 'W';
+            if (myScore < oppScore) res = 'L';
+
+            histDiv.innerHTML += `
+              <div class="match-item">
+                <div>
+                  <div style="font-weight:700; font-size:0.95rem;">vs <a href="profile.html?uid=${isHome ? m.awayPlayer : m.homePlayer}" style="color:var(--primary); text-decoration:none;">${oppName}</a></div>
+                  <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Tournament Match</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:16px;">
+                  <span class="match-score match-result-${res}">${myScore} - ${oppScore}</span>
+                  <span class="badge badge-${res==='W'?'success':res==='L'?'danger':'warning'}">${res}</span>
+                </div>
+              </div>
+            `;
+          });
+        }
+      } catch (err) {
+        document.getElementById('loading-err').textContent = err.message;
+      }
+    }
+
+    loadProfile();
+  </script>
+</body>
+</html>

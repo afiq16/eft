@@ -7,39 +7,56 @@
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/navbar.css">
   <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    .rank-medal { font-size: 1.2rem; font-weight: 800; }
+    .top-1 { color: #ffd700; }
+    .top-2 { color: #c0c0c0; }
+    .top-3 { color: #cd7f32; }
+    .player-cell { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+    .player-cell:hover { text-decoration: underline; color: var(--primary); }
+    .player-mini-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-glass); }
+  </style>
 </head>
 <body>
   <!-- Header -->
-  <header>
+  <header id="main-header">
     <div class="nav-container">
       <div class="logo-area">
-        <span class="logo-title">EF X TOUR 2026</span>
+        <a href="index.html" style="-webkit-text-fill-color:initial; text-decoration:none;">
+          <span class="logo-title">⚡ EF X TOUR 2026</span>
+        </a>
       </div>
-      <ul class="nav-links">
+      <ul class="nav-links" id="main-nav">
         <li><a href="index.html" class="nav-link">Home</a></li>
-        <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+        <li><a href="feed.html" class="nav-link">Feed</a></li>
+        <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+        <li><a href="streams.html" class="nav-link">Live TV</a></li>
         <li><a href="standings.html" class="nav-link active">Standings</a></li>
         <li><a href="fixtures.html" class="nav-link">Fixtures</a></li>
-        <li><a href="live-draw.html" class="nav-link">Live Draw</a></li>
       </ul>
-      <button class="hamburger" aria-label="Toggle navigation">
+      <div class="nav-auth">
+        <a href="dashboard.html" class="btn btn-outline" style="padding:8px 16px; font-size:0.85rem;">Dashboard</a>
+      </div>
+      <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation">
         <span></span><span></span><span></span>
       </button>
     </div>
   </header>
-  <div class="mobile-nav-overlay"></div>
+  <div class="mobile-nav-overlay" id="nav-overlay"></div>
 
-  <div style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
-    <h2 class="text-gold" style="font-size: 2rem; margin-bottom: 30px; text-transform: uppercase;">League Table</h2>
+  <div style="max-width: 1200px; margin: 40px auto; padding: 0 20px 80px;">
+    <div style="text-align:center; margin-bottom:32px;">
+      <h1 class="text-gold" style="font-family:var(--font-display); font-size: 2.4rem; font-weight:800; margin-bottom:8px;">🏆 Official League Standings</h1>
+      <p style="color:var(--text-secondary); font-size:0.95rem;">Updated automatically after every approved match result.</p>
+    </div>
 
-    <div class="table-container">
+    <div class="table-container" style="background:var(--bg-glass); border:1px solid var(--border-glass); border-radius:16px; padding:8px;">
       <table>
         <thead>
           <tr>
-            <th>Pos</th>
+            <th style="width:60px;">Pos</th>
             <th>Player Name</th>
-            <th>Club</th>
+            <th>Assigned Club</th>
             <th>P</th>
             <th>W</th>
             <th>D</th>
@@ -50,7 +67,7 @@
         </thead>
         <tbody id="standings-body">
           <tr>
-            <td colspan="9" style="text-align: center; color: var(--text-muted);">Standings will compute automatically after match results.</td>
+            <td colspan="9" style="text-align: center; color: var(--text-muted); padding:30px;">Standings will compute automatically after match results.</td>
           </tr>
         </tbody>
       </table>
@@ -73,24 +90,34 @@
           let standings = [];
           
           querySnapshot.forEach(docSnap => {
-            standings.push(docSnap.data());
+            standings.push({ playerId: docSnap.id, ...docSnap.data() });
           });
 
           // Sort by points, then goal difference
-          standings.sort((a, b) => b.points - a.points || b.goalDifference - a.goalDifference);
+          standings.sort((a, b) => (b.points || 0) - (a.points || 0) || (b.goalDifference || 0) - (a.goalDifference || 0));
 
           standings.forEach((row, index) => {
+            const rank = index + 1;
+            const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+            const rankClass = rank <= 3 ? `rank-medal top-${rank}` : '';
+            const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${row.playerId}&hairColor=2c1b18,4a312c`;
+
             const tr = document.createElement('tr');
             tr.innerHTML = `
-              <td>${index + 1}</td>
-              <td style="font-weight: 600;">${row.playerName}</td>
-              <td class="text-blue">${row.clubName}</td>
+              <td class="${rankClass}">${medal}</td>
+              <td>
+                <div class="player-cell" onclick="window.location.href='profile.html?uid=${row.playerId}'">
+                  <img src="${avatarUrl}" class="player-mini-avatar">
+                  <span style="font-weight: 700;">${row.playerName || 'Player'}</span>
+                </div>
+              </td>
+              <td class="text-blue" style="font-weight:600;">${row.clubName || 'Pending'}</td>
               <td>${row.played || 0}</td>
               <td>${row.wins || 0}</td>
               <td>${row.draws || 0}</td>
               <td>${row.losses || 0}</td>
-              <td>${row.goalDifference || 0}</td>
-              <td class="text-gold" style="font-weight: 700;">${row.points || 0}</td>
+              <td style="font-weight:700;">${row.goalDifference || 0}</td>
+              <td class="text-gold" style="font-weight: 800; font-size:1.1rem;">${row.points || 0}</td>
             `;
             standingsBody.appendChild(tr);
           });
@@ -101,5 +128,7 @@
     }
     loadStandings();
   </script>
+  <script type="module" src="js/notifications.js"></script>
+  <script type="module" src="js/floating-chat.js"></script>
 </body>
 </html>

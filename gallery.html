@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery | EF X TOUR 2026</title>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    .gallery-layout {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px 80px;
+    }
+    .gallery-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .gallery-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 800;
+      color: #fff;
+    }
+    .gallery-subtitle {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-top: 8px;
+    }
+    .submit-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 36px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .gallery-item {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: transform 0.3s, border-color 0.3s;
+      position: relative;
+    }
+    .gallery-item:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+    }
+    .gallery-img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+      cursor: pointer;
+    }
+    .gallery-info {
+      padding: 14px 16px;
+    }
+    .gallery-item-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .gallery-item-author {
+      font-size: 0.78rem;
+      color: var(--primary);
+    }
+
+    /* Modal Viewer */
+    .lightbox-modal {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.9);
+      backdrop-filter: blur(8px);
+      z-index: 10000;
+      display: none;
+      align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .lightbox-content {
+      max-width: 900px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .lightbox-img {
+      max-width: 100%;
+      max-height: 75vh;
+      border-radius: 12px;
+      object-fit: contain;
+      border: 1px solid var(--border-glass);
+    }
+    .lightbox-caption {
+      margin-top: 14px;
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <header id="main-header">
+    <div class="nav-container">
+      <div class="logo-area">
+        <a href="index.html" style="-webkit-text-fill-color:initial; text-decoration:none;">
+          <span class="logo-title">⚡ EF X TOUR 2026</span>
+        </a>
+      </div>
+      <ul class="nav-links" id="main-nav">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="feed.html" class="nav-link">Feed</a></li>
+        <li><a href="gallery.html" class="nav-link active">Gallery</a></li>
+        <li><a href="streams.html" class="nav-link">Live TV</a></li>
+        <li class="nav-auth-only" id="nav-standings"><a href="standings.html" class="nav-link">Standings</a></li>
+        <li class="nav-auth-only" id="nav-fixtures"><a href="fixtures.html" class="nav-link">Fixtures</a></li>
+      </ul>
+      <div class="nav-auth" id="nav-auth-btns">
+        <a href="login.html" class="btn btn-outline" id="btn-nav-login" style="padding:8px 18px; font-size:0.85rem;">Login</a>
+        <a href="register.html" class="btn btn-primary" id="btn-nav-reg" style="padding:8px 18px; font-size:0.85rem;">Register</a>
+        <a href="dashboard.html" class="btn btn-outline nav-auth-only" id="btn-nav-dash" style="padding:8px 18px; font-size:0.85rem; display:none;">Dashboard</a>
+        <button class="btn btn-outline nav-auth-only" id="btn-nav-logout" style="padding:8px 18px; font-size:0.85rem; display:none;">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="gallery-layout">
+    <div class="gallery-header">
+      <h1 class="gallery-title">🖼️ Tournament Photo Gallery</h1>
+      <p class="gallery-subtitle">Best match moments, squad showcases, and trophy celebrations approved by admins!</p>
+    </div>
+
+    <!-- Submit Photo Form -->
+    <div class="submit-card" id="submit-card" style="display:none;">
+      <h3 style="margin-bottom:14px; font-size:1.1rem; color:#fff;">📸 Submit Your Photo</h3>
+      <div class="form-group">
+        <label>Photo Title / Caption *</label>
+        <input type="text" id="g-title" class="form-input" placeholder="e.g. My Division 1 Squad Showcase!">
+      </div>
+      <div class="form-group">
+        <label>Select Photo File *</label>
+        <input type="file" id="g-file-input" accept="image/*" class="form-input">
+      </div>
+      <div class="form-group">
+        <label>Or Image Link (URL)</label>
+        <input type="url" id="g-url" class="form-input" placeholder="https://...">
+      </div>
+      <button class="btn btn-primary" id="btn-submit-photo" style="width:100%;">📤 Submit for Approval</button>
+    </div>
+
+    <div class="gallery-grid" id="gallery-grid">
+      <div style="text-align:center; color:var(--text-muted); grid-column:1/-1; padding:40px;">Loading gallery...</div>
+    </div>
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox-modal" id="lightbox">
+    <div class="lightbox-content">
+      <img src="" id="lightbox-img" class="lightbox-img">
+      <div id="lightbox-caption" class="lightbox-caption"></div>
+      <button class="btn btn-outline" style="margin-top:16px;" onclick="document.getElementById('lightbox').style.display='none'">Close</button>
+    </div>
+  </div>
+
+  <script src="js/firebase-config.js"></script>
+  <script type="module">
+    import { auth, db } from "./js/firebase-init.js";
+    import Utils from "./js/utils.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import {
+      collection, addDoc, getDocs, doc, getDoc, query, where, orderBy, onSnapshot
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    let currentUser = null;
+    let currentUserData = null;
+
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user;
+      const loggedIn = !!user;
+      
+      document.querySelectorAll('.nav-auth-only').forEach(el => el.style.display = loggedIn ? '' : 'none');
+      document.getElementById('btn-nav-login').style.display = loggedIn ? 'none' : '';
+      document.getElementById('btn-nav-reg').style.display = loggedIn ? 'none' : '';
+      document.getElementById('submit-card').style.display = loggedIn ? 'block' : 'none';
+
+      if (user) {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) currentUserData = userDoc.data();
+      }
+    });
+
+    document.getElementById('btn-nav-logout')?.addEventListener('click', async () => {
+      await signOut(auth);
+      window.location.reload();
+    });
+
+    document.getElementById('btn-submit-photo').addEventListener('click', async () => {
+      const title = document.getElementById('g-title').value.trim();
+      let url = document.getElementById('g-url').value.trim();
+      const fileInput = document.getElementById('g-file-input');
+
+      if (!title || (!url && (!fileInput.files || !fileInput.files[0]))) {
+        Utils.showToast("Title and a Photo (file or URL) are required!", "warning");
+        return;
+      }
+
+      Utils.showLoader();
+      try {
+        if (fileInput.files && fileInput.files[0]) {
+          url = await new Promise((resolve, reject) => {
+            const r = new FileReader();
+            r.onload = e => resolve(e.target.result);
+            r.onerror = err => reject(err);
+            r.readAsDataURL(fileInput.files[0]);
+          });
+        }
+
+        const authorName = currentUserData?.fullName || currentUserData?.username || currentUser?.displayName || currentUser?.email?.split('@')[0] || 'Player';
+
+        await addDoc(collection(db, "galleryPhotos"), {
+          title,
+          imageUrl: url,
+          authorUid: currentUser.uid,
+          authorName: authorName,
+          status: 'PENDING',
+          createdAt: new Date().toISOString()
+        });
+        document.getElementById('g-title').value = '';
+        document.getElementById('g-url').value = '';
+        fileInput.value = '';
+        Utils.showToast("Submitted! Waiting for admin approval.", "success");
+      } catch (err) { Utils.showToast(err.message, "error"); }
+      Utils.hideLoader();
+    });
+
+    // Load APPROVED photos
+    const q = query(collection(db, "galleryPhotos"), where("status", "==", "APPROVED"));
+    onSnapshot(q, (snap) => {
+      const grid = document.getElementById('gallery-grid');
+      if (snap.empty) {
+        grid.innerHTML = '<div style="text-align:center; color:var(--text-muted); grid-column:1/-1; padding:40px;">No photos in the gallery yet. Submit yours above!</div>';
+        return;
+      }
+      grid.innerHTML = '';
+      snap.forEach(d => {
+        const item = d.data();
+        const el = document.createElement('div');
+        el.className = 'gallery-item';
+        el.innerHTML = `
+          <img src="${item.imageUrl}" class="gallery-img" onclick="openLightbox('${item.imageUrl}', '${Utils.escapeHtml(item.title)}')">
+          <div class="gallery-info">
+            <div class="gallery-item-title">${Utils.escapeHtml(item.title)}</div>
+            <div class="gallery-item-author">By ${item.authorName}</div>
+          </div>
+        `;
+        grid.appendChild(el);
+      });
+    });
+
+    window.openLightbox = function(url, title) {
+      document.getElementById('lightbox-img').src = url;
+      document.getElementById('lightbox-caption').textContent = title;
+      document.getElementById('lightbox-modal') ? document.getElementById('lightbox-modal').style.display = 'flex' : document.getElementById('lightbox').style.display = 'flex';
+    };
+  </script>
+  <script type="module" src="js/notifications.js"></script>
+</body>
+</html>

@@ -3,74 +3,297 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EF X TOUR 2026 | Ultimate Esports League</title>
+  <title>EF X TOUR 2026 | Ultimate eFootball League Platform</title>
+  <meta name="description" content="EF X TOUR 2026 — The ultimate eFootball tournament platform. Join live draws, track standings, share posts, stream live via WebRTC, and compete for glory.">
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/navbar.css">
   <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/responsive.css">
   <style>
+    /* ── Hero ─────────────────────────────── */
     .hero {
-      height: 70vh;
+      position: relative;
+      min-height: 90vh;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       text-align: center;
-      position: relative;
-      background: radial-gradient(circle at center, rgba(0, 229, 255, 0.15) 0%, transparent 60%);
-      padding: 0 20px;
+      padding: 90px 24px 70px;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,229,255,0.14) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 50% at 80% 80%, rgba(212,175,55,0.08) 0%, transparent 60%);
+    }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: float linear infinite;
+      opacity: 0.4;
+    }
+    @keyframes float {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      10% { opacity: 0.4; }
+      90% { opacity: 0.4; }
+      100% { transform: translateY(-20px) scale(1); opacity: 0; }
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 900px; }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 18px;
+      border: 1px solid rgba(0,229,255,0.3);
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      background: rgba(0,229,255,0.08);
+      margin-bottom: 24px;
+      animation: badgePulse 2s ease-in-out infinite;
+    }
+    @keyframes badgePulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(0,229,255,0.3); }
+      50% { box-shadow: 0 0 0 6px rgba(0,229,255,0); }
+    }
+    .live-dot {
+      width: 8px; height: 8px;
+      background: #ff1744;
+      border-radius: 50%;
+      animation: livePulse 1.2s ease-in-out infinite;
+    }
+    @keyframes livePulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(255,23,68,0.5); }
+      50% { box-shadow: 0 0 0 5px rgba(255,23,68,0); }
     }
     .hero-title {
-      font-size: 4rem;
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
       font-weight: 800;
-      line-height: 1.1;
-      margin-bottom: 20px;
+      line-height: 1.05;
+      margin-bottom: 18px;
+      letter-spacing: -1px;
+    }
+    .hero-title .line1 { color: #fff; }
+    .hero-title .line2 {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
     .hero-subtitle {
-      font-size: 1.5rem;
+      font-size: 1.15rem;
       color: var(--text-secondary);
-      margin-bottom: 40px;
-      max-width: 700px;
+      max-width: 660px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
     }
-    .hero-buttons {
+    .hero-cta {
       display: flex;
-      gap: 20px;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 60px;
     }
-    .section-title {
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .h-stat-val {
+      font-family: var(--font-display);
       font-size: 2rem;
-      text-align: center;
-      margin: 60px 0 30px;
-      text-transform: uppercase;
+      font-weight: 800;
+      color: var(--primary);
     }
-    .grid-container {
+    .h-stat-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ── Section Structure ─────────────────── */
+    .section {
       max-width: 1200px;
       margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 30px;
-      padding: 0 20px;
+      padding: 60px 24px;
     }
+    .section-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .section-tag {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 50px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      background: rgba(0,229,255,0.1);
+      color: var(--primary);
+      border: 1px solid rgba(0,229,255,0.2);
+      margin-bottom: 12px;
+    }
+    .section-tag.gold {
+      background: rgba(212,175,55,0.1);
+      color: var(--secondary);
+      border-color: rgba(212,175,55,0.2);
+    }
+    .section-title {
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .section-subtitle {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      max-width: 540px;
+      margin: 0 auto;
+    }
+
+    /* ── Notice Cards ─────────────────────── */
+    .notice-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .notice-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: 14px;
+      padding: 22px;
+      transition: var(--transition-smooth);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .notice-card:hover {
+      border-color: rgba(0,229,255,0.3);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,229,255,0.08);
+    }
+    .notice-card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+      background: var(--primary); border-radius: 3px 0 0 3px;
+    }
+    .notice-card.gold::before { background: var(--secondary); }
+    .notice-type {
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;
+      color: var(--primary); margin-bottom: 8px;
+    }
+    .notice-card.gold .notice-type { color: var(--secondary); }
+    .notice-title { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+    .notice-body { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .notice-time { font-size: 0.75rem; color: var(--text-muted); margin-top: 12px; }
+
+    /* ── Notice Modal ─────────────────────── */
+    .notice-modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(6px);
+      z-index: 10000;
+      display: none;
+      align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .notice-modal {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-glass);
+      border-radius: 16px;
+      width: 100%; max-width: 600px;
+      padding: 32px;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    }
+    .notice-modal-close {
+      position: absolute; top: 20px; right: 20px;
+      background: rgba(255,255,255,0.1); border: none;
+      width: 32px; height: 32px; border-radius: 50%;
+      color: #fff; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: 0.2s;
+    }
+    .notice-modal-close:hover { background: rgba(255,255,255,0.2); }
+
+    /* ── Features Grid ────────────────────── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: 14px;
+      padding: 28px 24px;
+      text-align: center;
+      transition: var(--transition-smooth);
+    }
+    .feature-card:hover {
+      border-color: rgba(0,229,255,0.3);
+      transform: translateY(-5px);
+      box-shadow: 0 16px 48px rgba(0,229,255,0.08);
+    }
+    .feature-icon { font-size: 2.5rem; margin-bottom: 14px; display: block; }
+    .feature-title { font-family: var(--font-display); font-weight: 700; color: #fff; margin-bottom: 8px; }
+    .feature-desc { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6; }
+
+    /* Preview Grids */
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .mini-post-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    footer {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-glass);
+      padding: 40px 24px 30px;
+      text-align: center;
+    }
+    .nav-auth-only { display: none; }
   </style>
 </head>
 <body>
-
-  <!-- Premium Header -->
-  <header>
+  <!-- Header Navigation -->
+  <header id="main-header">
     <div class="nav-container">
       <div class="logo-area">
-        <span class="logo-title">EF X TOUR 2026</span>
+        <a href="index.html" style="-webkit-text-fill-color:initial; text-decoration:none;">
+          <span class="logo-title">⚡ EF X TOUR 2026</span>
+        </a>
       </div>
-      <ul class="nav-links" id="main-nav">
+
+      <ul class="nav-links" id="main-nav" role="navigation" aria-label="Main navigation">
         <li><a href="index.html" class="nav-link active">Home</a></li>
-        <li><a href="standings.html" class="nav-link">Standings</a></li>
-        <li><a href="fixtures.html" class="nav-link">Fixtures</a></li>
-        <li><a href="live-draw.html" class="nav-link">Live Lottery</a></li>
-        <li><a href="rules.html" class="nav-link">Rules</a></li>
+        <li><a href="feed.html" class="nav-link">Feed</a></li>
+        <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+        <li><a href="streams.html" class="nav-link">Live TV</a></li>
+        <li class="nav-auth-only" id="nav-standings"><a href="standings.html" class="nav-link">Standings</a></li>
+        <li class="nav-auth-only" id="nav-fixtures"><a href="fixtures.html" class="nav-link">Fixtures</a></li>
+        <li class="nav-auth-only" id="nav-draw"><a href="live-draw.html" class="nav-link">Live Draw</a></li>
       </ul>
-      <div class="nav-auth">
-        <a href="login.html" class="btn btn-outline" style="padding: 8px 16px;">Login</a>
-        <a href="register.html" class="btn btn-primary" style="padding: 8px 16px;">Register</a>
+
+      <div class="nav-auth" id="nav-auth-btns">
+        <a href="login.html" class="btn btn-outline" id="btn-nav-login" style="padding:8px 18px; font-size:0.85rem;">Login</a>
+        <a href="register.html" class="btn btn-primary" id="btn-nav-reg" style="padding:8px 18px; font-size:0.85rem;">Register</a>
+        <a href="dashboard.html" class="btn btn-outline nav-auth-only" id="btn-nav-dash" style="padding:8px 18px; font-size:0.85rem; display:none;">Dashboard</a>
+        <button class="btn btn-outline nav-auth-only" id="btn-nav-logout" style="padding:8px 18px; font-size:0.85rem; display:none;">Logout</button>
       </div>
+
       <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -78,64 +301,263 @@
   </header>
   <div class="mobile-nav-overlay" id="nav-overlay"></div>
 
+  <!-- Live TV Banner -->
+  <div id="live-tv-banner" style="display:none; background:linear-gradient(90deg, #ff1744, #d50000); padding:10px 24px; text-align:center;">
+    <a href="streams.html" style="color:#fff; text-decoration:none; font-weight:700; font-size:0.9rem; display:flex; align-items:center; justify-content:center; gap:10px;">
+      <span class="live-dot" style="background:#fff;"></span>
+      Players are streaming live right now! Click here to watch Live TV 📺
+    </a>
+  </div>
+
   <!-- Hero Section -->
-  <section class="hero">
-    <h1 class="hero-title">EF X TOUR 2026<br><span class="text-gold">THE ULTIMATE LEAGUE</span></h1>
-    <p class="hero-subtitle">Experience premium eFootball league matches, real-time allocations, and professional tournament management.</p>
-    <div class="hero-buttons">
-      <a href="registration.html" class="btn btn-primary">Register Now</a>
-      <a href="live-draw.html" class="btn btn-secondary">Watch Live Draw</a>
+  <section class="hero" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="live-dot"></span>
+        Season 01 — Registration Open
+      </div>
+      <h1 class="hero-title">
+        <span class="line1">EF X TOUR 2026</span><br>
+        <span class="line2">THE ULTIMATE LEAGUE</span>
+      </h1>
+      <p class="hero-subtitle">
+        Experience high-stakes eFootball league matches, direct WebRTC streaming, community social feed, real-time live draws, and professional tournament management.
+      </p>
+      <div class="hero-cta" id="hero-cta">
+        <a href="register.html" class="btn btn-primary" style="padding:14px 32px; font-size:1rem;">🎮 Join Now — Free</a>
+        <a href="streams.html" class="btn btn-secondary" style="padding:14px 32px; font-size:1rem;">🎥 Watch Live TV</a>
+      </div>
+      <div class="hero-stats">
+        <div class="h-stat">
+          <div class="h-stat-val" id="stat-players">—</div>
+          <div class="h-stat-label">Players Joined</div>
+        </div>
+        <div class="h-stat">
+          <div class="h-stat-val" id="stat-matches">—</div>
+          <div class="h-stat-label">Matches Played</div>
+        </div>
+        <div class="h-stat">
+          <div class="h-stat-val">1</div>
+          <div class="h-stat-label">Active Season</div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Notice board / Announcements -->
-  <h2 class="section-title">Latest Announcements</h2>
-  <div class="grid-container" id="announcements-container">
-    <div class="card">
-      <h3 class="text-blue">Season 01 Registration Open</h3>
-      <p style="margin-top: 10px; color: var(--text-secondary);">Registration fee has been configured as 50 USD. Prepare your screenshots and credentials to secure your slot.</p>
+  <!-- Notice Board -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-tag">📢 Announcements</div>
+      <h2 class="section-title">Notice Board</h2>
+      <p class="section-subtitle">Latest updates, match rules, and announcements from tournament organizers.</p>
     </div>
-    <div class="card">
-      <h3 class="text-gold">Live Lottery Draw Scheduling</h3>
-      <p style="margin-top: 10px; color: var(--text-secondary);">The randomized Club Allocation draw will lock automatically once slots are filled. Real-time draw sync will happen via RTDB.</p>
+    <div class="notice-grid" id="notice-grid">
+      <div class="notice-card">
+        <div class="notice-type">📌 Info</div>
+        <div class="notice-title">Welcome to EF X TOUR 2026!</div>
+        <div class="notice-body">Registration is now open. Join and compete in the most exciting eFootball tournament. Good luck to all participants!</div>
+        <div class="notice-time">EF X TOUR Organizer · Afiq</div>
+      </div>
     </div>
   </div>
 
-  <footer style="margin-top: 80px; padding: 40px 20px; text-align: center; border-top: 1px solid var(--border-glass);">
-    <p style="color: var(--text-muted);">&copy; 2026 EF X TOUR. Organized by Afiq. Powered by eFootball platform SDK.</p>
+  <!-- Notice Details Modal -->
+  <div class="notice-modal-overlay" id="notice-modal-overlay">
+    <div class="notice-modal">
+      <button class="notice-modal-close" id="notice-modal-close">×</button>
+      <div class="notice-type" id="nm-type">📌 Info</div>
+      <div style="font-family:var(--font-display); font-size:1.6rem; font-weight:800; color:#fff; margin-bottom:16px;" id="nm-title">Notice Title</div>
+      <div style="font-size:1rem; color:var(--text-secondary); line-height:1.8; margin-bottom:24px; white-space:pre-wrap;" id="nm-body">Notice body content goes here.</div>
+      <div style="font-size:0.85rem; color:var(--text-muted); border-top:1px solid var(--border-glass); padding-top:16px;" id="nm-time">Posted by Admin</div>
+    </div>
+  </div>
+
+  <!-- Features Grid -->
+  <div class="section" style="padding-top:0;">
+    <div class="section-header">
+      <div class="section-tag">⚡ Platform Features</div>
+      <h2 class="section-title">Everything Built For Players</h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <span class="feature-icon">🎥</span>
+        <div class="feature-title">Direct WebRTC Streaming</div>
+        <div class="feature-desc">Stream your gameplay directly from your browser with mic audio and Zoom-style controls!</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">⚽</span>
+        <div class="feature-title">Community Social Feed</div>
+        <div class="feature-desc">Share status updates, match screenshots, squad flexes, likes, and comments.</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🖼️</span>
+        <div class="feature-title">Photo Gallery</div>
+        <div class="feature-desc">Upload match highlights and squad photos directly for public showcase.</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">💬</span>
+        <div class="feature-title">Messenger Chat</div>
+        <div class="feature-desc">Instant private messaging with active players across the platform.</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🎲</span>
+        <div class="feature-title">Live Draw System</div>
+        <div class="feature-desc">Watch real-time automated club allocation draws with live spectator chat.</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">⚔️</span>
+        <div class="feature-title">Challenge System</div>
+        <div class="feature-desc">Challenge any player to a match with instant notification alerts.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Feed Preview -->
+  <div class="section" style="padding-top:0;">
+    <div class="section-header">
+      <div class="section-tag">🔥 Latest Posts</div>
+      <h2 class="section-title">Community Highlights</h2>
+    </div>
+    <div class="preview-grid" id="feed-preview-grid">
+      <div style="text-align:center; color:var(--text-muted); grid-column:1/-1;">Loading feed updates...</div>
+    </div>
+    <div style="text-align:center; margin-top:20px;">
+      <a href="feed.html" class="btn btn-outline">Explore Full Feed →</a>
+    </div>
+  </div>
+
+  <footer>
+    <div style="font-family:var(--font-display); font-weight:800; font-size:1.3rem; color:var(--primary); margin-bottom:8px;">⚡ EF X TOUR 2026</div>
+    <p style="color:var(--text-secondary); font-size:0.9rem;">The ultimate eFootball tournament platform</p>
+    <p style="color:var(--text-muted); font-size:0.82rem; margin-top:12px;">© 2026 EF X TOUR. Organized by Afiq.</p>
   </footer>
 
   <script src="js/mobile-nav.js"></script>
   <script src="js/firebase-config.js"></script>
   <script type="module">
-    import { db, auth } from "./js/firebase-init.js";
-    import { collection, getDocs, limit, query } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { auth, db } from "./js/firebase-init.js";
+    import Utils from "./js/utils.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { collection, getDocs, query, orderBy, limit, onSnapshot, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Load recent announcements dynamically
-    async function loadNews() {
+    // Live TV Banner Check
+    const liveQ = query(collection(db, "liveStreams"), where("status", "==", "LIVE"));
+    onSnapshot(liveQ, (snap) => {
+      document.getElementById('live-tv-banner').style.display = snap.empty ? 'none' : 'block';
+    });
+
+    // Auth navbar handling
+    onAuthStateChanged(auth, async (user) => {
+      const loggedIn = !!user;
+      ['nav-standings','nav-fixtures','nav-draw'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = loggedIn ? 'block' : 'none';
+      });
+      document.getElementById('btn-nav-login').style.display = loggedIn ? 'none' : '';
+      document.getElementById('btn-nav-reg').style.display = loggedIn ? 'none' : '';
+      document.getElementById('btn-nav-dash').style.display = loggedIn ? '' : 'none';
+      document.getElementById('btn-nav-logout').style.display = loggedIn ? '' : 'none';
+
+      if (loggedIn) {
+        document.getElementById('hero-cta').innerHTML = `
+          <a href="dashboard.html" class="btn btn-primary" style="padding:14px 32px; font-size:1rem;">🎮 My Dashboard</a>
+          <a href="streams.html" class="btn btn-secondary" style="padding:14px 32px; font-size:1rem;">🎥 Watch Live TV</a>
+        `;
+      }
+    });
+
+    document.getElementById('btn-nav-logout')?.addEventListener('click', async () => {
+      await signOut(auth);
+      window.location.reload();
+    });
+
+    // Load Stats
+    async function loadStats() {
       try {
-        const container = document.getElementById('announcements-container');
-        const q = query(collection(db, "news"), limit(3));
+        const usersSnap = await getDocs(collection(db, "users"));
+        document.getElementById('stat-players').textContent = usersSnap.size;
+        const matchSnap = await getDocs(query(collection(db, "matchResults")));
+        let approved = 0;
+        matchSnap.forEach(d => { if (d.data().status === 'APPROVED') approved++; });
+        document.getElementById('stat-matches').textContent = approved;
+      } catch (_) {}
+    }
+    loadStats();
+
+    // Load Announcements
+    async function loadAnnouncements() {
+      try {
+        const q = query(collection(db, "announcements"), limit(10));
         const snap = await getDocs(q);
-        
         if (!snap.empty) {
-          container.innerHTML = "";
-          snap.forEach(docSnap => {
-            const data = docSnap.data();
+          const grid = document.getElementById('notice-grid');
+          grid.innerHTML = '';
+          const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          // Sort by date newest first in JS
+          items.sort((a,b) => new Date(b.createdAt||0) - new Date(a.createdAt||0));
+          items.slice(0,6).forEach(data => {
+            const isGold = data.type === 'important' || data.type === 'warning';
             const card = document.createElement('div');
-            card.className = "card";
+            card.className = `notice-card ${isGold ? 'gold' : ''}`;
+            const icons = { info:'📌', important:'🔥', warning:'⚠️', event:'🎮' };
+            const typeText = `${icons[data.type]||'📌'} ${data.type||'Info'}`;
+            const rawDate = data.createdAt?.toDate ? data.createdAt.toDate() : (data.createdAt ? new Date(data.createdAt) : null);
+            const timeText = rawDate && !isNaN(rawDate) ? rawDate.toLocaleDateString('en-MY', {day:'numeric',month:'short',year:'numeric'}) : '';
+            const shortBody = (data.body||'').length > 90 ? data.body.slice(0,90)+'...' : data.body;
+            
             card.innerHTML = `
-              <h3 class="text-blue">${data.title}</h3>
-              <p style="margin-top: 10px; color: var(--text-secondary);">${data.description}</p>
+              <div class="notice-type">${typeText}</div>
+              <div class="notice-title">${data.title}</div>
+              <div class="notice-body">${shortBody}</div>
+              <div class="notice-time">${timeText} · ${data.author || 'Afiq'}</div>
+              <div style="margin-top:8px; font-size:0.78rem; color:var(--primary); font-weight:600; cursor:pointer;">Read more →</div>
             `;
-            container.appendChild(card);
+            
+            card.addEventListener('click', () => {
+              document.getElementById('nm-type').textContent = typeText;
+              document.getElementById('nm-title').textContent = data.title;
+              document.getElementById('nm-body').textContent = data.body;
+              document.getElementById('nm-time').textContent = `${timeText} · Posted by ${data.author || 'Admin'}`;
+              document.getElementById('notice-modal-overlay').style.display = 'flex';
+            });
+            grid.appendChild(card);
           });
         }
-      } catch (err) {
-        console.error("Error loading news: ", err);
-      }
+      } catch (e) { console.warn('Announcements load failed:', e); }
     }
-    loadNews();
+    loadAnnouncements();
+
+    document.getElementById('notice-modal-close')?.addEventListener('click', () => {
+      document.getElementById('notice-modal-overlay').style.display = 'none';
+    });
+
+    // Feed Preview
+    const feedQ = query(collection(db, "feedPosts"), limit(3));
+    onSnapshot(feedQ, (snap) => {
+      const container = document.getElementById('feed-preview-grid');
+      if (snap.empty) {
+        container.innerHTML = '<div style="text-align:center; color:var(--text-muted); grid-column:1/-1;">No community posts yet. Be the first!</div>';
+        return;
+      }
+      const items = snap.docs.map(d => d.data());
+      items.sort((a,b) => new Date(b.createdAt||0) - new Date(a.createdAt||0));
+      container.innerHTML = '';
+      items.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'mini-post-card';
+        card.innerHTML = `
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+            <img src="${p.authorAvatar||'https://api.dicebear.com/7.x/adventurer/svg?seed=guest'}" style="width:28px; height:28px; border-radius:50%;">
+            <div style="font-weight:700; font-size:0.85rem; color:#fff;">${Utils.escapeHtml(p.authorName||'Player')}</div>
+          </div>
+          <div style="font-size:0.85rem; color:var(--text-secondary); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${Utils.escapeHtml(p.content||'')}</div>
+        `;
+        container.appendChild(card);
+      });
+    });
   </script>
+  <script type="module" src="js/notifications.js"></script>
+  <script type="module" src="js/floating-chat.js"></script>
 </body>
 </html>

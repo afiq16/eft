@@ -7,104 +7,145 @@
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/navbar.css">
   <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/responsive.css">
   <style>
-    .registration-box {
-      max-width: 600px;
-      margin: 40px auto;
-      padding: 30px;
+    .reg-page {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+    .tour-select-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: 16px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: all 0.25s;
+      position: relative;
+    }
+    .tour-select-card:hover { border-color: rgba(0,229,255,0.3); transform: translateY(-2px); }
+    .tour-select-card.selected {
+      border-color: var(--primary);
+      background: rgba(0,229,255,0.06);
+      box-shadow: 0 0 20px rgba(0,229,255,0.1);
+    }
+    .tour-select-card .check {
+      position: absolute;
+      top: 16px; right: 16px;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--border-glass);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; color: #000;
+      background: transparent;
+    }
+    .tour-select-card.selected .check { background: var(--primary); border-color: var(--primary); }
+    .tour-name { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; margin-bottom: 4px; }
+    .tour-meta { font-size: 0.82rem; color: var(--text-secondary); }
+    .status-pill {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 50px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-left: 8px;
     }
     .reg-clubs-grid {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
       gap: 10px;
-      margin-top: 8px;
+    }
+    @media (max-width: 500px) { .reg-clubs-grid { grid-template-columns: 1fr; } }
+    .no-tours-msg {
+      text-align: center;
+      padding: 40px 24px;
+      color: var(--text-muted);
     }
   </style>
 </head>
 <body>
-  <!-- Header -->
   <header>
     <div class="nav-container">
       <div class="logo-area">
-        <span class="logo-title">EF X TOUR 2026</span>
+        <a href="index.html" style="-webkit-text-fill-color:initial;text-decoration:none;">
+          <span class="logo-title">⚡ EF X TOUR 2026</span>
+        </a>
       </div>
-      <ul class="nav-links">
+      <ul class="nav-links" id="main-nav">
         <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
-        <li><a href="registration.html" class="nav-link active">Tournament Registration</a></li>
+        <li><a href="registration.html" class="nav-link active">Tournament Reg</a></li>
         <li><a href="live-draw.html" class="nav-link">Live Draw</a></li>
         <li><a href="standings.html" class="nav-link">Standings</a></li>
         <li><a href="fixtures.html" class="nav-link">Fixtures</a></li>
       </ul>
       <div class="nav-auth">
-        <a href="dashboard.html" class="btn btn-outline" style="padding: 8px 16px;">Back to Dash</a>
+        <a href="dashboard.html" class="btn btn-outline" style="padding:8px 16px; font-size:0.85rem;">← Dashboard</a>
       </div>
-      <button class="hamburger" aria-label="Toggle navigation">
+      <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
   </header>
-  <div class="mobile-nav-overlay"></div>
+  <div class="mobile-nav-overlay" id="nav-overlay"></div>
 
-  <!-- Form container -->
-  <div class="registration-box card">
-    <h2 class="text-gold" style="margin-bottom: 10px; text-align: center;">TOURNAMENT ENTRY FORM</h2>
-    <p style="color: var(--text-secondary); text-align: center; margin-bottom: 30px;">Season 01 - Organizer: Afiq (50 USD Fee)</p>
+  <div class="reg-page">
+    <h1 style="font-size:1.8rem; font-weight:800; margin-bottom:6px;">🏆 Tournament Registration</h1>
+    <p style="color:var(--text-secondary); margin-bottom:28px;">Select a tournament and fill in your details to register.</p>
 
-    <div id="reg-status-alert" style="display: none;"></div>
+    <div id="current-status" style="display:none; margin-bottom:20px;"></div>
 
-    <form id="reg-form">
-      <div class="form-group">
-        <label for="team-name">Esports Team Name</label>
-        <input type="text" id="team-name" class="form-input" placeholder="e.g. Afiq Esports" required>
+    <!-- Tournament Selection -->
+    <h3 style="font-family:var(--font-display); font-size:0.85rem; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted); margin-bottom:12px;">Available Tournaments</h3>
+    <div id="tours-available">
+      <div class="no-tours-msg">
+        <div style="font-size:2rem; margin-bottom:12px;">🏆</div>
+        <div>Loading tournaments...</div>
       </div>
+    </div>
 
-      <div class="form-group">
-        <label>Preferred Clubs (Select top 3 choices)</label>
-        <div class="reg-clubs-grid">
-          <select id="club-pref-1" class="form-input" style="background: var(--bg-tertiary);" required>
-            <option value="">Club 1</option>
-            <option value="Arsenal">Arsenal</option>
-            <option value="Barcelona">Barcelona</option>
-            <option value="Manchester United">Manchester United</option>
-            <option value="Bayern Munich">Bayern Munich</option>
-            <option value="AC Milan">AC Milan</option>
-            <option value="PSG">PSG</option>
-          </select>
-          <select id="club-pref-2" class="form-input" style="background: var(--bg-tertiary);" required>
-            <option value="">Club 2</option>
-            <option value="Arsenal">Arsenal</option>
-            <option value="Barcelona">Barcelona</option>
-            <option value="Manchester United">Manchester United</option>
-            <option value="Bayern Munich">Bayern Munich</option>
-            <option value="AC Milan">AC Milan</option>
-            <option value="PSG">PSG</option>
-          </select>
-          <select id="club-pref-3" class="form-input" style="background: var(--bg-tertiary);" required>
-            <option value="">Club 3</option>
-            <option value="Arsenal">Arsenal</option>
-            <option value="Barcelona">Barcelona</option>
-            <option value="Manchester United">Manchester United</option>
-            <option value="Bayern Munich">Bayern Munich</option>
-            <option value="AC Milan">AC Milan</option>
-            <option value="PSG">PSG</option>
-          </select>
-        </div>
+    <!-- Registration Form -->
+    <div id="reg-form-wrap" style="display:none; margin-top:24px;">
+      <div class="card">
+        <h2 class="text-gold" style="text-align:center; margin-bottom:20px; font-size:1.1rem;">TOURNAMENT ENTRY FORM</h2>
+        <div id="selected-tour-label" style="text-align:center; color:var(--text-muted); font-size:0.85rem; margin-bottom:20px;"></div>
+
+        <form id="reg-form">
+          <div class="form-group">
+            <label for="team-name">Esports Team Name *</label>
+            <input type="text" id="team-name" class="form-input" placeholder="e.g. Afiq Esports" required>
+          </div>
+
+          <div class="form-group">
+            <label>Preferred Clubs (Select top 3)</label>
+            <div class="reg-clubs-grid">
+              <select id="club-pref-1" class="form-input" required>
+                <option value="">Club 1</option>
+              </select>
+              <select id="club-pref-2" class="form-input">
+                <option value="">Club 2</option>
+              </select>
+              <select id="club-pref-3" class="form-input">
+                <option value="">Club 3</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="card" style="background:rgba(0,229,255,0.04); border-color:rgba(0,229,255,0.12); padding:14px 18px; margin-bottom:20px;">
+            <p style="font-size:0.85rem; color:var(--text-secondary);">
+              💵 <strong>Payment:</strong> Cash/direct payment to Organizer Afiq. Entry fee: <strong id="tour-fee-label">—</strong>
+            </p>
+          </div>
+
+          <div style="margin-bottom:20px; display:flex; align-items:flex-start; gap:10px;">
+            <input type="checkbox" id="terms" required style="margin-top:3px;">
+            <label for="terms" style="color:var(--text-secondary); font-size:0.88rem;">I agree to clear the registration fee directly to Organizer Afiq and follow all tournament rules.</label>
+          </div>
+
+          <button type="submit" id="btn-submit-reg" class="btn btn-primary" style="width:100%;">📋 Submit Registration</button>
+        </form>
       </div>
-
-      <div class="card" style="margin-bottom: 20px; background: rgba(0, 229, 255, 0.05); border-color: rgba(0, 229, 255, 0.15);">
-        <p style="color: var(--text-secondary); font-size: 0.9rem;">
-          💵 <strong>Payment Method:</strong> Cash/Direct hand-to-hand payment to admin Organizer Afiq. Once submitted, please clear the dues directly.
-        </p>
-      </div>
-
-      <div style="margin-bottom: 20px;">
-        <input type="checkbox" id="terms" required>
-        <label for="terms" style="color: var(--text-secondary); font-size: 0.9rem; margin-left: 8px;">I agree to clear registration fee directly to Organizer Afiq</label>
-      </div>
-
-      <button type="submit" id="btn-submit-reg" class="btn btn-primary" style="width: 100%;">Submit Entry Details</button>
-    </form>
+    </div>
   </div>
 
   <script src="js/mobile-nav.js"></script>
@@ -113,29 +154,96 @@
     import AuthGuard from "./js/auth-guard.js";
     import Utils from "./js/utils.js";
     import { auth, db } from "./js/firebase-init.js";
-    import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import {
+      doc, getDoc, setDoc, getDocs, collection, query, where
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     AuthGuard.guardPage();
 
     let userId = "";
+    let selectedTour = null;
+
+    // Load available tournaments
+    async function loadTours() {
+      try {
+        const snap = await getDocs(collection(db, "tournaments"));
+        const container = document.getElementById('tours-available');
+
+        if (snap.empty) {
+          container.innerHTML = `
+            <div class="no-tours-msg">
+              <div style="font-size:2.5rem; margin-bottom:12px;">🚫</div>
+              <div style="font-weight:700; margin-bottom:8px;">No Tournaments Available</div>
+              <div style="font-size:0.85rem;">The admin has not created any open tournaments yet. Check back soon!</div>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = '';
+        const statusColors = { OPEN:'var(--success)', CLOSED:'var(--error)', ONGOING:'var(--primary)', COMPLETED:'var(--text-muted)' };
+
+        snap.forEach(d => {
+          const t = d.data();
+          if (t.status === 'CLOSED' || t.status === 'COMPLETED') return; // Hide closed
+          const card = document.createElement('div');
+          card.className = 'tour-select-card';
+          card.dataset.id = d.id;
+          card.dataset.name = t.name;
+          card.dataset.fee = t.fee || 'Free';
+          card.dataset.clubs = JSON.stringify(t.clubs || []);
+          card.innerHTML = `
+            <div class="check">✓</div>
+            <div class="tour-name">
+              🏆 ${t.name}
+              <span class="status-pill" style="background:rgba(0,230,118,0.15); color:${statusColors[t.status]||'var(--primary)'}; border:1px solid ${statusColors[t.status]||'var(--primary)'};">${t.status}</span>
+            </div>
+            <div class="tour-meta">Fee: ${t.fee||'Free'} · Max Slots: ${t.slots||'?'} · ${t.desc||''}</div>
+          `;
+          card.addEventListener('click', () => selectTour(card, d.id, t));
+          container.appendChild(card);
+        });
+      } catch (err) { console.error(err); }
+    }
+
+    function selectTour(card, id, data) {
+      document.querySelectorAll('.tour-select-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedTour = { id, ...data };
+
+      // Show form
+      document.getElementById('reg-form-wrap').style.display = 'block';
+      document.getElementById('selected-tour-label').textContent = `Registering for: ${data.name}`;
+      document.getElementById('tour-fee-label').textContent = data.fee || 'Free';
+
+      // Populate club dropdowns
+      const clubs = data.clubs || ["Arsenal","Barcelona","Manchester United","Bayern Munich","AC Milan","PSG","Chelsea","Real Madrid","Juventus","Atletico Madrid","Liverpool","Inter Milan"];
+      ['club-pref-1','club-pref-2','club-pref-3'].forEach((id, i) => {
+        const sel = document.getElementById(id);
+        sel.innerHTML = `<option value="">Club ${i+1}</option>`;
+        clubs.forEach(c => { sel.innerHTML += `<option value="${c}">${c}</option>`; });
+      });
+
+      document.getElementById('reg-form-wrap').scrollIntoView({ behavior:'smooth', block:'start' });
+    }
+    loadTours();
 
     onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        userId = user.uid;
-        // Check current registration status
-        const regDoc = await getDoc(doc(db, "registrations", userId));
-        if (regDoc.exists()) {
-          const regData = regDoc.data();
-          const alertDiv = document.getElementById('reg-status-alert');
-          alertDiv.style.display = 'block';
-          alertDiv.className = `alert alert-${regData.status === 'APPROVED' ? 'success' : regData.status === 'REJECTED' ? 'error' : 'warning'}`;
-          alertDiv.innerText = `Registration status: ${regData.status}. ${regData.adminNote || ""}`;
-          
-          if (regData.status === 'APPROVED' || regData.status === 'SUBMITTED') {
-            document.getElementById('btn-submit-reg').disabled = true;
-            document.getElementById('btn-submit-reg').innerText = "Submission Locked";
-          }
+      if (!user) return;
+      userId = user.uid;
+      // Check existing registration
+      const regDoc = await getDoc(doc(db, "registrations", userId));
+      if (regDoc.exists()) {
+        const rd = regDoc.data();
+        const statusDiv = document.getElementById('current-status');
+        statusDiv.style.display = 'block';
+        const statusColors = { APPROVED:'success', REJECTED:'danger', SUBMITTED:'warning' };
+        statusDiv.className = `alert alert-${statusColors[rd.status]||'warning'}`;
+        statusDiv.innerHTML = `✅ Your registration status: <strong>${rd.status}</strong>. ${rd.adminNote || ''}`;
+        if (rd.status === 'APPROVED' || rd.status === 'SUBMITTED') {
+          document.getElementById('btn-submit-reg').disabled = true;
+          document.getElementById('btn-submit-reg').textContent = '🔒 Already Submitted';
         }
       }
     });
@@ -143,37 +251,42 @@
     document.getElementById('reg-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!userId) return;
+      if (!selectedTour) { Utils.showToast("Please select a tournament first.", "warning"); return; }
 
-      const teamName = document.getElementById('team-name').value;
+      const teamName = document.getElementById('team-name').value.trim();
       const pref1 = document.getElementById('club-pref-1').value;
       const pref2 = document.getElementById('club-pref-2').value;
       const pref3 = document.getElementById('club-pref-3').value;
+
+      if (!teamName) { Utils.showToast("Please enter your team name.", "warning"); return; }
 
       Utils.showLoader();
       try {
         await setDoc(doc(db, "registrations", userId), {
           playerId: userId,
-          teamName: teamName,
-          clubPreferences: [pref1, pref2, pref3],
+          tournamentId: selectedTour.id,
+          tournamentName: selectedTour.name,
+          teamName,
+          clubPreferences: [pref1, pref2, pref3].filter(Boolean),
           paymentMethod: "CASH_DIRECT",
+          entryFee: selectedTour.fee || 'Free',
           status: "SUBMITTED",
           submittedAt: new Date().toISOString()
         });
 
-        // Add pending payment reference matching manual verification
         await setDoc(doc(db, "payments", userId), {
           playerId: userId,
           paymentMethod: "CASH_DIRECT",
           status: "PENDING_CASH",
-          amount: "50 USD",
+          amount: selectedTour.fee || 'Free',
           updatedAt: new Date().toISOString()
         });
 
-        if (window.Utils) window.Utils.hideLoader();
-        Utils.showToast("Registration submitted! Clear cash with Organizer Afiq.", "success");
-        setTimeout(() => location.reload(), 1500);
+        Utils.hideLoader();
+        Utils.showToast("✅ Registration submitted! Clear cash with Organizer Afiq.", "success");
+        setTimeout(() => location.reload(), 1800);
       } catch (err) {
-        if (window.Utils) window.Utils.hideLoader();
+        Utils.hideLoader();
         Utils.showToast(err.message, "error");
       }
     });

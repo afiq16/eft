@@ -7,36 +7,110 @@
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/navbar.css">
   <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/tournament.css">
-  <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    .fixtures-layout {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px 80px;
+    }
+    .fixture-card-wrap {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      transition: border-color 0.2s;
+    }
+    .fixture-card-wrap:hover { border-color: rgba(0,229,255,0.3); }
+    .fx-team { flex: 1; text-align: center; }
+    .fx-player-name { font-weight: 700; font-size: 1rem; color: #fff; }
+    .fx-club { font-size: 0.82rem; color: var(--primary); margin-top: 2px; }
+    .fx-center { text-align: center; min-width: 100px; }
+    .fx-vs { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: var(--secondary); }
+    .fx-score { font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; color: #fff; }
+
+    /* Modal for score submission */
+    .score-modal {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(5px);
+      z-index: 10000;
+      display: none;
+      align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .score-box {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-glass);
+      border-radius: 16px;
+      padding: 28px;
+      width: 100%; max-width: 440px;
+    }
+  </style>
 </head>
 <body>
   <!-- Header -->
-  <header>
+  <header id="main-header">
     <div class="nav-container">
       <div class="logo-area">
-        <span class="logo-title">EF X TOUR 2026</span>
+        <a href="index.html" style="-webkit-text-fill-color:initial; text-decoration:none;">
+          <span class="logo-title">⚡ EF X TOUR 2026</span>
+        </a>
       </div>
-      <ul class="nav-links">
+      <ul class="nav-links" id="main-nav">
         <li><a href="index.html" class="nav-link">Home</a></li>
-        <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+        <li><a href="feed.html" class="nav-link">Feed</a></li>
+        <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+        <li><a href="streams.html" class="nav-link">Live TV</a></li>
         <li><a href="standings.html" class="nav-link">Standings</a></li>
         <li><a href="fixtures.html" class="nav-link active">Fixtures</a></li>
-        <li><a href="live-draw.html" class="nav-link">Live Draw</a></li>
       </ul>
-      <button class="hamburger" aria-label="Toggle navigation">
+      <div class="nav-auth">
+        <a href="dashboard.html" class="btn btn-outline" style="padding:8px 16px; font-size:0.85rem;">Dashboard</a>
+      </div>
+      <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation">
         <span></span><span></span><span></span>
       </button>
     </div>
   </header>
-  <div class="mobile-nav-overlay"></div>
+  <div class="mobile-nav-overlay" id="nav-overlay"></div>
 
-  <div style="max-width: 1000px; margin: 40px auto; padding: 0 20px;">
-    <h2 class="text-gold" style="font-size: 2rem; margin-bottom: 30px; text-transform: uppercase;">League Fixtures</h2>
+  <div class="fixtures-layout">
+    <div style="text-align:center; margin-bottom:32px;">
+      <h1 class="text-gold" style="font-family:var(--font-display); font-size:2.4rem; font-weight:800; margin-bottom:8px;">📅 Match Center & Fixtures</h1>
+      <p style="color:var(--text-secondary); font-size:0.95rem;">Scheduled fixtures for the active season. Players can submit scores for review.</p>
+    </div>
 
-    <div id="fixtures-container" class="tournament-grid">
-      <div class="card" style="text-align: center; color: var(--text-secondary);">
-        Fixtures will appear once the Club Lottery completes and the admin generates match schedules.
+    <div id="fixtures-list">
+      <div style="text-align:center; color:var(--text-muted); padding:40px; background:var(--bg-glass); border-radius:16px;">
+        Loading fixtures...
+      </div>
+    </div>
+  </div>
+
+  <!-- Score Submission Modal -->
+  <div class="score-modal" id="score-modal">
+    <div class="score-box">
+      <h3 style="font-family:var(--font-display); color:#fff; margin-bottom:14px;">⚽ Submit Match Score</h3>
+      <div style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:20px;" id="modal-match-title">Home vs Away</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
+        <div>
+          <label style="font-size:0.8rem; color:var(--text-muted);" id="modal-home-label">Home Score</label>
+          <input type="number" id="home-score-input" class="form-input" min="0" max="99" value="0">
+        </div>
+        <div>
+          <label style="font-size:0.8rem; color:var(--text-muted);" id="modal-away-label">Away Score</label>
+          <input type="number" id="away-score-input" class="form-input" min="0" max="99" value="0">
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:flex-end;">
+        <button class="btn btn-outline" onclick="document.getElementById('score-modal').style.display='none'">Cancel</button>
+        <button class="btn btn-primary" id="btn-confirm-score">Submit for Review</button>
       </div>
     </div>
   </div>
@@ -44,41 +118,94 @@
   <script src="js/mobile-nav.js"></script>
   <script src="js/firebase-config.js"></script>
   <script type="module">
-    import { db } from "./js/firebase-init.js";
-    import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { auth, db } from "./js/firebase-init.js";
+    import Utils from "./js/utils.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { collection, getDocs, addDoc, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    async function loadFixtures() {
-      try {
-        const querySnapshot = await getDocs(collection(db, "fixtures"));
-        const container = document.getElementById('fixtures-container');
-        
-        if (!querySnapshot.empty) {
-          container.innerHTML = "";
-          querySnapshot.forEach(docSnap => {
-            const data = docSnap.data();
-            const matchCard = document.createElement('div');
-            matchCard.className = "match-card";
-            matchCard.innerHTML = `
-              <div class="match-team">
-                <span style="font-weight: 600;">${data.homePlayer}</span>
-                <span class="text-blue">(${data.homeClub})</span>
-              </div>
-              <div class="match-score">
-                ${data.homeScore !== undefined ? `${data.homeScore} - ${data.awayScore}` : 'VS'}
-              </div>
-              <div class="match-team away">
-                <span style="font-weight: 600;">${data.awayPlayer}</span>
-                <span class="text-blue">(${data.awayClub})</span>
-              </div>
-            `;
-            container.appendChild(matchCard);
-          });
-        }
-      } catch (err) {
-        console.error("Error loading fixtures:", err);
+    let currentUser = null;
+    let selectedFixture = null;
+
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user;
+    });
+
+    const q = query(collection(db, "fixtures"));
+    onSnapshot(q, (snap) => {
+      const container = document.getElementById('fixtures-list');
+      if (snap.empty) {
+        container.innerHTML = `
+          <div style="text-align:center; color:var(--text-muted); padding:40px; background:var(--bg-glass); border-radius:16px;">
+            No fixtures generated yet. Admin generates fixtures after Live Draw!
+          </div>
+        `;
+        return;
       }
-    }
-    loadFixtures();
+
+      container.innerHTML = '';
+      snap.forEach(d => {
+        const f = d.data();
+        f.id = d.id;
+
+        const homeName = f.homePlayerName || f.homePlayer || 'Home';
+        const awayName = f.awayPlayerName || f.awayPlayer || 'Away';
+        const isParticipant = currentUser && (f.homePlayer === currentUser.uid || f.awayPlayer === currentUser.uid);
+
+        const card = document.createElement('div');
+        card.className = 'fixture-card-wrap';
+        card.innerHTML = `
+          <div class="fx-team">
+            <div class="fx-player-name">${homeName}</div>
+            <div class="fx-club">${f.homeClub || ''}</div>
+          </div>
+          <div class="fx-center">
+            ${f.status === 'COMPLETED' ? `<div class="fx-score">${f.homeScore} - ${f.awayScore}</div>` : `<div class="fx-vs">VS</div>`}
+            <span class="badge badge-${f.status==='COMPLETED'?'success':'pending'}" style="margin-top:6px;">${f.status}</span>
+          </div>
+          <div class="fx-team">
+            <div class="fx-player-name">${awayName}</div>
+            <div class="fx-club">${f.awayClub || ''}</div>
+          </div>
+          ${isParticipant && f.status !== 'COMPLETED' ? `
+            <div style="width:100%; text-align:center; margin-top:8px; border-top:1px solid rgba(255,255,255,0.05); padding-top:10px;">
+              <button class="btn btn-primary" style="padding:6px 16px; font-size:0.82rem;" onclick="openScoreModal('${f.id}', '${homeName}', '${awayName}')">⚽ Submit Score</button>
+            </div>
+          ` : ''}
+        `;
+        container.appendChild(card);
+      });
+    });
+
+    window.openScoreModal = function(fid, hName, aName) {
+      selectedFixture = fid;
+      document.getElementById('modal-match-title').textContent = `${hName} vs ${aName}`;
+      document.getElementById('modal-home-label').textContent = hName;
+      document.getElementById('modal-away-label').textContent = aName;
+      document.getElementById('score-modal').style.display = 'flex';
+    };
+
+    document.getElementById('btn-confirm-score')?.addEventListener('click', async () => {
+      if (!selectedFixture || !currentUser) return;
+      const hScore = parseInt(document.getElementById('home-score-input').value) || 0;
+      const aScore = parseInt(document.getElementById('away-score-input').value) || 0;
+
+      Utils.showLoader();
+      try {
+        await addDoc(collection(db, "matchResults"), {
+          fixtureId: selectedFixture,
+          submittedBy: currentUser.uid,
+          homeScore: hScore,
+          awayScore: aScore,
+          status: 'PENDING',
+          createdAt: new Date().toISOString()
+        });
+        document.getElementById('score-modal').style.display = 'none';
+        Utils.showToast("Match score submitted! Waiting for Admin approval.", "success");
+      } catch (err) { Utils.showToast(err.message, "error"); }
+      Utils.hideLoader();
+    });
   </script>
+  <script type="module" src="js/notifications.js"></script>
+  <script type="module" src="js/floating-chat.js"></script>
 </body>
 </html>

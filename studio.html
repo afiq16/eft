@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Broadcast Studio | EF X TOUR 2026</title>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    .studio-layout {
+      max-width: 1400px;
+      margin: 20px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+    }
+    @media (max-width: 960px) {
+      .studio-layout { grid-template-columns: 1fr; }
+    }
+
+    .video-viewport {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #000;
+      border-radius: 16px;
+      border: 1px solid var(--border-glass);
+      object-fit: contain;
+      position: relative;
+      overflow: hidden;
+    }
+    #local-video {
+      width: 100%; height: 100%; object-fit: contain;
+    }
+
+    /* Zoom-Style Control Bar */
+    .zoom-bar {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-glass);
+      border-radius: 14px;
+      padding: 12px 20px;
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .zoom-btn {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-glass);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .zoom-btn:hover { background: rgba(0,229,255,0.15); border-color: var(--primary); }
+    .zoom-btn.off { background: rgba(255,23,68,0.2); border-color: #ff1744; color: #ff1744; }
+    .zoom-btn.active { background: var(--primary); color: #000; font-weight: 700; }
+
+    /* Studio Chat & Co-Host Panel */
+    .side-panel {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      height: 600px;
+      overflow: hidden;
+    }
+    .panel-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border-glass);
+      background: var(--bg-secondary);
+    }
+    .panel-tab {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      background: none;
+      color: var(--text-secondary);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .panel-tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
+    
+    .studio-chat-msgs {
+      flex: 1;
+      padding: 14px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.85rem;
+    }
+    .request-item {
+      padding: 12px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-glass);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav-container">
+      <div class="logo-area">
+        <a href="index.html" style="-webkit-text-fill-color:initial;text-decoration:none;">
+          <span class="logo-title">⚡ EF X TOUR 2026</span>
+        </a>
+      </div>
+      <ul class="nav-links">
+        <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+        <li><a href="streams.html" class="nav-link">Live TV</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <div class="studio-layout">
+    <div>
+      <div class="video-viewport">
+        <video id="local-video" autoplay muted playsinline></video>
+        <div id="live-indicator" style="display:none; position:absolute; top:12px; left:12px; background:#ff1744; color:#fff; font-size:0.75rem; font-weight:800; padding:4px 10px; border-radius:6px;">
+          🔴 BROADCASTING LIVE
+        </div>
+      </div>
+
+      <!-- Zoom-Style Control Bar -->
+      <div class="zoom-bar">
+        <button class="zoom-btn" id="btn-toggle-mic">🎙️ Mic On</button>
+        <button class="zoom-btn" id="btn-toggle-cam">📷 Camera</button>
+        <button class="zoom-btn" id="btn-toggle-screen">🖥️ Share Screen</button>
+        <button class="zoom-btn active" id="btn-start-broadcast">🔴 Start Live Stream</button>
+        <button class="zoom-btn off" id="btn-end-broadcast" style="display:none;">🛑 End Stream</button>
+      </div>
+
+      <div style="margin-top:14px; background:var(--bg-glass); border:1px solid var(--border-glass); border-radius:12px; padding:16px;">
+        <input type="text" id="stream-title" class="form-input" placeholder="Stream Title (e.g. Afiq League Match Day 1)">
+      </div>
+    </div>
+
+    <!-- Live Chat & Guest Requests Side Panel -->
+    <div class="side-panel">
+      <div class="panel-tabs">
+        <button class="panel-tab active" id="tab-chat-btn">💬 Stream Chat</button>
+        <button class="panel-tab" id="tab-requests-btn">👥 Requests (0)</button>
+      </div>
+
+      <!-- Realtime Live Comments -->
+      <div id="panel-chat" class="studio-chat-msgs">
+        <div style="text-align:center; color:var(--text-muted); padding-top:40px;">Viewer comments will appear here live while you stream! 💬</div>
+      </div>
+
+      <!-- Co-Host Requests -->
+      <div id="panel-requests" style="display:none; padding:14px; flex:1; overflow-y:auto;">
+        <div style="color:var(--text-muted); font-size:0.85rem; text-align:center; padding:20px;">No pending guest join requests.</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/firebase-config.js"></script>
+  <script type="module">
+    import { auth, db, rtdb } from "./js/firebase-init.js";
+    import AuthGuard from "./js/auth-guard.js";
+    import Utils from "./js/utils.js";
+    import { doc, setDoc, deleteDoc, getDoc, collection, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    AuthGuard.guardPage();
+
+    let localStream = null;
+    let micTrack = null;
+    let videoTrack = null;
+    let currentUid = null;
+    let isBroadcasting = false;
+    let peerConnections = {};
+    let isMicMuted = false;
+    let isCamOn = false;
+    let isScreenSharing = false;
+
+    const iceServers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) currentUid = user.uid;
+    });
+
+    // Mic initialization
+    async function initMicrophone() {
+      try {
+        const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        micTrack = audioStream.getAudioTracks()[0];
+      } catch (err) {
+        console.warn("Microphone capture issue:", err);
+      }
+    }
+    initMicrophone();
+
+    // Toggle Mic
+    document.getElementById('btn-toggle-mic').addEventListener('click', () => {
+      if (!micTrack) { Utils.showToast("No microphone detected", "warning"); return; }
+      isMicMuted = !isMicMuted;
+      micTrack.enabled = !isMicMuted;
+      const btn = document.getElementById('btn-toggle-mic');
+      if (isMicMuted) {
+        btn.textContent = '🎙️ Mic Muted';
+        btn.classList.add('off');
+      } else {
+        btn.textContent = '🎙️ Mic On';
+        btn.classList.remove('off');
+      }
+    });
+
+    // Toggle Camera
+    document.getElementById('btn-toggle-cam').addEventListener('click', async () => {
+      try {
+        if (isScreenSharing && localStream) {
+          localStream.getVideoTracks().forEach(t => t.stop());
+        }
+        const camStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const camVideoTrack = camStream.getVideoTracks()[0];
+
+        updateStreamTracks(camVideoTrack);
+        isCamOn = true;
+        isScreenSharing = false;
+
+        document.getElementById('btn-toggle-cam').classList.add('active');
+        document.getElementById('btn-toggle-screen').classList.remove('active');
+        Utils.showToast("Switched to Camera", "info");
+      } catch (err) { Utils.showToast("Camera error: " + err.message, "error"); }
+    });
+
+    // Toggle Screen Share WITH Microphone Audio!
+    document.getElementById('btn-toggle-screen').addEventListener('click', async () => {
+      try {
+        if (!micTrack) await initMicrophone();
+        
+        const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+        const screenVideoTrack = screenStream.getVideoTracks()[0];
+
+        // Handle when user clicks "Stop Sharing" from browser bar
+        screenVideoTrack.onended = () => {
+          document.getElementById('btn-toggle-screen').classList.remove('active');
+          isScreenSharing = false;
+        };
+
+        updateStreamTracks(screenVideoTrack);
+        isScreenSharing = true;
+        isCamOn = false;
+
+        document.getElementById('btn-toggle-screen').classList.add('active');
+        document.getElementById('btn-toggle-cam').classList.remove('active');
+        Utils.showToast("Screen Sharing Active (Mic Audio Included!)", "success");
+      } catch (err) { Utils.showToast("Screen share error: " + err.message, "error"); }
+    });
+
+    function updateStreamTracks(newVideoTrack) {
+      videoTrack = newVideoTrack;
+      const tracks = [newVideoTrack];
+      if (micTrack) tracks.push(micTrack);
+
+      localStream = new MediaStream(tracks);
+      document.getElementById('local-video').srcObject = localStream;
+
+      // Replace video track on active peer connections
+      Object.values(peerConnections).forEach(pc => {
+        const senders = pc.getSenders();
+        const vSender = senders.find(s => s.track && s.track.kind === 'video');
+        if (vSender) vSender.replaceTrack(newVideoTrack);
+      });
+    }
+
+    // Start Live Broadcast
+    document.getElementById('btn-start-broadcast').addEventListener('click', async () => {
+      const title = document.getElementById('stream-title').value.trim();
+      if (!title) { Utils.showToast("Please type a Stream Title!", "warning"); return; }
+      if (!localStream) { Utils.showToast("Please enable Camera or Share Screen first!", "warning"); return; }
+
+      Utils.showLoader();
+      try {
+        const uDoc = await getDoc(doc(db, "users", currentUid));
+        const uData = uDoc.exists() ? uDoc.data() : {};
+
+        await setDoc(doc(db, "liveStreams", currentUid), {
+          title,
+          url: "WEBRTC",
+          streamType: "WEBRTC",
+          streamerUid: currentUid,
+          streamerName: uData.fullName || uData.username || 'Streamer',
+          streamerAvatar: uData.profilePhoto || '',
+          status: "LIVE",
+          startedAt: new Date().toISOString()
+        });
+
+        await set(ref(rtdb, `webrtc_broadcasters/${currentUid}`), { status: 'ONLINE', title });
+
+        onValue(ref(rtdb, `webrtc_broadcasters/${currentUid}/requests`), (snap) => {
+          if (!snap.exists()) return;
+          Object.keys(snap.val()).forEach(viewerId => {
+            if (!peerConnections[viewerId]) createBroadcasterPeer(viewerId);
+          });
+        });
+
+        isBroadcasting = true;
+        document.getElementById('live-indicator').style.display = 'block';
+        document.getElementById('btn-start-broadcast').style.display = 'none';
+        document.getElementById('btn-end-broadcast').style.display = 'inline-flex';
+        Utils.showToast("🔴 You are LIVE on Live TV!", "success");
+      } catch (err) { Utils.showToast(err.message, "error"); }
+      Utils.hideLoader();
+    });
+
+    async function createBroadcasterPeer(viewerId) {
+      const pc = new RTCPeerConnection(iceServers);
+      peerConnections[viewerId] = pc;
+
+      localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+
+      pc.onicecandidate = (event) => {
+        if (event.candidate) {
+          push(ref(rtdb, `webrtc_broadcasters/${currentUid}/candidates/${viewerId}`), event.candidate.toJSON());
+        }
+      };
+
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+      await set(ref(rtdb, `webrtc_broadcasters/${currentUid}/offers/${viewerId}`), { sdp: offer.sdp, type: offer.type });
+
+      onValue(ref(rtdb, `webrtc_broadcasters/${currentUid}/answers/${viewerId}`), async (snap) => {
+        if (snap.exists() && !pc.currentRemoteDescription) {
+          await pc.setRemoteDescription(new RTCSessionDescription(snap.val()));
+        }
+      });
+    }
+
+    document.getElementById('btn-end-broadcast').addEventListener('click', async () => {
+      if (localStream) localStream.getTracks().forEach(t => t.stop());
+      Object.values(peerConnections).forEach(pc => pc.close());
+      peerConnections = {};
+
+      await deleteDoc(doc(db, "liveStreams", currentUid));
+      await remove(ref(rtdb, `webrtc_broadcasters/${currentUid}`));
+
+      document.getElementById('live-indicator').style.display = 'none';
+      document.getElementById('btn-start-broadcast').style.display = 'inline-flex';
+      document.getElementById('btn-end-broadcast').style.display = 'none';
+      Utils.showToast("Stream Ended.", "info");
+    });
+
+    // Clean up on tab close
+    window.addEventListener('beforeunload', () => {
+      if (isBroadcasting && currentUid) {
+        deleteDoc(doc(db, "liveStreams", currentUid));
+        remove(ref(rtdb, `webrtc_broadcasters/${currentUid}`));
+      }
+    });
+
+    // Realtime Stream Chat Display inside Studio
+    const chatBox = document.getElementById('panel-chat');
+    const chatQ = query(collection(db, "liveTvChat"), limit(50));
+    onSnapshot(chatQ, (snap) => {
+      chatBox.innerHTML = '';
+      if (snap.empty) {
+        chatBox.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding-top:40px;">Viewer comments will appear here live! 💬</div>';
+        return;
+      }
+      const msgs = snap.docs.map(d => d.data());
+      msgs.sort((a,b) => new Date(a.sentAt?.toDate ? a.sentAt.toDate() : a.sentAt || 0) - new Date(b.sentAt?.toDate ? b.sentAt.toDate() : b.sentAt || 0));
+
+      msgs.forEach(m => {
+        const el = document.createElement('div');
+        el.style.marginBottom = '6px';
+        el.innerHTML = `<span style="font-weight:700; color:var(--primary);">${Utils.escapeHtml(m.name||'Guest')}:</span> ${Utils.escapeHtml(m.text||'')}`;
+        chatBox.appendChild(el);
+      });
+      chatBox.scrollTop = chatBox.scrollHeight;
+    });
+
+    // Tabs
+    document.getElementById('tab-chat-btn').addEventListener('click', () => {
+      document.getElementById('panel-chat').style.display = 'flex';
+      document.getElementById('panel-requests').style.display = 'none';
+      document.getElementById('tab-chat-btn').classList.add('active');
+      document.getElementById('tab-requests-btn').classList.remove('active');
+    });
+    document.getElementById('tab-requests-btn').addEventListener('click', () => {
+      document.getElementById('panel-chat').style.display = 'none';
+      document.getElementById('panel-requests').style.display = 'block';
+      document.getElementById('tab-requests-btn').classList.add('active');
+      document.getElementById('tab-chat-btn').classList.remove('active');
+    });
+  </script>
+</body>
+</html>
