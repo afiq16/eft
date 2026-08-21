@@ -10,6 +10,7 @@ const Notifications = {
     this.injectUI();
     
     onAuthStateChanged(auth, (user) => {
+      document.body.classList.toggle('is-logged-in', !!user);
       if (user) {
         document.getElementById('nav-notifications-btn').style.display = 'flex';
         this.listen(user.uid);

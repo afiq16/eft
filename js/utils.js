@@ -1,4 +1,5 @@
 // Shared Utilities & Helpers for EF X TOUR 2026
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const Utils = {
   // Show premium notifications using CSS Injection
@@ -143,6 +144,18 @@ const Utils = {
   escapeHtml(str) {
     if (!str) return '';
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  },
+
+  async logAdminAction(db, actor, action, target, extra = {}) {
+    try {
+      await addDoc(collection(db, "auditLogs"), {
+        actor,
+        action,
+        target,
+        extra,
+        timestamp: new Date().toISOString()
+      });
+    } catch (_) {}
   }
 };
 
