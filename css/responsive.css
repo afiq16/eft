@@ -1,405 +1,238 @@
-/* ============================================
-   RESPONSIVE.CSS — Full Mobile-First Breakpoints
+/* ============================================================
+   RESPONSIVE.CSS — Layout breakpoints only (no nav/drawer rules)
    EF X TOUR 2026
-   Breakpoints: 1024px | 768px | 480px
-   ============================================ */
+   Breakpoints: 1200px | 992px | 768px | 480px | 360px
+   NOTE: Navbar/hamburger/drawer rules are in navbar.css
+   ============================================================ */
 
-/* ─── NAVBAR HAMBURGER BUTTON ─── */
+/* ── Prevent ALL horizontal overflow globally ── */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { max-width: 100%; overflow-x: hidden; }
 
-.hamburger {
-  display: none;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
-  border-radius: 8px;
-  background: transparent;
-  border: none;
-  padding: 6px;
-  z-index: 1100;
+/* ══════════════════════════════════════
+   LARGE TABLET  ≤ 1200px
+══════════════════════════════════════ */
+@media (max-width: 1200px) {
+  .nav-container   { padding: 0 20px; }
+  .admin-content   { padding: 22px 20px; }
+  .section         { padding: 48px 20px; }
 }
 
-.hamburger span {
-  display: block;
-  width: 22px;
-  height: 2px;
-  background: var(--text-primary);
-  border-radius: 2px;
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  transform-origin: center;
-}
-
-.hamburger.open span:nth-child(1) {
-  transform: translateY(7px) rotate(45deg);
-}
-
-.hamburger.open span:nth-child(2) {
-  opacity: 0;
-  transform: scaleX(0);
-}
-
-.hamburger.open span:nth-child(3) {
-  transform: translateY(-7px) rotate(-45deg);
-}
-
-/* Mobile nav overlay backdrop */
-.mobile-nav-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(8, 8, 12, 0.6);
-  backdrop-filter: blur(4px);
-  z-index: 900;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.mobile-nav-overlay.visible {
-  opacity: 1;
-}
-
-/* ─── LARGE TABLET (≤1024px) ─── */
-@media (max-width: 1024px) {
-
-  .admin-layout {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: 100%;
-    position: relative;
-    max-height: none;
-    border-right: none;
-    border-bottom: 1px solid var(--border-glass);
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 16px;
-  }
-
-  .sidebar-logo {
-    width: 100%;
-    border-bottom: none;
-    padding-bottom: 0;
-  }
-
-  .sidebar-menu {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .sidebar-item a {
-    padding: 8px 14px;
-    font-size: 0.85rem;
-  }
-
-  .admin-content {
-    padding: 24px 20px;
-  }
-
+/* ══════════════════════════════════════
+   TABLET / SMALL DESKTOP  ≤ 992px
+══════════════════════════════════════ */
+@media (max-width: 992px) {
+  /* Dashboard two-col → single col */
   .dashboard-grid {
     grid-template-columns: 1fr;
+    padding: 0 14px;
+    gap: 16px;
+  }
+  /* Dash layout (flex row → col) */
+  .dash-layout {
+    flex-direction: column !important;
+    gap: 14px !important;
+    padding: 0 14px 40px !important;
+  }
+  .dash-layout > div:first-child {
+    width: 100% !important;
+    min-width: unset !important;
+  }
+  /* Stats 4-col → 2-col */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
   }
 }
 
-/* ─── TABLET / MOBILE (≤768px) ─── */
+/* ══════════════════════════════════════
+   MOBILE  ≤ 768px
+══════════════════════════════════════ */
 @media (max-width: 768px) {
 
-  /* ── Navbar: slide-in drawer ── */
-  .nav-links {
-    position: fixed;
-    top: 0;
-    right: -100%;
-    width: 85%;
-    max-width: 320px;
-    height: 100vh;
-    background: rgba(12, 13, 20, 0.98);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-left: 1px solid var(--border-glass);
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 24px 20px 40px;
-    gap: 6px;
-    z-index: 1001;
-    transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    list-style: none;
-    display: flex;
-    overflow-y: auto;
-    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.8);
-  }
+  /* ── General spacing ── */
+  .section { padding: 36px 14px; }
 
-  .nav-links.open {
-    right: 0;
-  }
-
-  .nav-links li {
-    width: 100%;
-  }
-
-  .nav-link {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    padding: 12px 16px;
-    border-radius: 10px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    transition: background 0.2s, color 0.2s, transform 0.2s;
-  }
-
-  .nav-link:hover,
-  .nav-link.active {
-    background: rgba(0, 229, 255, 0.1);
-    color: var(--primary);
-    transform: translateX(4px);
-    box-shadow: inset 3px 0 0 var(--primary);
-  }
-
-  .hamburger {
-    display: flex;
-  }
-
-  .mobile-nav-overlay {
-    display: block;
-  }
-
-  .nav-container {
-    padding: 12px 16px;
-  }
-
-  .nav-auth {
-    display: none;
-  }
-
-  /* ── Hero Section ── */
+  /* ── Hero ── */
   .hero {
-    height: auto !important;
-    padding: 80px 20px 60px !important;
-    min-height: 55vh;
+    padding: 75px 14px 48px !important;
+    min-height: auto !important;
   }
-
-  .hero-title {
-    font-size: 2.2rem !important;
-  }
-
-  .hero-subtitle {
-    font-size: 1rem !important;
-  }
-
-  .hero-buttons {
+  .hero-title   { font-size: clamp(1.7rem, 6vw, 2.5rem) !important; }
+  .hero-subtitle { font-size: 0.9rem !important; }
+  .hero-cta {
     flex-direction: column !important;
-    gap: 12px !important;
-    width: 100%;
-    align-items: center;
+    align-items: center !important;
+    gap: 10px !important;
   }
-
-  .hero-buttons .btn {
-    width: 100%;
-    max-width: 280px;
+  .hero-cta .btn {
+    width: 100% !important;
+    max-width: 290px !important;
   }
+  .hero-stats {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+  .h-stat { width: 100% !important; }
 
   /* ── Section titles ── */
-  .section-title {
-    font-size: 1.4rem !important;
-    margin: 40px 0 20px !important;
-  }
+  .section-title { font-size: 1.35rem !important; }
 
-  /* ── Announcements card grid ── */
+  /* ── Grid layouts → single col ── */
+  .notice-grid,
+  .features-grid,
+  .preview-grid,
   .grid-container {
     grid-template-columns: 1fr !important;
-    gap: 16px !important;
+    gap: 12px !important;
   }
 
-  /* ── Auth / Register forms ── */
-  .auth-container {
-    margin: 40px 16px !important;
-    padding: 24px 20px !important;
-    max-width: calc(100% - 32px) !important;
-  }
-
-  .register-container {
-    margin: 40px 16px !important;
-    padding: 24px 20px !important;
-    max-width: calc(100% - 32px) !important;
-  }
-
+  /* ── Auth / register forms ── */
+  .auth-container,
+  .register-container,
   .registration-box {
-    margin: 30px 16px !important;
-    padding: 24px 20px !important;
-    max-width: calc(100% - 32px) !important;
+    margin: 20px 12px !important;
+    padding: 20px 14px !important;
+    max-width: calc(100% - 24px) !important;
   }
-
-  /* Register page: 2-column grids → single column */
-  .register-col-2 {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Registration page: 3-col club selects → single col */
+  .register-col-2,
   .reg-clubs-grid {
     grid-template-columns: 1fr !important;
   }
 
-  /* ── Tables: horizontal scroll ── */
+  /* ── Tables ── */
   .table-container {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
+  th, td { padding: 10px 10px; font-size: 0.83rem; }
 
-  /* ── Admin sidebar → vertical stacked ── */
-  .sidebar {
-    flex-direction: column;
-    padding: 16px;
-  }
-
-  .sidebar-menu {
-    flex-direction: column;
-  }
-
-  /* ── Dashboard profile card ── */
+  /* ── Profile card ── */
   .profile-card {
     flex-direction: column !important;
     text-align: center;
-    gap: 16px !important;
+    gap: 14px !important;
   }
+  .profile-avatar { width: 75px !important; height: 75px !important; }
 
-  .profile-avatar {
-    width: 80px !important;
-    height: 80px !important;
-  }
-
+  /* ── Stats ── */
   .stats-grid {
-    grid-template-columns: 1fr 1fr !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
   }
+  .stat-value { font-size: 1.7rem !important; }
 
-  .stat-value {
-    font-size: 1.8rem !important;
-  }
-
-  /* ── Live Draw ── */
-  .lottery-container {
-    padding: 0 16px !important;
-    margin: 24px auto !important;
-  }
-
-  .lottery-arena {
-    padding: 30px 16px !important;
-  }
-
-  .draw-split {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
-  .draw-card {
-    height: 180px !important;
-  }
-
-  .draw-card .value {
-    font-size: 1.6rem !important;
-  }
-
-  .draw-vs {
-    font-size: 1rem;
-  }
-
-  /* ── Fixtures match cards ── */
+  /* ── Match cards ── */
   .match-card {
     flex-direction: column !important;
-    gap: 12px !important;
-    padding: 16px !important;
+    gap: 8px !important;
+    padding: 14px !important;
   }
-
   .match-team,
   .match-team.away {
     width: 100% !important;
     flex-direction: row !important;
     text-align: left !important;
-    justify-content: flex-start;
+    justify-content: flex-start !important;
   }
-
   .match-score {
     width: 100% !important;
-    font-size: 1.4rem !important;
     text-align: center;
-  }
-
-  /* ── Admin overview card grid ── */
-  .admin-card-grid {
-    grid-template-columns: 1fr 1fr !important;
-  }
-
-  /* ── Rules page ── */
-  .rules-content {
-    font-size: 0.9rem;
-  }
-
-  /* ── Table cells font size ── */
-  th,
-  td {
-    padding: 12px 10px;
-    font-size: 0.88rem;
-  }
-}
-
-/* ─── SMALL MOBILE (≤480px) ─── */
-@media (max-width: 480px) {
-
-  .hero-title {
-    font-size: 1.75rem !important;
-  }
-
-  .logo-title {
-    font-size: 1.05rem !important;
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  .btn {
-    font-size: 0.85rem !important;
-    padding: 10px 18px !important;
-  }
-
-  th,
-  td {
-    padding: 10px 8px !important;
-    font-size: 0.82rem;
-  }
-
-  .draw-card {
-    height: 150px !important;
-  }
-
-  .draw-card .value {
     font-size: 1.3rem !important;
   }
 
-  .card {
-    padding: 16px !important;
-  }
-
-  .admin-card-grid {
+  /* ── Live Draw ── */
+  .lottery-container { padding: 0 12px !important; margin: 18px auto !important; }
+  .lottery-arena { padding: 24px 12px !important; }
+  .draw-split {
     grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  .draw-vs { display: none; }
+  .draw-card { height: 150px !important; padding: 18px 12px !important; }
+  .draw-card .value { font-size: 1.3rem !important; }
+
+  /* ── Admin ── */
+  .admin-card-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
   }
 
-  .sidebar-item a {
-    padding: 10px 12px;
-    font-size: 0.8rem;
+  /* ── Feeds / Streams ── */
+  .feed-layout,
+  .streams-layout {
+    flex-direction: column !important;
+    gap: 14px !important;
+    padding: 14px !important;
+  }
+  .feed-sidebar { width: 100% !important; }
+
+  /* ── Gallery ── */
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
   }
 
-  .lottery-arena {
-    padding: 20px 12px !important;
-  }
+  /* ── Buttons ── */
+  .btn { font-size: 0.83rem !important; }
 
-  footer {
-    padding: 30px 16px !important;
-  }
+  /* ── Footer ── */
+  footer { padding: 28px 14px !important; }
+}
+
+/* ══════════════════════════════════════
+   SMALL MOBILE  ≤ 480px
+══════════════════════════════════════ */
+@media (max-width: 480px) {
+
+  .section { padding: 28px 10px; }
+
+  .logo-title { font-size: 0.98rem !important; }
+  .nav-back-btn { font-size: 0.73rem !important; padding: 4px 9px !important; }
+
+  .hero { padding: 65px 10px 36px !important; }
+  .hero-title { font-size: clamp(1.5rem, 7vw, 2rem) !important; }
+  .hero-subtitle { font-size: 0.84rem !important; }
+
+  .stats-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 7px !important; }
+  .stat-box { padding: 11px 8px !important; }
+  .stat-value { font-size: 1.5rem !important; }
+  .stat-label { font-size: 0.7rem !important; }
+
+  .btn { font-size: 0.8rem !important; padding: 9px 14px !important; }
+
+  th, td { padding: 8px 6px !important; font-size: 0.76rem !important; }
+
+  .card { padding: 14px !important; }
+  .dash-card { padding: 12px !important; }
+
+  .admin-card-grid { grid-template-columns: 1fr !important; }
+  .admin-card { padding: 14px !important; }
+  .admin-card-value { font-size: 1.5rem !important; }
+
+  .draw-card { height: 125px !important; padding: 12px 8px !important; }
+  .draw-card .value { font-size: 1.05rem !important; }
+
+  .profile-avatar { width: 66px !important; height: 66px !important; }
+  .profile-name { font-size: 1rem !important; }
+
+  .gallery-grid { grid-template-columns: 1fr 1fr !important; gap: 6px !important; }
+
+  .form-input { font-size: 0.86rem !important; padding: 9px 11px !important; }
+
+  .score-box { padding: 16px 12px !important; width: 95% !important; }
+
+  footer { padding: 24px 10px !important; }
+}
+
+/* ══════════════════════════════════════
+   VERY SMALL  ≤ 360px
+══════════════════════════════════════ */
+@media (max-width: 360px) {
+  .logo-title { font-size: 0.85rem !important; }
+  .hero-title { font-size: 1.4rem !important; }
+  .stats-grid { grid-template-columns: 1fr !important; }
+  .btn { font-size: 0.75rem !important; padding: 8px 12px !important; }
+  th, td { padding: 6px 4px !important; font-size: 0.7rem !important; }
+  .profile-avatar { width: 58px !important; height: 58px !important; }
 }

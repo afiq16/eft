@@ -303,3 +303,28 @@ tr:hover td {
 .club-name-text {
   font-weight: 600;
 }
+
+/* Tab Buttons */
+.tab-btn {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.88rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+}
+.tab-btn:hover {
+  color: var(--primary);
+  background: rgba(0,229,255,0.05);
+}
+.tab-btn.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  background: rgba(0,229,255,0.08);
+}
