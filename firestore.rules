@@ -25,33 +25,39 @@ service cloud.firestore {
 
     match /users/{userId} {
       allow read: if isAuthenticated();
-      allow write: if isOwner(userId) || hasRole('SUPER_ADMIN');
+      allow write: if isOwner(userId) || isAdmin();
     }
-    
+
+    match /users/{userId}/notifications/{notifId} {
+      allow read: if isOwner(userId);
+      allow create: if isAdmin() || isOwner(userId);
+      allow update, delete: if isOwner(userId);
+    }
+
     match /players/{playerId} {
       allow read: if true;
-      allow write: if isOwner(playerId) || isAdmin();
+      allow write: if isAdmin();
     }
-    
+
     match /tournaments/{id} {
       allow read: if true;
       allow write: if isAdmin();
     }
-    
+
     match /seasons/{id} {
       allow read: if true;
       allow write: if isAdmin();
     }
-    
+
     match /registrations/{id} {
       allow read: if true;
-      allow create: if isAuthenticated();
-      allow update, delete: if isAdmin() || (isAuthenticated() && resource.data.playerId == request.auth.uid);
+      allow create: if isAuthenticated() && request.auth.uid == id;
+      allow update, delete: if isAdmin() || isOwner(id);
     }
 
     match /payments/{id} {
-      allow read: if isAdmin() || (isAuthenticated() && resource.data.playerId == request.auth.uid);
-      allow create: if isAuthenticated();
+      allow read: if isAdmin() || isOwner(id);
+      allow create: if isAuthenticated() && request.auth.uid == id;
       allow update, delete: if isAdmin();
     }
 
@@ -78,7 +84,7 @@ service cloud.firestore {
     match /matches/{id} {
       allow read: if true;
       allow create: if isAuthenticated();
-      allow update: if isAuthenticated();
+      allow update: if isAdmin();
       allow delete: if isAdmin();
     }
 
@@ -95,7 +101,7 @@ service cloud.firestore {
     match /friendlyMatches/{id} {
       allow read: if true;
       allow create: if isAuthenticated();
-      allow update, delete: if isAuthenticated() && (resource.data.challengerId == request.auth.uid || resource.data.opponentId == request.auth.uid);
+      allow update, delete: if isAdmin();
     }
 
     match /notices/{id} {
@@ -129,9 +135,9 @@ service cloud.firestore {
     }
 
     match /notifications/{id} {
-      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
-      allow create: if true;
-      allow update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow read: if isAdmin();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAdmin();
     }
 
     match /reports/{id} {
@@ -142,12 +148,76 @@ service cloud.firestore {
 
     match /auditLogs/{id} {
       allow read: if isAdmin();
-      allow create: if isAuthenticated();
+      allow create: if isAdmin();
     }
 
     match /settings/{id} {
       allow read: if true;
       allow write: if isAdmin();
+    }
+
+    match /announcements/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /galleryPhotos/{id} {
+      allow read: if true;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAdmin();
+    }
+
+    match /feedPosts/{id} {
+      allow read: if true;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAdmin() || resource.data.authorUid == request.auth.uid;
+    }
+
+    match /feedPosts/{postId}/comments/{commentId} {
+      allow read: if true;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAdmin();
+    }
+
+    match /drawConfig/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /challenges/{id} {
+      allow read: if true;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAdmin();
+    }
+
+    match /drawComments/{id} {
+      allow read: if true;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAdmin();
+    }
+
+    match /chats/{chatId}/messages/{msgId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAdmin();
+    }
+
+    match /liveStreams/{id} {
+      allow read: if true;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAdmin() || isOwner(resource.data.streamerUid);
+    }
+
+    match /liveTvChat/{id} {
+      allow read: if true;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAdmin();
+    }
+
+    match /matchResults/{id} {
+      allow read: if true;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAdmin();
     }
   }
 }

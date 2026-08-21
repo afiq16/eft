@@ -275,7 +275,7 @@
           return db2 - da;
         });
         
-        const histDiv = document.getElementById('prof-history');
+        const histDiv = document.getElementById('match-history-list');
         if (matches.length > 0) {
           histDiv.innerHTML = '';
           matches.slice(0,10).forEach(m => {
@@ -306,8 +306,6 @@
         document.getElementById('loading-err').textContent = err.message;
       }
     }
-
-    loadProfile();
   </script>
 </body>
 </html>

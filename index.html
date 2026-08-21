@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/navbar.css">
   <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
   <style>
     /* ── Hero ─────────────────────────────── */
     .hero {
@@ -118,9 +119,9 @@
 
     .hero-title {
       font-family: var(--font-display);
-      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-size: clamp(1.8rem, 5.5vw, 5rem);
       font-weight: 800;
-      line-height: 1.05;
+      line-height: 1.1;
       margin-bottom: 18px;
       letter-spacing: -1px;
     }
@@ -221,8 +222,8 @@
     /* ── Notice Cards ─────────────────────── */
     .notice-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+      gap: 16px;
     }
 
     .notice-card {
@@ -343,8 +344,8 @@
     /* ── Features Grid ────────────────────── */
     .features-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+      gap: 16px;
     }
 
     .feature-card {
@@ -384,7 +385,7 @@
     /* Preview Grids */
     .preview-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
       gap: 16px;
     }
 
@@ -402,8 +403,23 @@
       text-align: center;
     }
 
-    .nav-auth-only {
-      display: none;
+    .nav-auth-only { display: none; }
+
+    /* ── Mobile fixes for index.html ── */
+    @media (max-width: 768px) {
+      .section { padding: 36px 14px; }
+      .section-header { margin-bottom: 28px; }
+      .hero-stats { gap: 20px; }
+      .h-stat-val { font-size: 1.6rem; }
+      .notice-modal { padding: 20px 16px; }
+      .hero-cta { flex-direction: column; align-items: center; }
+      .hero-cta .btn { width: 100%; max-width: 280px; }
+    }
+    @media (max-width: 480px) {
+      .section { padding: 28px 10px; }
+      .feature-card { padding: 18px 14px; }
+      .feature-icon { font-size: 2rem; }
+      .hero-stats { flex-direction: column; gap: 10px; }
     }
   </style>
 </head>
@@ -414,7 +430,7 @@
     <div class="nav-container">
       <div class="logo-area">
         <button type="button" onclick="Utils.goBack()" class="nav-back-btn" aria-label="Go back">← Back</button>
-        <a href="index.html" style="-webkit-text-fill-color:initial; text-decoration:none;">
+        <a href="index.html" style="text-decoration:none;">
           <span class="logo-title">⚡ EF X TOUR 2026</span>
         </a>
       </div>
@@ -592,7 +608,6 @@
     <p style="color:var(--text-muted); font-size:0.82rem; margin-top:12px;">© 2026 EF X TOUR. Organized by Afiq.</p>
   </footer>
 
-  <script src="js/mobile-nav.js"></script>
   <script src="js/firebase-config.js"></script>
   <script type="module">
     import { auth, db } from "./js/firebase-init.js";

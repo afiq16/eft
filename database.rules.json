@@ -3,7 +3,17 @@
     ".read": "auth != null",
     ".write": "auth != null",
     "lottery": {
-      "$lotteryId": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "webrtc_broadcasters": {
+      "$broadcasterId": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid == $broadcasterId"
+      }
+    },
+    "stream_viewers": {
+      "$streamId": {
         ".read": true,
         ".write": "auth != null"
       }

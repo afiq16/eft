@@ -398,8 +398,8 @@
             <div id="clist-${pid}">Loading comments...</div>
             ${currentUser ? `
               <div class="comment-input-wrap">
-                <input type="text" id="cinput-${pid}" class="comment-input" placeholder="Write a comment..." onkeydown="if(event.key==='Enter') sendComment('${pid}')">
-                <button class="comment-btn" onclick="sendComment('${pid}')">Send</button>
+                <input type="text" id="cinput-${pid}" class="comment-input" placeholder="Write a comment..." onkeydown="if(event.key==='Enter') postComment('${pid}')">
+                <button class="comment-btn" onclick="postComment('${pid}')">Send</button>
               </div>
             ` : '<div style="font-size:0.8rem; color:var(--text-muted); margin-top:8px;">Log in to join the conversation.</div>'}
           </div>
