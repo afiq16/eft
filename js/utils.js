@@ -120,24 +120,19 @@ const Utils = {
     return `<span class="club-with-logo ${extraClass}" style="display:inline-flex; align-items:center; gap:6px;">${this.getClubLogoHtml(clubName, '', size)} <span class="club-name-text">${this.escapeHtml(clubName)}</span></span>`;
   },
 
-  // Cute Boy Gamer Avatar Presets
+  // Cartoon football player avatar presets
   getCuteBoyAvatars() {
     return [
-      { id: 'cute_boy_1', name: 'Gamer Kai', url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=GamerKai&hairColor=2c1b18,4a312c&skinColor=ecad80&glassesProbability=0' },
-      { id: 'cute_boy_2', name: 'Pro Leo', url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=ProLeo&hairColor=0e0e0e&skinColor=f2d3b1&glassesProbability=0' },
-      { id: 'cute_boy_3', name: 'Esports Ren', url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=EsportsRen&hairColor=4a312c&skinColor=ecad80&glassesProbability=100' },
-      { id: 'cute_boy_4', name: 'Champ Alex', url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=ChampAlex&hairColor=2c1b18&skinColor=f2d3b1&glassesProbability=0' },
-      { id: 'cute_boy_5', name: 'Striker Noah', url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=StrikerNoah&hairColor=0e0e0e&skinColor=ecad80&glassesProbability=0' },
-      { id: 'cute_boy_6', name: 'Legend Jin', url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=LegendJin&hairColor=4a312c&skinColor=f2d3b1&glassesProbability=0' },
-      { id: 'cute_boy_7', name: 'Cyber Haru', url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=CyberHaru&hairColor=2c1b18&skinColor=ecad80&glassesProbability=100' },
-      { id: 'cute_boy_8', name: 'Ace Toby', url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=AceToby&hairColor=0e0e0e&skinColor=f2d3b1&glassesProbability=0' },
-      { id: 'cute_boy_9', name: 'Star Sora', url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=StarSora&hairColor=4a312c&skinColor=ecad80&glassesProbability=0' },
-      { id: 'cute_boy_10', name: 'Hero Ryan', url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=HeroRyan&hairColor=2c1b18&skinColor=f2d3b1&glassesProbability=0' }
+      { id: 'football_player_1', name: 'Striker', url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=FootballStriker&backgroundColor=0f1017' },
+      { id: 'football_player_2', name: 'Captain', url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=FootballCaptain&backgroundColor=0f1017' },
+      { id: 'football_player_3', name: 'Playmaker', url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=FootballPlaymaker&backgroundColor=0f1017' },
+      { id: 'football_player_4', name: 'Goalkeeper', url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=FootballKeeper&backgroundColor=0f1017' },
+      { id: 'football_player_5', name: 'Champion', url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=FootballChampion&backgroundColor=0f1017' }
     ];
   },
 
   getDefaultCuteBoyAvatar(seed = 'player') {
-    return `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(seed)}&hairColor=2c1b18,4a312c,0e0e0e&skinColor=f2d3b1,ecad80`;
+    return 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" rx="50" fill="%231877f2"/%3E%3Ccircle cx="50" cy="35" r="20" fill="white"/%3E%3Cpath d="M15 92c2-25 17-38 35-38s33 13 35 38" fill="white"/%3E%3C/svg%3E';
   },
 
   // HTML Escape Helper

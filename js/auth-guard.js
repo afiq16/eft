@@ -75,6 +75,8 @@ const AuthGuard = {
           }
         } catch (err) {
           console.error("Auth guard error:", err);
+          window.location.href = "login.html";
+          return;
         }
       }
 

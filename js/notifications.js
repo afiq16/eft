@@ -11,17 +11,20 @@ const Notifications = {
     
     onAuthStateChanged(auth, (user) => {
       document.body.classList.toggle('is-logged-in', !!user);
+      const button = document.getElementById('nav-notifications-btn');
+      if (!button) return;
       if (user) {
-        document.getElementById('nav-notifications-btn').style.display = 'flex';
+        button.style.display = 'flex';
         this.listen(user.uid);
       } else {
-        document.getElementById('nav-notifications-btn').style.display = 'none';
+        button.style.display = 'none';
       }
     });
 
     document.addEventListener('click', (e) => {
       const dropdown = document.getElementById('nav-notif-dropdown');
       const btn = document.getElementById('nav-notifications-btn');
+      if (!dropdown || !btn) return;
       if (this.dropdownOpen && !dropdown.contains(e.target) && !btn.contains(e.target)) {
         this.toggleDropdown();
       }
@@ -59,6 +62,7 @@ const Notifications = {
 
   toggleDropdown() {
     const dropdown = document.getElementById('nav-notif-dropdown');
+    if (!dropdown) return;
     this.dropdownOpen = !this.dropdownOpen;
     dropdown.style.display = this.dropdownOpen ? 'block' : 'none';
     if (this.dropdownOpen && this.unreadCount > 0) {
@@ -73,6 +77,7 @@ const Notifications = {
     onSnapshot(q, (snap) => {
       const list = document.getElementById('notif-list');
       const badge = document.getElementById('nav-notif-badge');
+      if (!list || !badge) return;
       
       if (snap.empty) {
         list.innerHTML = '<div class="notif-empty">No notifications yet.</div>';
@@ -139,7 +144,8 @@ const Notifications = {
       });
       if (count > 0) {
         await batch.commit();
-        document.getElementById('nav-notif-badge').style.display = 'none';
+        const badge = document.getElementById('nav-notif-badge');
+        if (badge) badge.style.display = 'none';
         this.unreadCount = 0;
       }
     } catch (err) {

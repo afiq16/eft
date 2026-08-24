@@ -9,29 +9,32 @@ import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-
 import { auth, db } from "./firebase-init.js";
 import Utils from "./utils.js";
 
-const AVATAR_STYLES = ['adventurer'];
-
 function getRandomCartoonAvatar(seed) {
-  return `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(seed)}&hairColor=2c1b18,4a312c,0e0e0e&skinColor=f2d3b1,ecad80`;
+  return 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" rx="50" fill="%231877f2"/%3E%3Ccircle cx="50" cy="35" r="20" fill="white"/%3E%3Cpath d="M15 92c2-25 17-38 35-38s33 13 35 38" fill="white"/%3E%3C/svg%3E';
 }
 
 const AuthService = {
   async registerPlayer(email, password, profileData) {
     Utils.showLoader();
     try {
+      const fullName = String(profileData.fullName || '').trim().replace(/\s+/g, ' ');
+      const username = String(profileData.username || '').trim().toLowerCase();
+      if (!/^[a-z0-9][a-z0-9_.-]{2,19}$/.test(username)) {
+        throw new Error('Username must be 3-20 characters using letters, numbers, dot, dash or underscore.');
+      }
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
       // Auto-assign cute boy gamer player avatar
-      const avatarUrl = profileData.profilePhoto || getRandomCartoonAvatar(profileData.username || email);
+      const avatarUrl = profileData.profilePhoto || getRandomCartoonAvatar(username || email);
 
       // Create profile in Firestore
       await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
         email,
         role: "PLAYER",
-        fullName: profileData.fullName,
-        username: profileData.username,
+        fullName,
+        username,
         phone: profileData.phone,
         country: profileData.country,
         bio: profileData.bio || "",

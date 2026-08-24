@@ -15,6 +15,9 @@
 
     if (!hamburger || !navLinks) return;
 
+    const mobileQuery = window.matchMedia('(max-width: 1100px)');
+    if (!mobileQuery.matches) return;
+
     // ── Inject drawer header (logo + close btn) once
     if (!navLinks.querySelector('.drawer-header')) {
       const li = document.createElement('li');
@@ -46,7 +49,7 @@
     if (!navLinks.querySelector('.mob-auth-injected')) {
       const mobAuth = document.createElement('div');
       mobAuth.className = 'mob-auth-injected';
-      mobAuth.style.cssText = 'width:100%; border-top:1px solid rgba(255,255,255,0.08); padding-top:10px; margin-top:auto; display:flex; flex-direction:column; gap:4px;';
+      mobAuth.style.cssText = 'width:100%; border-top:1px solid rgba(255,255,255,0.08); padding-top:10px; margin-top:12px; display:flex; flex-direction:column; gap:4px;';
       
       mobAuth.innerHTML = `
         <a href="login.html" class="nav-link mob-guest" style="color:var(--primary)!important; text-align:center; justify-content:center;">Login</a>
@@ -102,7 +105,7 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeNav(); });
 
     // Resize — auto-close if desktop
-    window.addEventListener('resize', () => { if (window.innerWidth > 900) closeNav(); });
+    window.addEventListener('resize', () => { if (window.innerWidth > 1100) closeNav(); });
   }
 
   if (document.readyState === 'loading') {
