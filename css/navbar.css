@@ -87,6 +87,8 @@ header.scrolled {
 .nav-links {
   display: flex;
   align-items: center;
+  flex-wrap: nowrap;
+  min-width: 0;
   gap: 2px;
   list-style: none;
   margin: 0;
@@ -109,6 +111,7 @@ header.scrolled {
   text-decoration: none;
   display: block;
 }
+.nav-links > li { flex-shrink: 0; }
 .nav-link:hover {
   color: var(--primary);
   background: rgba(0, 229, 255, 0.07);
@@ -177,6 +180,9 @@ header.scrolled {
 .hamburger.active span:nth-child(2) { opacity: 0; transform: scaleX(0); }
 .hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); background: var(--primary); }
 
+/* The drawer has its own close control, so avoid showing a second X. */
+.hamburger.active { opacity: 0; pointer-events: none; }
+
 /* ══════════════════════════════════════════
    MOBILE OVERLAY BACKDROP
 ══════════════════════════════════════════ */
@@ -194,9 +200,9 @@ header.scrolled {
 .mobile-nav-overlay.active { opacity: 1; }
 
 /* ══════════════════════════════════════════
-   MOBILE BREAKPOINT — ≤900px
+  MOBILE BREAKPOINT — ≤1100px
 ══════════════════════════════════════════ */
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
 
   /* Show hamburger, hide desktop auth */
   .hamburger  { display: flex !important; }
@@ -210,7 +216,7 @@ header.scrolled {
     /* Override flex centering from desktop */
     position: fixed !important;
     top: 0 !important;
-    right: -100% !important;
+    right: 0 !important;
     bottom: 0 !important;
     width: min(300px, 82vw) !important;
     height: 100vh !important;
@@ -226,14 +232,15 @@ header.scrolled {
     -webkit-backdrop-filter: blur(24px) !important;
     border-left: 1px solid rgba(255, 255, 255, 0.07) !important;
     box-shadow: -6px 0 40px rgba(0, 0, 0, 0.95) !important;
-    z-index: 800 !important;
+    z-index: 9001 !important;
 
     overflow-y: auto !important;
     overflow-x: hidden !important;
 
-    transition: right 0.32s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transform: translateX(105%) !important;
+    transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
-  .nav-links.open { right: 0 !important; }
+  .nav-links.open { transform: translateX(0) !important; }
 
   /* Each <li> full width */
   .nav-links > li { width: 100%; }
@@ -344,7 +351,7 @@ header.scrolled {
 .admin-section { display: none; }
 .admin-section.active { display: block; }
 
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
   .admin-layout { flex-direction: column; }
   .sidebar {
     width: 100%;
