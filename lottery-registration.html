@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lottery Registration | EF X TOUR 2026</title>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(0,229,255,0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(212,175,55,0.05) 0%, transparent 50%);
+    }
+    .lottery-card {
+      width: 100%;
+      max-width: 600px;
+      background: rgba(15,16,23,0.92);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 36px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+    .lottery-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+    }
+    .title-area {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .title-area h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .input-group {
+      margin-bottom: 18px;
+    }
+    .input-group label {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .input-field {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(23,24,34,0.8);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+    .input-field:focus {
+      outline: none;
+      border-color: var(--secondary);
+      box-shadow: 0 0 12px rgba(212,175,55,0.2);
+    }
+    .clubs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 8px;
+      max-height: 200px;
+      overflow-y: auto;
+      padding: 8px;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+    }
+    .club-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s;
+    }
+    .club-checkbox:hover {
+      background: rgba(255,255,255,0.08);
+    }
+    .club-checkbox input {
+      accent-color: var(--secondary);
+    }
+    .club-checkbox.selected {
+      border-color: var(--secondary);
+      background: rgba(212,175,55,0.15);
+      color: #fff;
+    }
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1rem;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, var(--secondary), #b8860b);
+      color: #000;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(212,175,55,0.3);
+      margin-top: 10px;
+      transition: all 0.2s;
+    }
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 35px rgba(212,175,55,0.5);
+    }
+    .submit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .status-box {
+      text-align: center;
+      padding: 20px;
+      background: rgba(0,229,255,0.05);
+      border: 1px solid rgba(0,229,255,0.2);
+      border-radius: 12px;
+      margin-top: 15px;
+    }
+    .countdown-display {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--secondary);
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="lottery-card">
+    <div class="title-area">
+      <a href="index.html" style="color:var(--text-muted); text-decoration:none; font-size:0.85rem; display:inline-block; margin-bottom:10px;">← Back to Home</a>
+      <h1>🎲 3D Tournament Lottery</h1>
+      <p style="color:var(--text-muted); font-size:0.9rem;">Register your team to participate in the live 3D draw</p>
+    </div>
+
+    <!-- Already Submitted / Wait View -->
+    <div id="wait-view" style="display:none;" class="status-box">
+      <div style="font-size: 2.5rem; margin-bottom: 8px;">✅</div>
+      <h3 style="color:#fff; margin-bottom: 6px;">Registration Successful!</h3>
+      <p style="color:var(--text-muted); font-size: 0.85rem;" id="reg-details-text"></p>
+      
+      <div style="margin-top: 20px; padding:12px; background:rgba(212,175,55,0.1); border-radius:12px; border:1px solid rgba(212,175,55,0.3);">
+        <div style="font-size: 0.78rem; color: var(--secondary); text-transform: uppercase; letter-spacing: 1px; font-weight:700;">Scheduled Draw Time</div>
+        <div class="countdown-display" id="scheduled-time-text" style="font-size:1.2rem; margin:6px 0;">Loading Schedule...</div>
+      </div>
+
+      <div style="margin-top:20px;">
+        <a href="3d-lottery.html" class="submit-btn" style="display:block; text-decoration:none; padding: 14px 24px; background:linear-gradient(135deg, #ff1744, #ff5252); color:#fff; font-weight:800; box-shadow:0 0 25px rgba(255,23,68,0.5);">🔴 WATCH LIVE BROADCAST ARENA</a>
+      </div>
+    </div>
+
+    <!-- Registration Form -->
+    <form id="lottery-form">
+      <div class="input-group">
+        <label for="player-name">Player Name</label>
+        <input type="text" id="player-name" class="input-field" placeholder="e.g. Lionel Messi" required>
+      </div>
+
+      <div class="input-group">
+        <label for="team-name">Team Name</label>
+        <input type="text" id="team-name" class="input-field" placeholder="e.g. Cyber Strikers" required>
+      </div>
+
+      <div class="input-group">
+        <label>Select 3-4 Preferred Clubs</label>
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px;">Selected: <span id="club-count" style="color:var(--secondary); font-weight:700;">0</span>/4</div>
+        <div class="clubs-grid" id="clubs-grid">
+          <!-- Club Checkboxes populated dynamically -->
+        </div>
+      </div>
+
+      <div id="error-msg" style="color:var(--error); font-size:0.85rem; display:none; margin-bottom:10px;"></div>
+
+      <button type="submit" class="submit-btn" id="btn-submit">Submit Entry</button>
+    </form>
+
+  </div>
+
+  <script src="js/firebase-config.js"></script>
+  <script type="module">
+    import { db, rtdb } from "./js/firebase-init.js";
+    import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const CLUBS = [
+      // Premier League, La Liga, Serie A, etc.
+      "Real Madrid", "Barcelona", "Atletico Madrid", "Manchester City", "Arsenal", 
+      "Liverpool", "Chelsea", "Manchester United", "Tottenham Hotspur", "Bayern Munich", 
+      "Borussia Dortmund", "PSG", "Inter Milan", "AC Milan", "Juventus", "Napoli"
+    ];
+
+    const form = document.getElementById('lottery-form');
+    const waitView = document.getElementById('wait-view');
+    const clubsGrid = document.getElementById('clubs-grid');
+    const clubCountSpan = document.getElementById('club-count');
+    const errorMsg = document.getElementById('error-msg');
+    const submitBtn = document.getElementById('btn-submit');
+
+    let selectedClubs = [];
+
+    // Render clubs
+    CLUBS.forEach(club => {
+      const label = document.createElement('label');
+      label.className = 'club-checkbox';
+      label.innerHTML = `
+        <input type="checkbox" value="${club}">
+        <span>${club}</span>
+      `;
+      const chk = label.querySelector('input');
+      chk.addEventListener('change', () => {
+        if (chk.checked) {
+          if (selectedClubs.length >= 4) {
+            chk.checked = false;
+            return;
+          }
+          selectedClubs.push(club);
+          label.classList.add('selected');
+        } else {
+          selectedClubs = selectedClubs.filter(c => c !== club);
+          label.classList.remove('selected');
+        }
+        clubCountSpan.textContent = selectedClubs.length;
+      });
+      clubsGrid.appendChild(label);
+    });
+
+    // Check device local storage
+    const savedEntry = localStorage.getItem('ef_3d_lottery_entry');
+    if (savedEntry) {
+      showRegisteredState(JSON.parse(savedEntry));
+    }
+
+    // Listen to schedule from Realtime DB
+    const scheduleRef = ref(rtdb, 'lottery_config/scheduled_time');
+    onValue(scheduleRef, (snapshot) => {
+      const val = snapshot.val();
+      const el = document.getElementById('scheduled-time-text');
+      if (val) {
+        el.textContent = new Date(val).toLocaleString();
+      } else {
+        el.textContent = "To Be Announced (Admin)";
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorMsg.style.display = 'none';
+
+      const playerName = document.getElementById('player-name').value.trim();
+      const teamName = document.getElementById('team-name').value.trim();
+
+      if (!playerName || !teamName) {
+        showError("Please fill out all fields.");
+        return;
+      }
+
+      if (selectedClubs.length < 3) {
+        showError("Please select at least 3 clubs (maximum 4).");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Submitting...";
+
+      try {
+        const entryData = {
+          playerName,
+          teamName,
+          chosenClubs: selectedClubs,
+          submittedAt: new Date().toISOString()
+        };
+
+        // Save to Firestore under separate collection `lottery_entries`
+        await addDoc(collection(db, "lottery_entries"), {
+          ...entryData,
+          createdAt: serverTimestamp()
+        });
+
+        // Save locally to lock device
+        localStorage.setItem('ef_3d_lottery_entry', JSON.stringify(entryData));
+
+        showRegisteredState(entryData);
+
+        // Auto-redirect to live broadcast arena after 1.5s
+        setTimeout(() => {
+          window.location.href = "3d-lottery.html";
+        }, 1500);
+      } catch (err) {
+        console.error(err);
+        showError("Failed to register. Please try again: " + err.message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit Entry";
+      }
+    });
+
+    function showError(msg) {
+      errorMsg.textContent = msg;
+      errorMsg.style.display = 'block';
+    }
+
+    function showRegisteredState(data) {
+      form.style.display = 'none';
+      waitView.style.display = 'block';
+      document.getElementById('reg-details-text').innerHTML = `
+        <strong>Player:</strong> ${data.playerName}<br>
+        <strong>Team:</strong> ${data.teamName}<br>
+        <strong>Clubs:</strong> ${data.chosenClubs.join(', ')}
+      `;
+    }
+  </script>
+</body>
+</html>

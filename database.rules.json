@@ -1,22 +1,30 @@
 {
   "rules": {
-    ".read": "auth != null",
-    ".write": "auth != null",
-    "lottery": {
+    ".read": true,
+    ".write": true,
+    "lottery_broadcast": {
       ".read": true,
-      ".write": "auth != null"
+      ".write": true
     },
-    "webrtc_broadcasters": {
-      "$broadcasterId": {
-        ".read": "auth != null",
-        ".write": "auth != null && auth.uid == $broadcasterId"
-      }
+    "lottery_presence": {
+      ".read": true,
+      ".write": true
     },
-    "stream_viewers": {
-      "$streamId": {
-        ".read": true,
-        ".write": "auth != null"
-      }
+    "lottery_results": {
+      ".read": true,
+      ".write": true
+    },
+    "lottery_reactions": {
+      ".read": true,
+      ".write": true
+    },
+    "lottery_config": {
+      ".read": true,
+      ".write": true
+    },
+    "lottery_state": {
+      ".read": true,
+      ".write": true
     }
   }
 }

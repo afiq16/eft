@@ -201,7 +201,7 @@
   <script type="module">
     import { db } from "./js/firebase-init.js";
     import Utils from "./js/utils.js";
-    import { doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { doc, getDoc, collection, query, where, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const urlParams = new URLSearchParams(window.location.search);
     const uid = urlParams.get('uid');

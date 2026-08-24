@@ -478,7 +478,7 @@
         }
 
         const timeHtml = msg.sentAt ? `<span class="time">${new Date(msg.sentAt.toDate ? msg.sentAt.toDate() : msg.sentAt).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span>` : '';
-        el.innerHTML = `${authorHtml}: ${msg.text} ${timeHtml}`;
+        el.innerHTML = `${authorHtml}: ${Utils.escapeHtml(msg.text || '')} ${timeHtml}`;
         chatFeed.appendChild(el);
       });
       chatFeed.scrollTop = chatFeed.scrollHeight;
@@ -521,6 +521,5 @@
       } catch(e){}
     };
   </script>
-  <script src="js/mobile-nav.js"></script>
 </body>
 </html>

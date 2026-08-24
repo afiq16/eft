@@ -53,6 +53,32 @@
       gap: 14px;
     }
     @media (max-width: 600px) { .form-row-2 { grid-template-columns: 1fr; } }
+    @media (max-width: 900px) {
+      .admin-content,
+      .admin-content > * {
+        min-width: 0;
+        max-width: 100%;
+      }
+      .admin-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .admin-card,
+      .announcement-item,
+      .challenge-review-item,
+      .tour-card,
+      .user-row { min-width: 0; }
+      .announcement-item,
+      .challenge-review-item,
+      .tour-card { overflow-wrap: anywhere; }
+    }
+    @media (max-width: 480px) {
+      .admin-card-grid { grid-template-columns: 1fr; gap: 10px; }
+      .admin-card { padding: 16px; }
+      .admin-card-value { font-size: 1.7rem; }
+      .user-row,
+      .announcement-item,
+      .challenge-review-item,
+      .tour-card { padding: 11px 12px; gap: 8px; }
+      .user-email { overflow-wrap: anywhere; }
+    }
     .user-row {
       display: flex;
       align-items: center;
@@ -177,6 +203,7 @@
       <div class="section-label">Draw, Matches & Live</div>
       <ul class="sidebar-menu">
         <li class="sidebar-item"><a href="#" onclick="showSection('draw-control')"><span class="sidebar-icon">🎲</span>Live Draw Control</a></li>
+        <li class="sidebar-item"><a href="#" onclick="showSection('lottery-3d-control')"><span class="sidebar-icon">🎰</span>3D Lottery Control</a></li>
         <li class="sidebar-item"><a href="#" onclick="showSection('fixtures-control')"><span class="sidebar-icon">📅</span>Fixtures Generator</a></li>
         <li class="sidebar-item"><a href="#" onclick="showSection('match-approvals')"><span class="sidebar-icon">✅</span>Match Approvals</a></li>
         <li class="sidebar-item"><a href="#" onclick="showSection('live-streams')"><span class="sidebar-icon">📺</span>Live TV Moderation</a></li>
@@ -403,6 +430,52 @@
         </div>
       </section>
 
+      <!-- ── 3D Lottery Control ── -->
+      <section id="lottery-3d-control-section" class="admin-section">
+        <h2 class="text-gold" style="margin-bottom:20px;">🎰 3D Tournament Lottery Control</h2>
+
+        <div class="admin-card" style="margin-bottom:24px;">
+          <h3 style="margin-bottom:12px;">📅 Set 3D Lottery Schedule</h3>
+          <div class="form-row-2" style="margin-bottom:12px;">
+            <div class="form-group">
+              <label for="lottery-3d-datetime">Date & Time</label>
+              <input type="datetime-local" id="lottery-3d-datetime" class="form-input">
+            </div>
+          </div>
+          <button class="btn btn-secondary" id="btn-schedule-3d-lottery">📅 Save 3D Schedule</button>
+        </div>
+
+        <div class="admin-card">
+          <h3 style="margin-bottom:8px;">🎬 Live 3D Draw Control</h3>
+          <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:16px;">
+            Load registered teams, then click <strong>"▶️ START AUTOMATED LIVE LOTTERY"</strong> to start the live video/3D show! All viewers will see 3D cards lift and clubs announced sequentially.
+          </p>
+
+          <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px;">
+            <button class="btn btn-outline" id="btn-load-3d-entries">🔄 Load Registered Entries</button>
+            <button class="btn btn-danger" id="btn-reset-3d-lottery" style="font-size:0.85rem;">🗑️ Reset Draw State</button>
+          </div>
+
+          <div id="3d-entries-list" style="max-height:160px; overflow-y:auto; margin-bottom:16px; font-size:0.85rem; color:var(--text-secondary); background:rgba(0,0,0,0.3); padding:10px; border-radius:8px;">
+            Click "Load Registered Entries" to view queue.
+          </div>
+
+          <div style="display:flex; justify-content:center; gap:14px; flex-wrap:wrap; margin-bottom:20px;">
+            <button class="draw-manual-btn" id="btn-start-auto-3d" style="background:linear-gradient(135deg, #00e676, #00b0ff); color:#000;">▶️ START 5-MINUTE LIVE VIDEO SHOW</button>
+            <button class="draw-manual-btn" id="btn-trigger-3d-draw" disabled style="font-size:0.95rem; padding:12px 20px;">🃏 REVEAL NEXT TEAM ONLY</button>
+          </div>
+          <p id="3d-draw-status" style="text-align:center; color:var(--text-muted); font-size:0.85rem;">Load entries to begin.</p>
+        </div>
+
+        <!-- Live Admin Stage Preview -->
+        <div class="admin-card">
+          <h3 style="margin-bottom:12px; color:var(--secondary);">📺 Live Broadcast Monitor (Admin View)</h3>
+          <div style="width:100%; height:460px; border-radius:14px; overflow:hidden; border:2px solid rgba(212,175,55,0.3);">
+            <iframe src="3d-lottery.html" style="width:100%; height:100%; border:none;" title="Live 3D Lottery Preview"></iframe>
+          </div>
+        </div>
+      </section>
+
       <!-- ── Fixtures Generator ── -->
       <section id="fixtures-control-section" class="admin-section">
         <h2 class="text-blue" style="margin-bottom:20px;">📅 Fixture Generator</h2>
@@ -494,7 +567,7 @@
     import {
       collection, getDocs, doc, getDoc, setDoc, updateDoc, addDoc, deleteDoc, orderBy, query, where, limit, serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { ref, set, push, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     AuthGuard.guardPage(['SUPER_ADMIN', 'TOURNAMENT_ADMIN']);
@@ -1286,6 +1359,127 @@
         });
       } catch (err) { Utils.showToast(err.message, "error"); }
     }
+    // ── 3D Lottery Admin Logic ──────────────────────────────
+    let loaded3dEntries = [];
+    let drawCount3d = 0;
+    let autoDrawInterval = null;
+
+    document.getElementById('btn-schedule-3d-lottery')?.addEventListener('click', async () => {
+      const val = document.getElementById('lottery-3d-datetime').value;
+      if (!val) { Utils.showToast("Please pick date and time.", "warning"); return; }
+      try {
+        await set(ref(rtdb, 'lottery_config/scheduled_time'), val);
+        Utils.showToast("3D Lottery schedule saved!", "success");
+      } catch (err) { Utils.showToast(err.message, "error"); }
+    });
+
+    document.getElementById('btn-load-3d-entries')?.addEventListener('click', async () => {
+      Utils.showLoader();
+      try {
+        const snap = await getDocs(collection(db, "lottery_entries"));
+        loaded3dEntries = [];
+        snap.forEach(d => loaded3dEntries.push(d.data()));
+        
+        Utils.hideLoader();
+        const list = document.getElementById('3d-entries-list');
+        const triggerBtn = document.getElementById('btn-trigger-3d-draw');
+        const autoBtn = document.getElementById('btn-start-auto-3d');
+
+        if (loaded3dEntries.length === 0) {
+          list.innerHTML = `<div style="color:var(--text-muted);">No entries found in lottery_entries.</div>`;
+          triggerBtn.disabled = true;
+          autoBtn.disabled = true;
+          return;
+        }
+
+        let html = '';
+        loaded3dEntries.forEach((item, idx) => {
+          html += `<div style="padding:4px 8px; border-bottom:1px solid rgba(255,255,255,0.05);">
+            <strong>#${idx + 1} ${item.teamName}</strong> (${item.playerName}) — Clubs: ${item.chosenClubs.join(', ')}
+          </div>`;
+        });
+        list.innerHTML = html;
+        triggerBtn.disabled = false;
+        autoBtn.disabled = false;
+        document.getElementById('3d-draw-status').textContent = `Loaded ${loaded3dEntries.length} entries. Click START AUTOMATED LOTTERY to go live!`;
+        Utils.showToast(`Loaded ${loaded3dEntries.length} entries!`, "success");
+      } catch (err) { Utils.hideLoader(); Utils.showToast(err.message, "error"); }
+    });
+
+    async function executeSingle3DDraw() {
+      if (loaded3dEntries.length === 0) {
+        if (autoDrawInterval) {
+          clearInterval(autoDrawInterval);
+          autoDrawInterval = null;
+        }
+        document.getElementById('btn-trigger-3d-draw').disabled = true;
+        document.getElementById('btn-start-auto-3d').disabled = true;
+        await set(ref(rtdb, 'lottery_state'), { status: 'finished' });
+        document.getElementById('3d-draw-status').textContent = `🎉 All teams have been drawn! Lottery draw finished.`;
+        Utils.showToast("All teams drawn successfully!", "success");
+        return;
+      }
+
+      const nextEntry = loaded3dEntries.shift();
+      const randomClub = nextEntry.chosenClubs[Math.floor(Math.random() * nextEntry.chosenClubs.length)];
+      drawCount3d++;
+
+      try {
+        await set(ref(rtdb, 'lottery_state'), {
+          status: 'drawing',
+          currentTeam: nextEntry.teamName,
+          currentPlayer: nextEntry.playerName,
+          currentClub: randomClub,
+          drawCount: drawCount3d
+        });
+
+        await push(ref(rtdb, 'lottery_results'), {
+          teamName: nextEntry.teamName,
+          playerName: nextEntry.playerName,
+          assignedClub: randomClub,
+          timestamp: new Date().toISOString()
+        });
+
+        document.getElementById('3d-draw-status').textContent = `[LIVE DRAW] Drawn #${drawCount3d}: ${nextEntry.teamName} (${nextEntry.playerName}) ➔ ${randomClub}. (${loaded3dEntries.length} remaining)`;
+      } catch (err) { Utils.showToast(err.message, "error"); }
+    }
+
+    document.getElementById('btn-trigger-3d-draw')?.addEventListener('click', () => {
+      executeSingle3DDraw();
+    });
+
+    document.getElementById('btn-start-auto-3d')?.addEventListener('click', async () => {
+      try {
+        const payload = {
+          isPlaying: true,
+          startTime: Date.now()
+        };
+        await set(ref(rtdb, 'lottery_results'), null);
+        await set(ref(rtdb, 'lottery_broadcast'), payload);
+        await setDoc(doc(db, "settings", "lottery_broadcast"), payload, { merge: true });
+        document.getElementById('3d-draw-status').textContent = '🚀 LIVE VIDEO SHOW IS NOW BROADCASTING TO ALL USERS!';
+        Utils.showToast("🚀 LIVE VIDEO BROADCAST STARTED FOR ALL USERS!", "success");
+      } catch (err) { Utils.showToast(err.message, "error"); }
+    });
+
+    document.getElementById('btn-reset-3d-lottery')?.addEventListener('click', async () => {
+      if (!confirm("Are you sure you want to reset the 3D lottery state and results?")) return;
+      if (autoDrawInterval) {
+        clearInterval(autoDrawInterval);
+        autoDrawInterval = null;
+      }
+      try {
+        await set(ref(rtdb, 'lottery_state'), { status: 'waiting', currentTeam: '', currentClub: '', drawCount: 0 });
+        await remove(ref(rtdb, 'lottery_results'));
+        loaded3dEntries = [];
+        document.getElementById('btn-trigger-3d-draw').disabled = true;
+        document.getElementById('btn-start-auto-3d').disabled = true;
+        document.getElementById('btn-start-auto-3d').textContent = '▶️ START AUTOMATED LOTTERY';
+        document.getElementById('3d-entries-list').innerHTML = `Draw state reset. Click "Load Registered Entries" to start over.`;
+        document.getElementById('3d-draw-status').textContent = `Reset completed.`;
+        Utils.showToast("3D Lottery reset!", "info");
+      } catch (err) { Utils.showToast(err.message, "error"); }
+    });
   </script>
   <script type="module" src="js/floating-chat.js"></script>
 </body>

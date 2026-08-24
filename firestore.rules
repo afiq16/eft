@@ -25,12 +25,18 @@ service cloud.firestore {
 
     match /users/{userId} {
       allow read: if isAuthenticated();
-      allow write: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) || isAdmin();
+      allow update: if isAdmin() || (isOwner(userId) &&
+        request.resource.data.uid == resource.data.uid &&
+        request.resource.data.email == resource.data.email &&
+        request.resource.data.role == resource.data.role);
+      allow delete: if isAdmin();
     }
 
     match /users/{userId}/notifications/{notifId} {
       allow read: if isOwner(userId);
-      allow create: if isAdmin() || isOwner(userId);
+      allow create: if isAdmin() || isOwner(userId) ||
+        (isAuthenticated() && request.resource.data.fromUid == request.auth.uid && request.resource.data.toUid == userId);
       allow update, delete: if isOwner(userId);
     }
 
@@ -190,6 +196,15 @@ service cloud.firestore {
       allow update, delete: if isAdmin();
     }
 
+    match /friendRequests/{requestId} {
+      allow read: if isAuthenticated() &&
+        (resource.data.fromUid == request.auth.uid || resource.data.toUid == request.auth.uid);
+      allow create: if isAuthenticated() && request.resource.data.fromUid == request.auth.uid;
+      allow update: if isAuthenticated() && resource.data.toUid == request.auth.uid;
+      allow delete: if isAuthenticated() &&
+        (resource.data.fromUid == request.auth.uid || resource.data.toUid == request.auth.uid);
+    }
+
     match /drawComments/{id} {
       allow read: if true;
       allow create: if isAuthenticated();
@@ -217,6 +232,18 @@ service cloud.firestore {
     match /matchResults/{id} {
       allow read: if true;
       allow create: if isAuthenticated();
+      allow update, delete: if isAdmin();
+    }
+
+    match /lottery_entries/{id} {
+      allow read: if true;
+      allow create: if true;
+      allow update, delete: if isAdmin();
+    }
+
+    match /lottery_comments/{id} {
+      allow read: if true;
+      allow create: if true;
       allow update, delete: if isAdmin();
     }
   }
